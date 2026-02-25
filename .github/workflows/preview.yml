@@ -40,15 +40,15 @@ jobs:
       - name: Build for preview
         run: yarn build
         env:
-          VITE_PREVIEW_MODE: 'true'
+          VITE_BASE_PATH: /visual-wiring/pr-${{ github.event.pull_request.number }}/
 
-      - name: Deploy to preview branch
+      - name: Deploy to preview
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           destination_dir: pr-${{ github.event.pull_request.number }}
-          publish_branch: gh-pages-preview
+          publish_branch: gh-pages
           keep_files: true
 
       - name: Comment PR with preview URL
@@ -58,16 +58,16 @@ jobs:
             const prNumber = context.payload.pull_request.number;
             const previewUrl = `https://${{ github.repository_owner }}.github.io/visual-wiring/pr-${prNumber}/`;
             const version = process.env.PREVIEW_VERSION;
-            
+
             const comment = `## 🚀 Preview Deployment
-            
+
             Your changes have been deployed to a preview environment!
-            
+
             **Preview URL:** ${previewUrl}
             **Version:** \`${version}\`
-            
+
             This preview will be available until the PR is closed.`;
-            
+
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
