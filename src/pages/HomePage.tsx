@@ -1,10 +1,11 @@
 import './HomePage.css';
 
-import { Cpu, Plus, Upload } from 'lucide-react';
+import { Plus, Upload } from 'lucide-react';
 import { useState } from 'react';
 
 import packageJson from '../../package.json';
 import { ActionButton } from '../components/ActionButton';
+import { AppLogo } from '../components/AppLogo';
 import { CreateProjectForm } from '../components/CreateProjectForm';
 import { ImportModal } from '../components/ImportModal';
 import { useProject } from '../hooks/useProject';
@@ -47,15 +48,7 @@ export function HomePage() {
     <div className="home-page">
       <div className="home-container">
         <div className="home-left">
-          <div className="brand-section">
-            <div className="brand-icon">
-              <Cpu size={40} />
-            </div>
-            <div>
-              <h1 className="brand-title">Visual Wiring</h1>
-              <p className="brand-subtitle">Component Designer</p>
-            </div>
-          </div>
+          <AppLogo size="lg" />
 
           <div className="hero-section">
             <h2 className="hero-title">

@@ -67,3 +67,18 @@
 .btn-cancel:hover:not(:disabled) {
   background-color: #e2e8f0;
 }
+
+/* Danger Button */
+.btn-danger {
+  background-color: #ef4444;
+  color: white;
+  box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.25);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: #dc2626;
+}
+
+.btn-danger:disabled:hover {
+  background-color: #ef4444;
+}
