@@ -1,7 +1,7 @@
 {
   "name": "visual-wiring",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A visual tool for creating custom components with pins and connecting them through interactive wires",
   "type": "module",
   "keywords": [
