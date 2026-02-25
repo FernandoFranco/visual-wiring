@@ -10,7 +10,7 @@ import { Modal } from '../Modal';
 export interface ImportModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onImport: (data: unknown, filename: string, url?: string) => void;
+  onImport: (data: unknown, filename: string) => Promise<void> | void;
 }
 
 export function ImportModal(props: ImportModalProps) {
@@ -24,13 +24,10 @@ export function ImportModal(props: ImportModalProps) {
     try {
       const text = await file.text();
       const data = JSON.parse(text);
-      onImport(data, file.name);
+      await onImport(data, file.name);
       onClose();
     } catch (err) {
-      setError(
-        'Failed to parse JSON: ' +
-          (err instanceof Error ? err.message : 'Unknown error')
-      );
+      setError(err instanceof Error ? err.message : 'Failed to load file');
     }
   };
 
@@ -46,17 +43,24 @@ export function ImportModal(props: ImportModalProps) {
     try {
       const response = await fetch(importUrl);
       if (!response.ok)
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(
+          `HTTP error: ${response.status} ${response.statusText}`
+        );
       const data = await response.json();
-      const filename = importUrl.split('/').pop() || 'URL Import';
-      onImport(data, filename, importUrl);
+      const filename = importUrl.split('/').pop() || 'imported.json';
+      await onImport(data, filename);
       setImportUrl('');
       onClose();
     } catch (err) {
-      setError(
-        'Failed to fetch from URL: ' +
-          (err instanceof Error ? err.message : 'Unknown error')
-      );
+      if (err instanceof TypeError && err.message.includes('fetch')) {
+        setError(
+          'Could not reach the URL. This may be caused by a CORS restriction on the server.'
+        );
+      } else {
+        setError(
+          err instanceof Error ? err.message : 'Failed to fetch from URL'
+        );
+      }
     } finally {
       setIsLoading(false);
     }
