@@ -2,32 +2,45 @@ import './HomePage.css';
 
 import { Cpu, Plus, Upload } from 'lucide-react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import packageJson from '../../package.json';
 import { ActionButton } from '../components/ActionButton';
 import { CreateProjectForm } from '../components/CreateProjectForm';
 import { ImportModal } from '../components/ImportModal';
+import { useProject } from '../hooks/useProject';
+import { useSnackbar } from '../hooks/useSnackbar';
 
 export function HomePage() {
-  const navigate = useNavigate();
+  const { createProject, loadProject } = useProject();
+  const { showError } = useSnackbar();
   const [isCreating, setIsCreating] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   const handleNewProject = (name: string) => {
-    // TODO: Save project to context/state
-    console.log('Creating project:', name);
-    navigate('/project');
+    try {
+      createProject(name);
+    } catch {
+      showError('Failed to create project. Please try again.');
+    }
   };
 
   const handleLoadProject = () => {
     setIsImportModalOpen(true);
   };
 
-  const handleImport = (data: unknown, filename: string, url?: string) => {
-    // TODO: Validate and process imported data
-    console.log('Importing data:', { data, filename, url });
-    navigate('/project');
+  const handleImport = async (data: unknown, filename: string) => {
+    const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+    const file = new File([blob], filename, { type: 'application/json' });
+
+    try {
+      await loadProject(file);
+    } catch (err) {
+      showError(
+        err instanceof Error
+          ? `Failed to load project: ${err.message}`
+          : 'Failed to load project. Make sure the file is a valid project.'
+      );
+    }
   };
 
   return (
@@ -70,7 +83,7 @@ export function HomePage() {
 
               <ActionButton
                 title="Load Project"
-                subtitle="Import existing component diagram"
+                subtitle="Import an existing project file"
                 icon={<Upload size={24} />}
                 variant="secondary"
                 onClick={handleLoadProject}
