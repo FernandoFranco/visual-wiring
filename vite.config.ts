@@ -4,5 +4,7 @@ import { defineConfig } from 'vite';
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: process.env.GITHUB_ACTIONS ? '/visual-wiring/' : '/',
+  base:
+    process.env.VITE_BASE_PATH ||
+    (process.env.GITHUB_ACTIONS ? '/visual-wiring/' : '/'),
 });

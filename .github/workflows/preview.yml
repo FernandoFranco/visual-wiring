@@ -10,6 +10,10 @@ permissions:
   contents: write
   pull-requests: write
 
+concurrency:
+  group: preview-pages-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   preview:
     name: Deploy Preview
@@ -35,42 +39,18 @@ jobs:
           CURRENT_VERSION=$(node -p "require('./package.json').version")
           PREVIEW_VERSION="${CURRENT_VERSION}-pr.${PR_NUMBER}"
           npm version $PREVIEW_VERSION --no-git-tag-version
-          echo "PREVIEW_VERSION=$PREVIEW_VERSION" >> $GITHUB_ENV
 
       - name: Build for preview
         run: yarn build
         env:
-          VITE_PREVIEW_MODE: 'true'
+          VITE_BASE_PATH: /visual-wiring/pr-${{ github.event.pull_request.number }}/
 
-      - name: Deploy to preview branch
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Preview Pages
+        uses: rajyan/preview-pages@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          destination_dir: pr-${{ github.event.pull_request.number }}
-          publish_branch: gh-pages-preview
-          keep_files: true
-
-      - name: Comment PR with preview URL
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const prNumber = context.payload.pull_request.number;
-            const previewUrl = `https://${{ github.repository_owner }}.github.io/visual-wiring/pr-${prNumber}/`;
-            const version = process.env.PREVIEW_VERSION;
-            
-            const comment = `## 🚀 Preview Deployment
-            
-            Your changes have been deployed to a preview environment!
-            
-            **Preview URL:** ${previewUrl}
-            **Version:** \`${version}\`
-            
-            This preview will be available until the PR is closed.`;
-            
-            github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: prNumber,
-              body: comment
-            });
+          source-dir: dist
+          target-dir: .
+          configured-domain: fernandofranco.github.io
+          configured-dir: .
+          pr-per-commit: false
+          pr-comment: sticky
