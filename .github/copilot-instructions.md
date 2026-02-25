@@ -60,3 +60,69 @@ Automatically runs ESLint and Prettier on staged files before each commit.
 ### Commit-msg Hook:
 
 Validates commit messages using Commitlint to ensure they follow Conventional Commits format.
+
+## 📐 Code Standards
+
+### File Headers:
+
+**IMPORTANT: Do NOT add license headers or any comment blocks at the top of files.**
+
+Never add:
+
+- `@license` comments
+- `SPDX-License-Identifier` headers
+- Copyright notices
+- Any other file header comments
+
+Files should start directly with imports.
+
+### React Component Pattern:
+
+All React components must follow this standard pattern:
+
+```tsx
+import { type PropsWithChildren } from 'react';
+
+// Export the interface
+export interface ComponentProps {
+  // Props definition
+}
+
+// Export the component as a named function
+export function Component(props: PropsWithChildren<ComponentProps>) {
+  return <div>{props.children}</div>;
+}
+```
+
+**Important Rules:**
+
+- Always export interfaces with `export interface`
+- Always export components as named functions with `export function`
+- Never use `export default`
+- Use `PropsWithChildren<T>` when component accepts children
+- Use destructuring in function parameters only when it improves readability
+
+### Component Structure (Barrel Exports):
+
+Each component should be in its own folder with an `index.ts` file for clean imports:
+
+```
+components/
+  Button/
+    Button.tsx       // Component implementation
+    Button.css       // Component styles
+    index.ts         // Barrel export
+```
+
+**index.ts pattern:**
+
+```tsx
+export { Component, type ComponentProps } from './Component';
+```
+
+This allows clean imports:
+
+```tsx
+import { Button } from '../components/Button';
+// Instead of: import { Button } from '../components/Button/Button';
+```

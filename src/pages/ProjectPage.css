@@ -1,0 +1,81 @@
+.project-page {
+  min-height: 100vh;
+  background-color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+}
+
+.project-header {
+  background-color: white;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #f8fafc;
+  border: none;
+  border-radius: 0.5rem;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.back-button:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+.project-title {
+  font-size: 1.25rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.025em;
+  color: #0f172a;
+  margin: 0;
+}
+
+.project-main {
+  flex: 1;
+  padding: 1.5rem;
+}
+
+.project-canvas {
+  height: 100%;
+  background-color: white;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.canvas-placeholder {
+  text-align: center;
+  padding: 3rem;
+}
+
+.placeholder-text {
+  font-size: 1.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.025em;
+  color: #0f172a;
+  margin: 0 0 0.5rem 0;
+}
+
+.placeholder-subtext {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  margin: 0;
+}
