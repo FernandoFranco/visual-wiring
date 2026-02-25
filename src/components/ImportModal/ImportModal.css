@@ -1,0 +1,90 @@
+.import-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.import-modal-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.import-modal-section-label {
+  font-size: 0.625rem;
+  font-weight: 900;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.import-modal-url-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.import-modal-url-input-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.import-modal-url-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+}
+
+.import-modal-url-input {
+  width: 100%;
+  padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  outline: none;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.import-modal-url-input:focus {
+  border-color: #0f172a;
+  background-color: white;
+}
+
+.import-modal-url-input::placeholder {
+  color: #cbd5e1;
+}
+
+.import-modal-fetch-btn {
+  padding: 0.75rem 1.5rem;
+  white-space: nowrap;
+}
+
+.import-modal-error {
+  padding: 1rem;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 0.75rem;
+  animation: errorSlideIn 0.3s ease-out;
+}
+
+@keyframes errorSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.import-modal-error p {
+  font-size: 0.75rem;
+  color: #991b1b;
+  margin: 0;
+}

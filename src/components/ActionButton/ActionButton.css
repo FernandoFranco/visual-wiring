@@ -1,0 +1,92 @@
+.action-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border: none;
+  border-radius: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  font-family: inherit;
+}
+
+.action-button-primary {
+  background-color: #0f172a;
+  color: white;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.action-button-primary:hover {
+  background-color: #1e293b;
+}
+
+.action-button-primary:active {
+  transform: scale(0.95);
+}
+
+.action-button-secondary {
+  background-color: white;
+  color: #0f172a;
+  border: 2px solid #f1f5f9;
+}
+
+.action-button-secondary:hover {
+  border-color: #0f172a;
+}
+
+.action-button-secondary:active {
+  transform: scale(0.95);
+}
+
+.action-button-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.action-button-icon-wrapper {
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-primary {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.icon-secondary {
+  background-color: #f8fafc;
+}
+
+.action-button-text-wrapper {
+  text-align: left;
+}
+
+.action-button-title {
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.875rem;
+  margin: 0 0 0.25rem 0;
+}
+
+.action-button-subtitle {
+  font-size: 0.75rem;
+  opacity: 0.5;
+  margin: 0;
+}
+
+.action-button-arrow {
+  opacity: 0;
+  transform: translateX(-0.5rem);
+  transition: all 0.2s ease;
+}
+
+.action-button:hover .action-button-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
