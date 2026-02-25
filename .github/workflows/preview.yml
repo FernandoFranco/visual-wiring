@@ -1,0 +1,76 @@
+name: Preview Deployment
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  preview:
+    name: Deploy Preview
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Update version for preview
+        run: |
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          PREVIEW_VERSION="${CURRENT_VERSION}-pr.${PR_NUMBER}"
+          npm version $PREVIEW_VERSION --no-git-tag-version
+          echo "PREVIEW_VERSION=$PREVIEW_VERSION" >> $GITHUB_ENV
+
+      - name: Build for preview
+        run: yarn build
+        env:
+          VITE_PREVIEW_MODE: 'true'
+
+      - name: Deploy to preview branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          destination_dir: pr-${{ github.event.pull_request.number }}
+          publish_branch: gh-pages-preview
+          keep_files: true
+
+      - name: Comment PR with preview URL
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const previewUrl = `https://${{ github.repository_owner }}.github.io/visual-wiring/pr-${prNumber}/`;
+            const version = process.env.PREVIEW_VERSION;
+            
+            const comment = `## 🚀 Preview Deployment
+            
+            Your changes have been deployed to a preview environment!
+            
+            **Preview URL:** ${previewUrl}
+            **Version:** \`${version}\`
+            
+            This preview will be available until the PR is closed.`;
+            
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: comment
+            });
