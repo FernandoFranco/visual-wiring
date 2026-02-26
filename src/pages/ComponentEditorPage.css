@@ -1,0 +1,12 @@
+.component-editor-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.component-editor-page__body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}

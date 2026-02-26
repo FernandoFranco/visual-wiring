@@ -1,0 +1,12 @@
+.json-viewer-modal {
+  max-width: 56rem;
+  max-height: calc(100vh - 3rem);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.json-viewer-modal .modal-body {
+  overflow: auto;
+  padding: 0;
+}

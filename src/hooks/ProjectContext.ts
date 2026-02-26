@@ -1,5 +1,6 @@
 import { createContext } from 'react';
 
+import type { Component } from '../types/component';
 import type { Project } from '../types/project';
 
 export interface ProjectContextValue {
@@ -12,6 +13,8 @@ export interface ProjectContextValue {
   updateName: (name: string) => void;
   closeProject: () => void;
   renameLibrary: (id: string, name: string) => void;
+  addComponent: (libraryId: string, component: Component) => void;
+  updateComponent: (libraryId: string, component: Component) => void;
 }
 
 export const ProjectContext = createContext<ProjectContextValue | undefined>(
