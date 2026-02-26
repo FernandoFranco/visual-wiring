@@ -1,0 +1,97 @@
+.library {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* Show rename button on header hover */
+.library .expansion-panel__header:hover .library__rename-btn {
+  opacity: 1;
+}
+
+/* Name */
+.library__name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+  display: block;
+}
+
+/* Inline rename input */
+.library__rename-input {
+  width: 100%;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1e293b;
+  background: white;
+  border: 1px solid #0f172a;
+  border-radius: 0.25rem;
+  padding: 0.125rem 0.375rem;
+  outline: none;
+  font-family: inherit;
+}
+
+/* Rename icon button */
+.library__rename-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  border-radius: 0.25rem;
+  opacity: 0;
+  transition:
+    opacity 0.15s ease,
+    background-color 0.1s ease;
+  padding: 0;
+}
+
+.library__rename-btn:hover {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+/* Search highlight */
+.library__highlight {
+  background-color: #fef08a;
+  color: #713f12;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+/* Component list */
+.library__components {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.library__component {
+  font-size: 0.775rem;
+  color: #475569;
+  padding: 0.25rem 0.375rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
+.library__component:hover {
+  background-color: #f8fafc;
+}
+
+.library__empty {
+  font-size: 0.725rem;
+  color: #cbd5e1;
+  padding: 0.375rem 0;
+  font-style: italic;
+}

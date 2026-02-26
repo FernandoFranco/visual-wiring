@@ -11,6 +11,7 @@ export interface ProjectContextValue {
   saveProject: () => void;
   updateName: (name: string) => void;
   closeProject: () => void;
+  renameLibrary: (id: string, name: string) => void;
 }
 
 export const ProjectContext = createContext<ProjectContextValue | undefined>(

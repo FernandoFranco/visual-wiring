@@ -4,6 +4,7 @@ import type { Project } from '../types/project';
 import {
   createNewProject,
   loadProjectFromFile,
+  renameProjectLibrary,
   saveProjectToFile,
   updateProjectName,
 } from '../utils/projectManager';
@@ -50,6 +51,11 @@ export function ProjectProvider({ children }: PropsWithChildren) {
     storage.clearProject();
   };
 
+  const renameLibrary = (id: string, name: string) => {
+    if (!project) return;
+    setProject(renameProjectLibrary(project, id, name));
+  };
+
   const value: ProjectContextValue = {
     project,
     isProjectLoaded: !!project,
@@ -58,6 +64,7 @@ export function ProjectProvider({ children }: PropsWithChildren) {
     saveProject,
     updateName,
     closeProject,
+    renameLibrary,
   };
 
   return (
