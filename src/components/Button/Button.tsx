@@ -2,7 +2,7 @@ import './Button.css';
 
 import { type ButtonHTMLAttributes, type PropsWithChildren } from 'react';
 
-type ButtonVariant = 'primary' | 'secondary' | 'cancel';
+type ButtonVariant = 'primary' | 'secondary' | 'cancel' | 'danger';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;

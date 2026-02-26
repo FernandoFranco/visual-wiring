@@ -1,0 +1,66 @@
+.app-bar {
+  background-color: white;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  flex-shrink: 0;
+  gap: 1rem;
+}
+
+.app-bar__left {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.app-bar__divider {
+  width: 1px;
+  height: 24px;
+  background-color: #e2e8f0;
+  flex-shrink: 0;
+}
+
+.app-bar__project-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #475569;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-bar__right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.app-bar__action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  color: #64748b;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+  font-family: inherit;
+}
+
+.app-bar__action-btn:hover {
+  background-color: #0f172a;
+  border-color: #0f172a;
+  color: white;
+}

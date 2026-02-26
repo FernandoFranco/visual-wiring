@@ -1,0 +1,53 @@
+.project-canvas {
+  flex: 1;
+  background-color: #f8fafc;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.project-canvas__placeholder {
+  text-align: center;
+  padding: 3rem;
+  background-color: white;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+  max-width: 420px;
+  width: 100%;
+}
+
+.project-canvas__title {
+  font-size: 1.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.025em;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+}
+
+.project-canvas__subtitle {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  margin-bottom: 1.5rem;
+}
+
+.project-canvas__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  padding: 1rem;
+  background-color: #f8fafc;
+  border-radius: 0.5rem;
+  text-align: left;
+}
+
+.project-canvas__info p {
+  font-size: 0.8125rem;
+  color: #64748b;
+}
+
+.project-canvas__info strong {
+  color: #0f172a;
+}
