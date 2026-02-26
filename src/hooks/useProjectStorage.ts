@@ -1,4 +1,5 @@
 import type { Project } from '../types/project';
+import { createDefaultLibrary } from '../utils/projectManager';
 
 const STORAGE_KEY = 'project';
 
@@ -16,7 +17,11 @@ export function useProjectStorage() {
 
     if (stored) {
       try {
-        return JSON.parse(stored) as Project;
+        const project = JSON.parse(stored) as Project;
+        if (!Array.isArray(project.libraries)) {
+          project.libraries = [createDefaultLibrary()];
+        }
+        return project;
       } catch (error) {
         console.error('Failed to parse stored project:', error);
         return null;

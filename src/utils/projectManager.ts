@@ -1,9 +1,23 @@
+import type { Library } from '../types/library';
 import type { Project } from '../types/project';
 import { sanitizeFilename, saveFile } from './fileHelper';
 
+export function createDefaultLibrary(): Library {
+  return {
+    id: crypto.randomUUID(),
+    name: 'My Library',
+    components: [],
+  };
+}
+
 export function createNewProject(name: string): Project {
   const now = new Date().toISOString();
-  return { name, createdAt: now, updatedAt: now };
+  return {
+    name,
+    createdAt: now,
+    updatedAt: now,
+    libraries: [createDefaultLibrary()],
+  };
 }
 
 export function loadProjectFromFile(file: File): Promise<Project> {
@@ -16,6 +30,9 @@ export function loadProjectFromFile(file: File): Promise<Project> {
         const project = JSON.parse(content) as Project;
         if (!project.name) {
           throw new Error('Invalid project format: missing name field');
+        }
+        if (!Array.isArray(project.libraries)) {
+          project.libraries = [createDefaultLibrary()];
         }
         resolve(project);
       } catch (error) {
@@ -43,6 +60,20 @@ export function updateProjectName(project: Project, name: string): Project {
   return {
     ...project,
     name,
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export function renameProjectLibrary(
+  project: Project,
+  id: string,
+  name: string
+): Project {
+  return {
+    ...project,
+    libraries: project.libraries.map(lib =>
+      lib.id === id ? { ...lib, name } : lib
+    ),
     updatedAt: new Date().toISOString(),
   };
 }
