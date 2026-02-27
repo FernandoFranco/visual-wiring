@@ -1,14 +1,17 @@
 import './Library.css';
 
-import { Pencil } from 'lucide-react';
+import { Pencil, Plus } from 'lucide-react';
 import { useRef, useState } from 'react';
 
 import type { Library as LibraryType } from '../../types/library';
 import { ExpansionPanel } from '../ExpansionPanel';
+import { IconButton } from '../IconButton';
 
 export interface LibraryProps {
   library: LibraryType;
   onRename: (id: string, name: string) => void;
+  onAddComponent?: () => void;
+  onEditComponent?: (componentId: string) => void;
   query?: string;
 }
 
@@ -27,7 +30,13 @@ function Highlight({ text, query }: { text: string; query: string }) {
   );
 }
 
-export function Library({ library, onRename, query = '' }: LibraryProps) {
+export function Library({
+  library,
+  onRename,
+  onAddComponent,
+  onEditComponent,
+  query = '',
+}: LibraryProps) {
   const [isOpen, setIsOpen] = useState(true);
   const [isRenaming, setIsRenaming] = useState(false);
   const [draftName, setDraftName] = useState('');
@@ -87,14 +96,25 @@ export function Library({ library, onRename, query = '' }: LibraryProps) {
     : library.components.length;
 
   const actions = !isRenaming ? (
-    <button
-      className="library__rename-btn"
-      onClick={startRename}
-      type="button"
-      title="Rename library"
-    >
-      <Pencil size={11} />
-    </button>
+    <>
+      <IconButton
+        className="library__add-btn"
+        onClick={e => {
+          e.stopPropagation();
+          onAddComponent?.();
+        }}
+        title="Add component"
+      >
+        <Plus size={11} />
+      </IconButton>
+      <IconButton
+        className="library__rename-btn"
+        onClick={startRename}
+        title="Rename library"
+      >
+        <Pencil size={11} />
+      </IconButton>
+    </>
   ) : undefined;
 
   return (
@@ -114,7 +134,16 @@ export function Library({ library, onRename, query = '' }: LibraryProps) {
           <ul className="library__components">
             {filtered.map(component => (
               <li key={component.id} className="library__component">
-                <Highlight text={component.name} query={query} />
+                <span className="library__component-name">
+                  <Highlight text={component.name} query={query} />
+                </span>
+                <IconButton
+                  className="library__component-edit-btn"
+                  title="Edit component"
+                  onClick={() => onEditComponent?.(component.id)}
+                >
+                  <Pencil size={10} />
+                </IconButton>
               </li>
             ))}
           </ul>

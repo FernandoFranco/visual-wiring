@@ -1,0 +1,104 @@
+.json-viewer {
+  font-family: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  color: #1e293b;
+  padding: 1.25rem 1.5rem;
+}
+
+.jv-node {
+  display: inline;
+}
+
+.jv-node--expanded {
+  display: inline;
+}
+
+.jv-children {
+  display: block;
+  padding-left: 1.5rem;
+  border-left: 1px solid #e2e8f0;
+  margin-left: 0.35rem;
+}
+
+.jv-entry {
+  display: block;
+}
+
+.jv-closing {
+  display: block;
+}
+
+.jv-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  margin-right: 2px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  vertical-align: middle;
+  border-radius: 2px;
+  transition: color 0.1s ease;
+}
+
+.jv-toggle:hover {
+  color: #475569;
+}
+
+.jv-toggle__icon {
+  transition: transform 0.15s ease;
+}
+
+.jv-toggle__icon--open {
+  transform: rotate(90deg);
+}
+
+.jv-bracket {
+  color: #475569;
+  font-weight: 600;
+}
+
+.jv-key {
+  color: #7c3aed;
+}
+
+.jv-colon {
+  color: #64748b;
+}
+
+.jv-comma {
+  color: #64748b;
+}
+
+.jv-string {
+  color: #16a34a;
+}
+
+.jv-number {
+  color: #ea580c;
+}
+
+.jv-boolean {
+  color: #2563eb;
+}
+
+.jv-null {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.jv-summary {
+  color: #94a3b8;
+  font-size: 0.75rem;
+  margin: 0 0.35rem;
+  font-style: italic;
+}
+
+.jv-node--collapsed .jv-bracket {
+  opacity: 0.6;
+}

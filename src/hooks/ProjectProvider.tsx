@@ -1,11 +1,14 @@
 import { type PropsWithChildren, useEffect, useState } from 'react';
 
+import type { Component } from '../types/component';
 import type { Project } from '../types/project';
 import {
+  addComponentToLibrary,
   createNewProject,
   loadProjectFromFile,
   renameProjectLibrary,
   saveProjectToFile,
+  updateComponentInLibrary,
   updateProjectName,
 } from '../utils/projectManager';
 import { ProjectContext, type ProjectContextValue } from './ProjectContext';
@@ -51,6 +54,16 @@ export function ProjectProvider({ children }: PropsWithChildren) {
     storage.clearProject();
   };
 
+  const addComponent = (libraryId: string, component: Component) => {
+    if (!project) return;
+    setProject(addComponentToLibrary(project, libraryId, component));
+  };
+
+  const updateComponent = (libraryId: string, component: Component) => {
+    if (!project) return;
+    setProject(updateComponentInLibrary(project, libraryId, component));
+  };
+
   const renameLibrary = (id: string, name: string) => {
     if (!project) return;
     setProject(renameProjectLibrary(project, id, name));
@@ -65,6 +78,8 @@ export function ProjectProvider({ children }: PropsWithChildren) {
     updateName,
     closeProject,
     renameLibrary,
+    addComponent,
+    updateComponent,
   };
 
   return (

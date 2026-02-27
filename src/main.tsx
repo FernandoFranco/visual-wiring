@@ -7,8 +7,10 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { ProjectProvider } from './hooks/ProjectProvider';
 import { SnackbarProvider } from './hooks/SnackbarProvider';
+import { ComponentEditorPage } from './pages/ComponentEditorPage';
 import { HomePage } from './pages/HomePage';
 import { ProjectPage } from './pages/ProjectPage';
+import { ROUTES } from './routes';
 
 const basename = import.meta.env.BASE_URL;
 
@@ -19,7 +21,7 @@ createRoot(document.getElementById('root')!).render(
         <ProjectProvider>
           <Routes>
             <Route
-              path="/"
+              path={ROUTES.HOME}
               element={
                 <ProtectedRoute requireProject={false}>
                   <HomePage />
@@ -27,10 +29,26 @@ createRoot(document.getElementById('root')!).render(
               }
             />
             <Route
-              path="/project"
+              path={ROUTES.PROJECT}
               element={
                 <ProtectedRoute requireProject={true}>
                   <ProjectPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={ROUTES.COMPONENT_EDITOR_NEW}
+              element={
+                <ProtectedRoute requireProject={true}>
+                  <ComponentEditorPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={ROUTES.COMPONENT_EDITOR_EDIT}
+              element={
+                <ProtectedRoute requireProject={true}>
+                  <ComponentEditorPage />
                 </ProtectedRoute>
               }
             />

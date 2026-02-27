@@ -1,13 +1,16 @@
 import './ProjectSidebar.css';
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { useProject } from '../../hooks/useProject';
+import { ROUTES } from '../../routes';
 import { Library } from '../Library';
 import { SidebarSearch } from '../SidebarSearch';
 
 export function ProjectSidebar() {
   const { project, renameLibrary } = useProject();
+  const navigate = useNavigate();
   const libraries = project?.libraries ?? [];
   const [query, setQuery] = useState('');
 
@@ -45,6 +48,10 @@ export function ProjectSidebar() {
               key={library.id}
               library={library}
               onRename={renameLibrary}
+              onAddComponent={() => navigate(ROUTES.toNewComponent(library.id))}
+              onEditComponent={componentId =>
+                navigate(ROUTES.toEditComponent(library.id, componentId))
+              }
               query={trimmedQuery}
             />
           ))

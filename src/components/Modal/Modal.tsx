@@ -10,6 +10,7 @@ export interface ModalProps {
   subtitle?: string;
   icon?: ReactNode;
   showCloseButton?: boolean;
+  className?: string;
 }
 
 export function Modal(props: PropsWithChildren<ModalProps>) {
@@ -20,6 +21,7 @@ export function Modal(props: PropsWithChildren<ModalProps>) {
     subtitle,
     icon,
     showCloseButton = true,
+    className,
     children,
   } = props;
 
@@ -39,7 +41,10 @@ export function Modal(props: PropsWithChildren<ModalProps>) {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={e => e.stopPropagation()}>
+      <div
+        className={`modal-content${className ? ` ${className}` : ''}`}
+        onClick={e => e.stopPropagation()}
+      >
         {(title || icon || showCloseButton) && (
           <div className="modal-header">
             {icon || title ? (

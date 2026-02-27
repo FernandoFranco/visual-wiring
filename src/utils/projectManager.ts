@@ -1,3 +1,4 @@
+import type { Component } from '../types/component';
 import type { Library } from '../types/library';
 import type { Project } from '../types/project';
 import { sanitizeFilename, saveFile } from './fileHelper';
@@ -73,6 +74,43 @@ export function renameProjectLibrary(
     ...project,
     libraries: project.libraries.map(lib =>
       lib.id === id ? { ...lib, name } : lib
+    ),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export function addComponentToLibrary(
+  project: Project,
+  libraryId: string,
+  component: Component
+): Project {
+  return {
+    ...project,
+    libraries: project.libraries.map(lib =>
+      lib.id === libraryId
+        ? { ...lib, components: [...lib.components, component] }
+        : lib
+    ),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export function updateComponentInLibrary(
+  project: Project,
+  libraryId: string,
+  component: Component
+): Project {
+  return {
+    ...project,
+    libraries: project.libraries.map(lib =>
+      lib.id === libraryId
+        ? {
+            ...lib,
+            components: lib.components.map(c =>
+              c.id === component.id ? component : c
+            ),
+          }
+        : lib
     ),
     updatedAt: new Date().toISOString(),
   };
