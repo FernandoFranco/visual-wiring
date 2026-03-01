@@ -1,12 +1,17 @@
 import './ComponentEditorSidebar.css';
 
 import type { Pin, PinSide } from '../../types/pin';
+import { Input } from '../Input';
 import { PinSection } from '../PinSection';
 
 export interface ComponentEditorSidebarProps {
   name: string;
   onNameChange: (value: string) => void;
   nameError?: string;
+  minWidth: number;
+  onMinWidthChange: (value: number) => void;
+  minHeight: number;
+  onMinHeightChange: (value: number) => void;
   pins: Pin[];
   onPinsChange: (pins: Pin[]) => void;
   onSave: () => void;
@@ -18,6 +23,10 @@ export function ComponentEditorSidebar({
   name,
   onNameChange,
   nameError,
+  minWidth,
+  onMinWidthChange,
+  minHeight,
+  onMinHeightChange,
   pins,
   onPinsChange,
 }: ComponentEditorSidebarProps) {
@@ -30,24 +39,51 @@ export function ComponentEditorSidebar({
   return (
     <aside className="component-editor-sidebar">
       <div className="component-editor-sidebar__section">
-        <label
-          className="component-editor-sidebar__label"
-          htmlFor="component-name"
-        >
-          Name <span className="component-editor-sidebar__required">*</span>
-        </label>
-        <input
+        <Input
           id="component-name"
-          className={`component-editor-sidebar__name-input${nameError ? ' component-editor-sidebar__name-input--error' : ''}`}
+          size="sm"
+          label="Name"
+          required
           type="text"
           placeholder="Component name..."
           value={name}
+          error={nameError}
+          className={nameError ? 'input-field--error' : ''}
           onChange={e => onNameChange(e.target.value)}
           autoFocus
         />
-        {nameError && (
-          <p className="component-editor-sidebar__error">{nameError}</p>
-        )}
+      </div>
+
+      <div className="component-editor-sidebar__section">
+        <p className="component-editor-sidebar__label">
+          Minimum size (grid units)
+        </p>
+        <div className="component-editor-sidebar__size-row">
+          <Input
+            id="min-width"
+            size="sm"
+            inline
+            label="W"
+            type="number"
+            min={1}
+            value={minWidth}
+            onChange={e =>
+              onMinWidthChange(Math.max(1, Number(e.target.value)))
+            }
+          />
+          <Input
+            id="min-height"
+            size="sm"
+            inline
+            label="H"
+            type="number"
+            min={1}
+            value={minHeight}
+            onChange={e =>
+              onMinHeightChange(Math.max(1, Number(e.target.value)))
+            }
+          />
+        </div>
       </div>
 
       <div className="component-editor-sidebar__divider" />

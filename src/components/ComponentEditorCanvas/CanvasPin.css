@@ -1,0 +1,15 @@
+.cec-pin__rect {
+  fill: #1e293b;
+  stroke: none;
+}
+
+.cec-pin__label {
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  fill: #f1f5f9;
+  user-select: none;
+  pointer-events: none;
+}
+
+.cec-pin__label--outside {
+  fill: #475569;
+}

@@ -1,0 +1,18 @@
+/* .component-body {
+  filter: drop-shadow(0 4px 20px rgba(15, 23, 42, 0.12));
+} */
+
+.cec-body {
+  fill: white;
+  stroke: #334155;
+  stroke-width: 1.5;
+}
+
+.cec-name {
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 10px;
+  font-weight: 600;
+  fill: #334155;
+  pointer-events: none;
+  user-select: none;
+}

@@ -1,0 +1,15 @@
+.grid-canvas {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.grid-canvas__svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.grid-canvas__bg {
+  fill: #f8fafc;
+}

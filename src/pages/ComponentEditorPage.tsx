@@ -33,6 +33,8 @@ export function ComponentEditorPage() {
   const [name, setName] = useState(existingComponent?.name ?? '');
   const [nameError, setNameError] = useState('');
   const [pins, setPins] = useState<Pin[]>(existingComponent?.pins ?? []);
+  const [minWidth, setMinWidth] = useState(existingComponent?.minWidth ?? 4);
+  const [minHeight, setMinHeight] = useState(existingComponent?.minHeight ?? 4);
   const [isDiscardOpen, setIsDiscardOpen] = useState(false);
   const [isJsonModalOpen, setIsJsonModalOpen] = useState(false);
 
@@ -43,7 +45,9 @@ export function ComponentEditorPage() {
 
   const hasChanges = isEditMode
     ? name.trim() !== existingComponent!.name ||
-      JSON.stringify(pins) !== JSON.stringify(existingComponent!.pins)
+      JSON.stringify(pins) !== JSON.stringify(existingComponent!.pins) ||
+      minWidth !== (existingComponent!.minWidth ?? 4) ||
+      minHeight !== (existingComponent!.minHeight ?? 4)
     : name.trim() !== '' || pins.length > 0;
 
   const handleBack = () => {
@@ -70,12 +74,16 @@ export function ComponentEditorPage() {
         id: componentId,
         name: trimmedName,
         pins,
+        minWidth,
+        minHeight,
       });
     } else {
       addComponent(libraryId, {
         id: crypto.randomUUID(),
         name: trimmedName,
         pins,
+        minWidth,
+        minHeight,
       });
     }
 
@@ -120,11 +128,20 @@ export function ComponentEditorPage() {
             if (value.trim()) setNameError('');
           }}
           nameError={nameError}
+          minWidth={minWidth}
+          onMinWidthChange={setMinWidth}
+          minHeight={minHeight}
+          onMinHeightChange={setMinHeight}
           pins={pins}
           onPinsChange={setPins}
           onSave={handleSave}
         />
-        <ComponentEditorCanvas />
+        <ComponentEditorCanvas
+          name={name}
+          pins={pins}
+          minWidth={minWidth}
+          minHeight={minHeight}
+        />
       </div>
 
       <ConfirmationModal
@@ -142,7 +159,13 @@ export function ComponentEditorPage() {
         isOpen={isJsonModalOpen}
         onClose={() => setIsJsonModalOpen(false)}
         title="Component JSON"
-        data={{ id: componentId || '(unsaved)', name, pins }}
+        data={{
+          id: componentId || '(unsaved)',
+          name,
+          pins,
+          minWidth,
+          minHeight,
+        }}
         defaultExpandDepth={2}
       />
     </div>
