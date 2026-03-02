@@ -41,7 +41,7 @@ export function ComponentEditorSidebar({
       <div className="component-editor-sidebar__section">
         <Input
           id="component-name"
-          size="sm"
+          variant="sm"
           label="Name"
           required
           type="text"
@@ -61,7 +61,7 @@ export function ComponentEditorSidebar({
         <div className="component-editor-sidebar__size-row">
           <Input
             id="min-width"
-            size="sm"
+            variant="sm"
             inline
             label="W"
             type="number"
@@ -73,7 +73,7 @@ export function ComponentEditorSidebar({
           />
           <Input
             id="min-height"
-            size="sm"
+            variant="sm"
             inline
             label="H"
             type="number"

@@ -4,12 +4,9 @@ import { type InputHTMLAttributes } from 'react';
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
-  /** Shows a red asterisk after the label */
   required?: boolean;
   error?: string;
-  /** 'md' = large form style (default); 'sm' = compact inline style */
-  size?: 'sm' | 'md';
-  /** Places the label to the left of the field instead of above it */
+  variant?: 'sm' | 'md';
   inline?: boolean;
 }
 
@@ -18,7 +15,7 @@ export function Input(props: InputProps) {
     label,
     required,
     error,
-    size = 'md',
+    variant = 'md',
     inline = false,
     className = '',
     id,
@@ -27,19 +24,19 @@ export function Input(props: InputProps) {
 
   return (
     <div
-      className={`input-wrapper input-wrapper--${size}${
+      className={`input-wrapper input-wrapper--${variant}${
         inline ? ' input-wrapper--inline' : ''
       }`}
     >
       {label && (
-        <label className={`input-label input-label--${size}`} htmlFor={id}>
+        <label className={`input-label input-label--${variant}`} htmlFor={id}>
           {label}
           {required && <span className="input-label__required"> *</span>}
         </label>
       )}
       <input
         id={id}
-        className={`input-field input-field--${size} ${className}`}
+        className={`input-field input-field--${variant} ${className}`}
         {...rest}
       />
       {error && <span className="input-error">{error}</span>}
