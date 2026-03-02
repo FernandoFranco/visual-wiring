@@ -4,7 +4,9 @@ import { Pencil, Plus } from 'lucide-react';
 import { useRef, useState } from 'react';
 
 import type { Library as LibraryType } from '../../types/library';
+import { ComponentBody } from '../ComponentEditorCanvas';
 import { ExpansionPanel } from '../ExpansionPanel';
+import { GridCanvas } from '../GridCanvas';
 import { IconButton } from '../IconButton';
 
 export interface LibraryProps {
@@ -134,16 +136,27 @@ export function Library({
           <ul className="library__components">
             {filtered.map(component => (
               <li key={component.id} className="library__component">
-                <span className="library__component-name">
-                  <Highlight text={component.name} query={query} />
-                </span>
-                <IconButton
-                  className="library__component-edit-btn"
-                  title="Edit component"
-                  onClick={() => onEditComponent?.(component.id)}
-                >
-                  <Pencil size={10} />
-                </IconButton>
+                <div className="library__component__header">
+                  <span className="library__component__header-name">
+                    <Highlight text={component.name} query={query} />
+                  </span>
+                  <IconButton
+                    className="library__component__header-edit-btn"
+                    title="Edit component"
+                    onClick={() => onEditComponent?.(component.id)}
+                  >
+                    <Pencil size={10} />
+                  </IconButton>
+                </div>
+
+                <GridCanvas grid={4} noBackground>
+                  <ComponentBody
+                    name=""
+                    pins={component.pins}
+                    minWidth={component.minWidth}
+                    minHeight={component.minHeight}
+                  />
+                </GridCanvas>
               </li>
             ))}
           </ul>

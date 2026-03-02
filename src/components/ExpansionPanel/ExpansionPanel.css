@@ -71,8 +71,6 @@
 .expansion-panel__body-inner {
   min-height: 0;
   overflow: hidden;
-  padding: 0 0.5rem 0 2rem;
-  padding-bottom: 0;
   transition: padding-bottom 0.2s ease;
 }
 

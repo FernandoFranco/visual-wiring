@@ -1,19 +1,24 @@
 .component-editor-canvas {
   flex: 1;
-  background-color: #f8fafc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
   overflow: hidden;
 }
 
-.component-editor-canvas__placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  color: #cbd5e1;
-  font-size: 0.875rem;
-  font-style: italic;
+/* COMPONENT PREVIEW badge */
+.component-editor-canvas__badge {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: #94a3b8;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  pointer-events: none;
   user-select: none;
+  white-space: nowrap;
 }
