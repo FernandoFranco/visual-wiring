@@ -1,1 +1,1 @@
-export { ProjectCanvas, type ProjectCanvasProps } from './ProjectCanvas';
+export { ProjectCanvas } from './ProjectCanvas';

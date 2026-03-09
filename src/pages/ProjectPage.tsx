@@ -59,7 +59,7 @@ export function ProjectPage() {
       </AppBar>
       <div className="project-body">
         <ProjectSidebar />
-        <ProjectCanvas project={project} />
+        <ProjectCanvas />
       </div>
 
       <JsonViewerModal

@@ -6,6 +6,9 @@ import {
   addComponentToLibrary,
   createNewProject,
   loadProjectFromFile,
+  movePlacedComponent,
+  placeComponentOnCanvas,
+  removePlacedComponent,
   renameProjectLibrary,
   saveProjectToFile,
   updateComponentInLibrary,
@@ -69,6 +72,34 @@ export function ProjectProvider({ children }: PropsWithChildren) {
     setProject(renameProjectLibrary(project, id, name));
   };
 
+  const placeComponent = (
+    libraryId: string,
+    componentId: string,
+    x: number,
+    y: number
+  ) => {
+    if (!project) return;
+    setProject(
+      placeComponentOnCanvas(project, {
+        instanceId: crypto.randomUUID(),
+        componentId,
+        libraryId,
+        x,
+        y,
+      })
+    );
+  };
+
+  const handleMovePlaced = (instanceId: string, x: number, y: number) => {
+    if (!project) return;
+    setProject(movePlacedComponent(project, instanceId, x, y));
+  };
+
+  const handleRemovePlaced = (instanceId: string) => {
+    if (!project) return;
+    setProject(removePlacedComponent(project, instanceId));
+  };
+
   const value: ProjectContextValue = {
     project,
     isProjectLoaded: !!project,
@@ -80,6 +111,9 @@ export function ProjectProvider({ children }: PropsWithChildren) {
     renameLibrary,
     addComponent,
     updateComponent,
+    placeComponent,
+    movePlacedComponent: handleMovePlaced,
+    removePlacedComponent: handleRemovePlaced,
   };
 
   return (

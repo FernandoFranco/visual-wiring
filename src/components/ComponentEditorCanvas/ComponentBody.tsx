@@ -1,5 +1,7 @@
 import './ComponentBody.css';
 
+import type React from 'react';
+
 import type { Pin, PinSide } from '../../types/pin';
 import { useGridCanvas } from '../GridCanvas';
 import { CanvasPin } from './CanvasPin';
@@ -9,6 +11,10 @@ export interface ComponentBodyProps {
   minWidth?: number;
   minHeight?: number;
   pins: Pin[];
+  x?: number;
+  y?: number;
+  onMouseDown?: (e: React.MouseEvent<SVGGElement>) => void;
+  isDragging?: boolean;
 }
 
 function sidePins(pins: Pin[], side: PinSide): Pin[] {
@@ -20,6 +26,10 @@ export function ComponentBody({
   pins,
   minWidth = 4,
   minHeight = 4,
+  x: propX,
+  y: propY,
+  onMouseDown,
+  isDragging = false,
 }: ComponentBodyProps) {
   const { grid, canvasWidth, canvasHeight } = useGridCanvas();
 
@@ -54,13 +64,24 @@ export function ComponentBody({
   const svgW = bodyW + 2 * grid;
   const svgH = bodyH + 2 * grid;
 
-  const tx = Math.round((canvasWidth / 2 - svgW / 2) / grid) * grid;
-  const ty = Math.round((canvasHeight / 2 - svgH / 2) / grid) * grid;
+  const tx =
+    propX !== undefined
+      ? propX
+      : Math.round((canvasWidth / 2 - svgW / 2) / grid) * grid;
+  const ty =
+    propY !== undefined
+      ? propY
+      : Math.round((canvasHeight / 2 - svgH / 2) / grid) * grid;
 
   const displayName = name.trim();
 
   return (
-    <g transform={`translate(${tx}, ${ty})`} className="component-body">
+    <g
+      transform={`translate(${tx}, ${ty})`}
+      className={`component-body${isDragging ? ' component-body--dragging' : ''}`}
+      onMouseDown={onMouseDown}
+      style={onMouseDown ? { cursor: 'grab' } : undefined}
+    >
       <rect
         x={bx}
         y={by}

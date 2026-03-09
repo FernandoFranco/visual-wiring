@@ -8,6 +8,18 @@
   stroke-width: 1.5;
 }
 
+.component-body--dragging .cec-body {
+  fill: #f0f9ff;
+  stroke: #0284c7;
+  stroke-dasharray: 4 2;
+  opacity: 0.75;
+}
+
+.component-body--dragging .cec-name {
+  fill: #0284c7;
+  opacity: 0.75;
+}
+
 .cec-name {
   font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
   font-size: 10px;

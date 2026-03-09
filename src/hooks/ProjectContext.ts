@@ -15,6 +15,14 @@ export interface ProjectContextValue {
   renameLibrary: (id: string, name: string) => void;
   addComponent: (libraryId: string, component: Component) => void;
   updateComponent: (libraryId: string, component: Component) => void;
+  placeComponent: (
+    libraryId: string,
+    componentId: string,
+    x: number,
+    y: number
+  ) => void;
+  movePlacedComponent: (instanceId: string, x: number, y: number) => void;
+  removePlacedComponent: (instanceId: string) => void;
 }
 
 export const ProjectContext = createContext<ProjectContextValue | undefined>(
