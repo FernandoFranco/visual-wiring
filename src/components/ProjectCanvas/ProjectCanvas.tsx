@@ -1,5 +1,6 @@
 import './ProjectCanvas.css';
 
+import { Trash2 } from 'lucide-react';
 import {
   type DragEvent,
   type MouseEvent,
@@ -34,10 +35,17 @@ interface DropPreview {
 }
 
 export function ProjectCanvas() {
-  const { project, placeComponent, movePlacedComponent } = useProject();
+  const {
+    project,
+    placeComponent,
+    movePlacedComponent,
+    removePlacedComponent,
+  } = useProject();
   const containerRef = useRef<HTMLDivElement>(null);
+  const trashRef = useRef<HTMLDivElement>(null);
   const [dropPreview, setDropPreview] = useState<DropPreview | null>(null);
   const [moveState, setMoveState] = useState<MoveState | null>(null);
+  const [isOverTrash, setIsOverTrash] = useState(false);
 
   const findComponent = useCallback(
     (libraryId: string, componentId: string) => {
@@ -125,19 +133,32 @@ export function ProjectCanvas() {
       if (nx !== moveState.currentX || ny !== moveState.currentY) {
         setMoveState(s => (s ? { ...s, currentX: nx, currentY: ny } : null));
       }
+      const trashRect = trashRef.current?.getBoundingClientRect();
+      const over =
+        !!trashRect &&
+        e.clientX >= trashRect.left &&
+        e.clientX <= trashRect.right &&
+        e.clientY >= trashRect.top &&
+        e.clientY <= trashRect.bottom;
+      setIsOverTrash(over);
     },
     [moveState]
   );
 
   const commitMove = useCallback(() => {
     if (!moveState) return;
-    movePlacedComponent(
-      moveState.instanceId,
-      moveState.currentX,
-      moveState.currentY
-    );
+    if (isOverTrash) {
+      removePlacedComponent(moveState.instanceId);
+    } else {
+      movePlacedComponent(
+        moveState.instanceId,
+        moveState.currentX,
+        moveState.currentY
+      );
+    }
     setMoveState(null);
-  }, [moveState, movePlacedComponent]);
+    setIsOverTrash(false);
+  }, [moveState, isOverTrash, movePlacedComponent, removePlacedComponent]);
 
   const startMove = useCallback((placed: PlacedComponent, e: MouseEvent) => {
     e.stopPropagation();
@@ -156,6 +177,8 @@ export function ProjectCanvas() {
 
   const placedComponents = project.placedComponents ?? [];
   const isMoving = moveState !== null;
+  // Hide the moving component when over trash
+  const hiddenInstanceId = isOverTrash ? moveState?.instanceId : null;
 
   return (
     <div
@@ -173,6 +196,7 @@ export function ProjectCanvas() {
           const comp = findComponent(placed.libraryId, placed.componentId);
           if (!comp) return null;
           const currentlyMoving = moveState?.instanceId === placed.instanceId;
+          if (hiddenInstanceId === placed.instanceId) return null;
           const x = currentlyMoving ? moveState!.currentX : placed.x;
           const y = currentlyMoving ? moveState!.currentY : placed.y;
           return (
@@ -214,6 +238,16 @@ export function ProjectCanvas() {
       {placedComponents.length === 0 && !dropPreview && (
         <div className="project-canvas__empty">
           <p>Drag components from the library to place them here</p>
+        </div>
+      )}
+
+      {isMoving && (
+        <div
+          ref={trashRef}
+          className={`project-canvas__trash${isOverTrash ? ' project-canvas__trash--active' : ''}`}
+        >
+          <Trash2 size={20} />
+          <span>Drop to delete</span>
         </div>
       )}
     </div>
