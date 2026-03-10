@@ -122,6 +122,36 @@ export function movePlacedComponent(
   };
 }
 
+export function rotatePlacedComponent(
+  project: Project,
+  instanceId: string
+): Project {
+  return {
+    ...project,
+    placedComponents: (project.placedComponents ?? []).map(p => {
+      if (p.instanceId !== instanceId) return p;
+      const current = p.rotation ?? 0;
+      const next = ((current + 90) % 360) as 0 | 90 | 180 | 270;
+      return { ...p, rotation: next };
+    }),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export function setPlacedComponentRotation(
+  project: Project,
+  instanceId: string,
+  rotation: 0 | 90 | 180 | 270
+): Project {
+  return {
+    ...project,
+    placedComponents: (project.placedComponents ?? []).map(p =>
+      p.instanceId === instanceId ? { ...p, rotation } : p
+    ),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
 export function removePlacedComponent(
   project: Project,
   instanceId: string

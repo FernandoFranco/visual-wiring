@@ -28,3 +28,7 @@
   pointer-events: none;
   user-select: none;
 }
+.component-body--selected .cec-body {
+  stroke: #3b82f6;
+  stroke-width: 2;
+}

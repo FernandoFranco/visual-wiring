@@ -6,6 +6,7 @@ export interface PlacedComponent {
   libraryId: string;
   x: number;
   y: number;
+  rotation?: 0 | 90 | 180 | 270;
 }
 
 export interface Project {

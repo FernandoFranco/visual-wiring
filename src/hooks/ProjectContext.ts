@@ -23,6 +23,11 @@ export interface ProjectContextValue {
   ) => void;
   movePlacedComponent: (instanceId: string, x: number, y: number) => void;
   removePlacedComponent: (instanceId: string) => void;
+  rotatePlacedComponent: (instanceId: string) => void;
+  setPlacedComponentRotation: (
+    instanceId: string,
+    rotation: 0 | 90 | 180 | 270
+  ) => void;
 }
 
 export const ProjectContext = createContext<ProjectContextValue | undefined>(

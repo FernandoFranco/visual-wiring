@@ -10,7 +10,9 @@ import {
   placeComponentOnCanvas,
   removePlacedComponent,
   renameProjectLibrary,
+  rotatePlacedComponent,
   saveProjectToFile,
+  setPlacedComponentRotation,
   updateComponentInLibrary,
   updateProjectName,
 } from '../utils/projectManager';
@@ -100,6 +102,19 @@ export function ProjectProvider({ children }: PropsWithChildren) {
     setProject(removePlacedComponent(project, instanceId));
   };
 
+  const handleRotatePlaced = (instanceId: string) => {
+    if (!project) return;
+    setProject(rotatePlacedComponent(project, instanceId));
+  };
+
+  const handleSetRotation = (
+    instanceId: string,
+    rotation: 0 | 90 | 180 | 270
+  ) => {
+    if (!project) return;
+    setProject(setPlacedComponentRotation(project, instanceId, rotation));
+  };
+
   const value: ProjectContextValue = {
     project,
     isProjectLoaded: !!project,
@@ -114,6 +129,8 @@ export function ProjectProvider({ children }: PropsWithChildren) {
     placeComponent,
     movePlacedComponent: handleMovePlaced,
     removePlacedComponent: handleRemovePlaced,
+    rotatePlacedComponent: handleRotatePlaced,
+    setPlacedComponentRotation: handleSetRotation,
   };
 
   return (

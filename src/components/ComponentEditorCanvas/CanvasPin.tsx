@@ -10,6 +10,8 @@ export interface CanvasPinProps {
   textAnchor: 'start' | 'middle' | 'end';
   dominantBaseline: 'auto' | 'hanging' | 'middle' | 'central';
   name: string;
+  /** Pre-computed SVG transform to apply on the label text (e.g. counter-rotation). */
+  textTransform?: string;
 }
 
 export function CanvasPin({
@@ -20,6 +22,7 @@ export function CanvasPin({
   textAnchor,
   dominantBaseline,
   name,
+  textTransform,
 }: CanvasPinProps) {
   const { grid } = useGridCanvas();
   const pinFont = Math.max(5, grid * 0.9);
@@ -41,6 +44,7 @@ export function CanvasPin({
         className="cec-pin__label cec-pin__label--outside"
         textAnchor={textAnchor}
         dominantBaseline={dominantBaseline}
+        transform={textTransform}
       >
         {name || '?'}
       </text>

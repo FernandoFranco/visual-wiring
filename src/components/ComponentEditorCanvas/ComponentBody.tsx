@@ -13,7 +13,10 @@ export interface ComponentBodyProps {
   pins: Pin[];
   x?: number;
   y?: number;
+  rotation?: number;
+  isSelected?: boolean;
   onMouseDown?: (e: React.MouseEvent<SVGGElement>) => void;
+  onContextMenu?: (e: React.MouseEvent<SVGGElement>) => void;
   isDragging?: boolean;
 }
 
@@ -28,7 +31,10 @@ export function ComponentBody({
   minHeight = 4,
   x: propX,
   y: propY,
+  rotation = 0,
+  isSelected = false,
   onMouseDown,
+  onContextMenu,
   isDragging = false,
 }: ComponentBodyProps) {
   const { grid, canvasWidth, canvasHeight } = useGridCanvas();
@@ -75,11 +81,33 @@ export function ComponentBody({
 
   const displayName = name.trim();
 
+  const bodyCx = bx + bodyW / 2;
+  const bodyCy = by + bodyH / 2;
+  const rotateTransform = rotation
+    ? ` rotate(${rotation}, ${bodyCx}, ${bodyCy})`
+    : '';
+
+  const pinTf = (lx: number, ly: number) =>
+    rotation === 180 ? `rotate(-180, ${lx}, ${ly})` : undefined;
+  const pinAnchor = (
+    a: 'start' | 'middle' | 'end'
+  ): 'start' | 'middle' | 'end' => {
+    if (rotation !== 180) return a;
+    return a === 'start' ? 'end' : a === 'end' ? 'start' : 'middle';
+  };
+  const pinBaseline = (
+    b: 'auto' | 'hanging' | 'middle' | 'central'
+  ): 'auto' | 'hanging' | 'middle' | 'central' => {
+    if (rotation !== 180) return b;
+    return b === 'auto' ? 'hanging' : b === 'hanging' ? 'auto' : b;
+  };
+
   return (
     <g
-      transform={`translate(${tx}, ${ty})`}
-      className={`component-body${isDragging ? ' component-body--dragging' : ''}`}
+      transform={`translate(${tx}, ${ty})${rotateTransform}`}
+      className={`component-body${isDragging ? ' component-body--dragging' : ''}${isSelected ? ' component-body--selected' : ''}`}
       onMouseDown={onMouseDown}
+      onContextMenu={onContextMenu}
       style={onMouseDown ? { cursor: 'grab' } : undefined}
     >
       <rect
@@ -97,22 +125,28 @@ export function ComponentBody({
         className="cec-name"
         textAnchor="middle"
         dominantBaseline="middle"
+        transform={
+          rotation ? `rotate(${-rotation}, ${bodyCx}, ${bodyCy})` : undefined
+        }
       >
         {displayName}
       </text>
 
       {topPins.map((pin, i) => {
         const cx = hCx(i);
+        const lx = cx;
+        const ly = by - PIN_HALF - 2;
         return (
           <CanvasPin
             key={pin.id}
             rectX={cx - PIN_HALF}
             rectY={by - PIN_HALF}
-            labelX={cx}
-            labelY={by - PIN_HALF - 2}
-            textAnchor="middle"
-            dominantBaseline="auto"
+            labelX={lx}
+            labelY={ly}
+            textAnchor={pinAnchor('middle')}
+            dominantBaseline={pinBaseline('auto')}
             name={pin.name}
+            textTransform={pinTf(lx, ly)}
           />
         );
       })}
@@ -120,16 +154,19 @@ export function ComponentBody({
       {bottomPins.map((pin, i) => {
         const cx = hCx(i);
         const py = by + bodyH - PIN_HALF;
+        const lx = cx;
+        const ly = py + grid + 2;
         return (
           <CanvasPin
             key={pin.id}
             rectX={cx - PIN_HALF}
             rectY={py}
-            labelX={cx}
-            labelY={py + grid + 2}
-            textAnchor="middle"
-            dominantBaseline="hanging"
+            labelX={lx}
+            labelY={ly}
+            textAnchor={pinAnchor('middle')}
+            dominantBaseline={pinBaseline('hanging')}
             name={pin.name}
+            textTransform={pinTf(lx, ly)}
           />
         );
       })}
@@ -137,16 +174,19 @@ export function ComponentBody({
       {leftPins.map((pin, i) => {
         const cy = vCy(i);
         const px = bx - PIN_HALF;
+        const lx = px - 2;
+        const ly = cy;
         return (
           <CanvasPin
             key={pin.id}
             rectX={px}
             rectY={cy - PIN_HALF}
-            labelX={px - 2}
-            labelY={cy}
-            textAnchor="end"
-            dominantBaseline="central"
+            labelX={lx}
+            labelY={ly}
+            textAnchor={pinAnchor('end')}
+            dominantBaseline={pinBaseline('central')}
             name={pin.name}
+            textTransform={pinTf(lx, ly)}
           />
         );
       })}
@@ -154,16 +194,19 @@ export function ComponentBody({
       {rightPins.map((pin, i) => {
         const cy = vCy(i);
         const px = bx + bodyW - PIN_HALF;
+        const lx = px + grid + 2;
+        const ly = cy;
         return (
           <CanvasPin
             key={pin.id}
             rectX={px}
             rectY={cy - PIN_HALF}
-            labelX={px + grid + 2}
-            labelY={cy}
-            textAnchor="start"
-            dominantBaseline="central"
+            labelX={lx}
+            labelY={ly}
+            textAnchor={pinAnchor('start')}
+            dominantBaseline={pinBaseline('central')}
             name={pin.name}
+            textTransform={pinTf(lx, ly)}
           />
         );
       })}
