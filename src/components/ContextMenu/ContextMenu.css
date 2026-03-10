@@ -1,0 +1,103 @@
+.context-menu {
+  position: fixed;
+  z-index: 1000;
+  min-width: 160px;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 0.5rem;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.08),
+    0 10px 24px -4px rgba(0, 0, 0, 0.12);
+  padding: 0.25rem;
+  animation: context-menu-appear 0.1s ease;
+}
+
+@keyframes context-menu-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.context-menu__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.625rem;
+  border-radius: 0.3rem;
+  font-size: 0.8125rem;
+  color: #334155;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.1s ease;
+}
+
+.context-menu__item:hover {
+  background-color: #f1f5f9;
+}
+
+.context-menu__item--danger {
+  color: #ef4444;
+}
+
+.context-menu__item--danger:hover {
+  background-color: #fef2f2;
+}
+
+.context-menu__icon {
+  display: flex;
+  align-items: center;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.context-menu__item--danger .context-menu__icon {
+  color: #ef4444;
+}
+
+.context-menu__label {
+  flex: 1;
+}
+
+.context-menu__chevron {
+  flex-shrink: 0;
+  color: #94a3b8;
+}
+
+.context-menu__item-check {
+  width: 14px;
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  color: #3b82f6;
+  display: flex;
+  align-items: center;
+}
+
+.context-menu__item--active {
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+.context-menu__item--active:hover {
+  background-color: #eff6ff;
+}
+
+.context-menu__submenu {
+  position: absolute;
+  top: -0.25rem;
+  left: calc(100% + 0.25rem);
+  min-width: 120px;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 0.5rem;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.08),
+    0 10px 24px -4px rgba(0, 0, 0, 0.12);
+  padding: 0.25rem;
+  animation: context-menu-appear 0.1s ease;
+}

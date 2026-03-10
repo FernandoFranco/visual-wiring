@@ -6,8 +6,13 @@ import {
   addComponentToLibrary,
   createNewProject,
   loadProjectFromFile,
+  movePlacedComponent,
+  placeComponentOnCanvas,
+  removePlacedComponent,
   renameProjectLibrary,
+  rotatePlacedComponent,
   saveProjectToFile,
+  setPlacedComponentRotation,
   updateComponentInLibrary,
   updateProjectName,
 } from '../utils/projectManager';
@@ -69,6 +74,47 @@ export function ProjectProvider({ children }: PropsWithChildren) {
     setProject(renameProjectLibrary(project, id, name));
   };
 
+  const placeComponent = (
+    libraryId: string,
+    componentId: string,
+    x: number,
+    y: number
+  ) => {
+    if (!project) return;
+    setProject(
+      placeComponentOnCanvas(project, {
+        instanceId: crypto.randomUUID(),
+        componentId,
+        libraryId,
+        x,
+        y,
+      })
+    );
+  };
+
+  const handleMovePlaced = (instanceId: string, x: number, y: number) => {
+    if (!project) return;
+    setProject(movePlacedComponent(project, instanceId, x, y));
+  };
+
+  const handleRemovePlaced = (instanceId: string) => {
+    if (!project) return;
+    setProject(removePlacedComponent(project, instanceId));
+  };
+
+  const handleRotatePlaced = (instanceId: string) => {
+    if (!project) return;
+    setProject(rotatePlacedComponent(project, instanceId));
+  };
+
+  const handleSetRotation = (
+    instanceId: string,
+    rotation: 0 | 90 | 180 | 270
+  ) => {
+    if (!project) return;
+    setProject(setPlacedComponentRotation(project, instanceId, rotation));
+  };
+
   const value: ProjectContextValue = {
     project,
     isProjectLoaded: !!project,
@@ -80,6 +126,11 @@ export function ProjectProvider({ children }: PropsWithChildren) {
     renameLibrary,
     addComponent,
     updateComponent,
+    placeComponent,
+    movePlacedComponent: handleMovePlaced,
+    removePlacedComponent: handleRemovePlaced,
+    rotatePlacedComponent: handleRotatePlaced,
+    setPlacedComponentRotation: handleSetRotation,
   };
 
   return (

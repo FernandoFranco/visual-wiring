@@ -4,6 +4,10 @@ import { Pencil, Plus } from 'lucide-react';
 import { useRef, useState } from 'react';
 
 import type { Library as LibraryType } from '../../types/library';
+import {
+  clearComponentDragPayload,
+  setComponentDragPayload,
+} from '../../utils/dragState';
 import { ComponentBody } from '../ComponentEditorCanvas';
 import { ExpansionPanel } from '../ExpansionPanel';
 import { GridCanvas } from '../GridCanvas';
@@ -135,7 +139,33 @@ export function Library({
         ) : (
           <ul className="library__components">
             {filtered.map(component => (
-              <li key={component.id} className="library__component">
+              <li
+                key={component.id}
+                className="library__component library__component--draggable"
+                draggable
+                onDragStart={e => {
+                  setComponentDragPayload({
+                    componentId: component.id,
+                    libraryId: library.id,
+                  });
+                  e.dataTransfer.setData(
+                    'application/x-component',
+                    JSON.stringify({
+                      componentId: component.id,
+                      libraryId: library.id,
+                    })
+                  );
+                  e.dataTransfer.effectAllowed = 'copy';
+
+                  const ghost = document.createElement('div');
+                  ghost.style.cssText =
+                    'position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;';
+                  document.body.appendChild(ghost);
+                  e.dataTransfer.setDragImage(ghost, 0, 0);
+                  requestAnimationFrame(() => ghost.remove());
+                }}
+                onDragEnd={() => clearComponentDragPayload()}
+              >
                 <div className="library__component__header">
                   <span className="library__component__header-name">
                     <Highlight text={component.name} query={query} />

@@ -1,6 +1,6 @@
 import type { Component } from '../types/component';
 import type { Library } from '../types/library';
-import type { Project } from '../types/project';
+import type { PlacedComponent, Project } from '../types/project';
 import { sanitizeFilename, saveFile } from './fileHelper';
 
 export function createDefaultLibrary(): Library {
@@ -90,6 +90,76 @@ export function addComponentToLibrary(
       lib.id === libraryId
         ? { ...lib, components: [...lib.components, component] }
         : lib
+    ),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export function placeComponentOnCanvas(
+  project: Project,
+  placed: PlacedComponent
+): Project {
+  const existing = project.placedComponents ?? [];
+  return {
+    ...project,
+    placedComponents: [...existing, placed],
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export function movePlacedComponent(
+  project: Project,
+  instanceId: string,
+  x: number,
+  y: number
+): Project {
+  return {
+    ...project,
+    placedComponents: (project.placedComponents ?? []).map(p =>
+      p.instanceId === instanceId ? { ...p, x, y } : p
+    ),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export function rotatePlacedComponent(
+  project: Project,
+  instanceId: string
+): Project {
+  return {
+    ...project,
+    placedComponents: (project.placedComponents ?? []).map(p => {
+      if (p.instanceId !== instanceId) return p;
+      const current = p.rotation ?? 0;
+      const next = ((current + 90) % 360) as 0 | 90 | 180 | 270;
+      return { ...p, rotation: next };
+    }),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export function setPlacedComponentRotation(
+  project: Project,
+  instanceId: string,
+  rotation: 0 | 90 | 180 | 270
+): Project {
+  return {
+    ...project,
+    placedComponents: (project.placedComponents ?? []).map(p =>
+      p.instanceId === instanceId ? { ...p, rotation } : p
+    ),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export function removePlacedComponent(
+  project: Project,
+  instanceId: string
+): Project {
+  return {
+    ...project,
+    placedComponents: (project.placedComponents ?? []).filter(
+      p => p.instanceId !== instanceId
     ),
     updatedAt: new Date().toISOString(),
   };

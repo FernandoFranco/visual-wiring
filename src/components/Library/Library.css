@@ -104,6 +104,19 @@
   flex-direction: column;
 }
 
+.library__component--draggable {
+  cursor: grab;
+}
+
+.library__component--draggable:active {
+  cursor: grabbing;
+}
+
+.library__component--draggable:hover {
+  background-color: #f1f5f9;
+  border-radius: 0.25rem;
+}
+
 .library__component:hover .library__component__header {
   background-color: #f8fafc;
 }
