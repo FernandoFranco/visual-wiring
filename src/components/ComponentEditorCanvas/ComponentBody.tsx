@@ -18,6 +18,8 @@ export interface ComponentBodyProps {
   onMouseDown?: (e: React.MouseEvent<SVGGElement>) => void;
   onContextMenu?: (e: React.MouseEvent<SVGGElement>) => void;
   isDragging?: boolean;
+  onPinDown?: (pinId: string, e: React.MouseEvent<SVGGElement>) => void;
+  wireTargetPinIds?: string[];
 }
 
 function sidePins(pins: Pin[], side: PinSide): Pin[] {
@@ -36,6 +38,8 @@ export function ComponentBody({
   onMouseDown,
   onContextMenu,
   isDragging = false,
+  onPinDown,
+  wireTargetPinIds = [],
 }: ComponentBodyProps) {
   const { grid, canvasWidth, canvasHeight } = useGridCanvas();
 
@@ -147,6 +151,8 @@ export function ComponentBody({
             dominantBaseline={pinBaseline('auto')}
             name={pin.name}
             textTransform={pinTf(lx, ly)}
+            onPinDown={onPinDown ? e => onPinDown(pin.id, e) : undefined}
+            isWireTarget={wireTargetPinIds.includes(pin.id)}
           />
         );
       })}
@@ -167,6 +173,8 @@ export function ComponentBody({
             dominantBaseline={pinBaseline('hanging')}
             name={pin.name}
             textTransform={pinTf(lx, ly)}
+            onPinDown={onPinDown ? e => onPinDown(pin.id, e) : undefined}
+            isWireTarget={wireTargetPinIds.includes(pin.id)}
           />
         );
       })}
@@ -187,6 +195,8 @@ export function ComponentBody({
             dominantBaseline={pinBaseline('central')}
             name={pin.name}
             textTransform={pinTf(lx, ly)}
+            onPinDown={onPinDown ? e => onPinDown(pin.id, e) : undefined}
+            isWireTarget={wireTargetPinIds.includes(pin.id)}
           />
         );
       })}
@@ -207,6 +217,8 @@ export function ComponentBody({
             dominantBaseline={pinBaseline('central')}
             name={pin.name}
             textTransform={pinTf(lx, ly)}
+            onPinDown={onPinDown ? e => onPinDown(pin.id, e) : undefined}
+            isWireTarget={wireTargetPinIds.includes(pin.id)}
           />
         );
       })}

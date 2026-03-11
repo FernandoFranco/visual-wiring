@@ -1,0 +1,75 @@
+.canvas-wire {
+  fill: none;
+  stroke: #1e293b;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.canvas-wire--in-progress {
+  stroke: #3b82f6;
+  stroke-dasharray: 5 3;
+  pointer-events: none;
+}
+
+.canvas-wire__halo {
+  fill: none;
+  stroke: #3b82f6;
+  stroke-width: 5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+.canvas-wire__hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 12;
+  pointer-events: stroke;
+  cursor: default;
+}
+
+.canvas-wire__hit--ns {
+  cursor: ns-resize;
+}
+
+.canvas-wire__hit--ew {
+  cursor: ew-resize;
+}
+
+.canvas-wire__segment--hovered {
+  fill: none;
+  stroke: white;
+  stroke-width: 6;
+  stroke-linecap: round;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.canvas-wire__waypoint {
+  stroke: white;
+  stroke-width: 1.5;
+  pointer-events: none;
+}
+
+.canvas-wire__waypoint-hit {
+  fill: transparent;
+  stroke: none;
+  pointer-events: all;
+  cursor: pointer;
+}
+
+.canvas-wire__ghost {
+  fill: #3b82f6;
+  stroke: white;
+  stroke-width: 1.5;
+  opacity: 0.55;
+  cursor: crosshair;
+  pointer-events: all;
+}
+
+.canvas-wire__ghost:hover {
+  opacity: 1;
+}

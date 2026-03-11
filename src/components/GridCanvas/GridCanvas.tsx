@@ -18,11 +18,15 @@ export type { GridCanvasContextValue };
 export interface GridCanvasProps {
   grid?: number;
   noBackground?: boolean;
+  panX?: number;
+  panY?: number;
 }
 
 export function GridCanvas({
   grid = 10,
   noBackground = false,
+  panX = 0,
+  panY = 0,
   children,
 }: PropsWithChildren<GridCanvasProps>) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -45,7 +49,7 @@ export function GridCanvas({
 
   return (
     <GridCanvasContext.Provider
-      value={{ grid, canvasWidth: cw, canvasHeight: ch }}
+      value={{ grid, canvasWidth: cw, canvasHeight: ch, panX, panY }}
     >
       <div
         className="grid-canvas"
@@ -58,8 +62,8 @@ export function GridCanvas({
               <defs>
                 <pattern
                   id={patternId}
-                  x="0"
-                  y="0"
+                  x={((panX % grid) + grid) % grid}
+                  y={((panY % grid) + grid) % grid}
                   width={grid}
                   height={grid}
                   patternUnits="userSpaceOnUse"
@@ -83,7 +87,7 @@ export function GridCanvas({
               />
             </>
           )}
-          {children}
+          <g transform={`translate(${panX}, ${panY})`}>{children}</g>
         </svg>
       </div>
     </GridCanvasContext.Provider>

@@ -1,9 +1,5 @@
 import type { Component } from '../types/component';
 
-/**
- * Replicates the body-size calculation from ComponentBody so we can compute
- * the centering offset before the SVG element is rendered.
- */
 export function computeBodySize(
   component: Component,
   grid: number
@@ -33,10 +29,6 @@ export function computeBodySize(
   return { bodyW, bodyH };
 }
 
-/**
- * Returns the (x, y) translation offset so that the component body center
- * sits exactly at (cursorX, cursorY), snapped to the grid.
- */
 export function centeredSnapPosition(
   component: Component,
   grid: number,
@@ -45,8 +37,6 @@ export function centeredSnapPosition(
 ): { x: number; y: number } {
   const snapRound = (v: number) => Math.round(v / grid) * grid;
   const { bodyW, bodyH } = computeBodySize(component, grid);
-  // Inside the <g>, the body rect starts at (grid, grid), so body center is at
-  // (grid + bodyW/2) and (grid + bodyH/2) relative to the group origin.
   return {
     x: snapRound(cursorX - grid - bodyW / 2),
     y: snapRound(cursorY - grid - bodyH / 2),

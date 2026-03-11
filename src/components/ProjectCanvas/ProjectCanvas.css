@@ -3,9 +3,15 @@
   position: relative;
   overflow: hidden;
   background-color: #f8fafc;
+  cursor: grab;
 }
 
 .project-canvas--moving {
+  cursor: grabbing !important;
+  user-select: none;
+}
+
+.project-canvas--panning {
   cursor: grabbing !important;
   user-select: none;
 }
@@ -71,5 +77,43 @@
   to {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
+  }
+}
+
+.project-canvas--drawing-wire {
+  cursor: crosshair !important;
+}
+
+.project-canvas__cancel-wire {
+  position: absolute;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: reset-pan-appear 0.15s ease;
+  border-color: #fca5a5;
+  color: #ef4444;
+}
+
+.project-canvas__cancel-wire:hover:not(:disabled) {
+  background-color: #fef2f2;
+  border-color: #f87171;
+  color: #dc2626;
+}
+
+.project-canvas__reset-pan {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  animation: reset-pan-appear 0.15s ease;
+}
+
+@keyframes reset-pan-appear {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

@@ -14,6 +14,10 @@ const ROTATION_OPTIONS = [
 
 export interface ComponentPropertiesSidebarProps {
   componentName: string;
+  instanceId: string;
+  pinCount: number;
+  x: number;
+  y: number;
   rotation: 0 | 90 | 180 | 270;
   onRotationChange: (rotation: 0 | 90 | 180 | 270) => void;
   onClose: () => void;
@@ -21,6 +25,10 @@ export interface ComponentPropertiesSidebarProps {
 
 export function ComponentPropertiesSidebar({
   componentName,
+  instanceId,
+  pinCount,
+  x,
+  y,
   rotation,
   onRotationChange,
   onClose,
@@ -53,6 +61,26 @@ export function ComponentPropertiesSidebar({
           value={String(rotation)}
           onChange={handleRotationChange}
         />
+      </div>
+
+      <div className="component-properties-sidebar__footer">
+        <div className="component-properties-sidebar__info-row">
+          <span className="component-properties-sidebar__info-label">Pins</span>
+          <span className="component-properties-sidebar__info-value">
+            {pinCount}
+          </span>
+        </div>
+        <div className="component-properties-sidebar__info-row">
+          <span className="component-properties-sidebar__info-label">
+            Position
+          </span>
+          <span className="component-properties-sidebar__info-value">
+            {x}, {y}
+          </span>
+        </div>
+        <span className="component-properties-sidebar__id" title={instanceId}>
+          id: {instanceId.slice(0, 8)}…
+        </span>
       </div>
     </aside>
   );
