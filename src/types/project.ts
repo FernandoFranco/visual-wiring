@@ -1,4 +1,5 @@
 import type { Library } from './library';
+import type { Wire } from './wire';
 
 export interface PlacedComponent {
   instanceId: string;
@@ -15,4 +16,5 @@ export interface Project {
   updatedAt: string;
   libraries: Library[];
   placedComponents?: PlacedComponent[];
+  wires?: Wire[];
 }

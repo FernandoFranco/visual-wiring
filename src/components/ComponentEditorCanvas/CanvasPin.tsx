@@ -1,5 +1,7 @@
 import './CanvasPin.css';
 
+import type React from 'react';
+
 import { useGridCanvas } from '../GridCanvas';
 
 export interface CanvasPinProps {
@@ -10,8 +12,9 @@ export interface CanvasPinProps {
   textAnchor: 'start' | 'middle' | 'end';
   dominantBaseline: 'auto' | 'hanging' | 'middle' | 'central';
   name: string;
-  /** Pre-computed SVG transform to apply on the label text (e.g. counter-rotation). */
   textTransform?: string;
+  onPinDown?: (e: React.MouseEvent<SVGGElement>) => void;
+  isWireTarget?: boolean;
 }
 
 export function CanvasPin({
@@ -23,12 +26,32 @@ export function CanvasPin({
   dominantBaseline,
   name,
   textTransform,
+  onPinDown,
+  isWireTarget = false,
 }: CanvasPinProps) {
   const { grid } = useGridCanvas();
   const pinFont = Math.max(5, grid * 0.9);
 
+  const handleMouseDown = (e: React.MouseEvent<SVGGElement>) => {
+    if (!onPinDown) return;
+    e.stopPropagation();
+    onPinDown(e);
+  };
+
+  const classes = [
+    'cec-pin',
+    onPinDown ? 'cec-pin--connectable' : '',
+    isWireTarget ? 'cec-pin--wire-target' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <g className="cec-pin">
+    <g
+      className={classes}
+      onMouseDown={handleMouseDown}
+      onClick={onPinDown ? e => e.stopPropagation() : undefined}
+    >
       <rect
         x={rectX}
         y={rectY}

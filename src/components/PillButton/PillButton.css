@@ -1,0 +1,46 @@
+.pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 2rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1.5px solid #e2e8f0;
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.pill-btn:hover:not(:disabled) {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+  color: #334155;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.pill-btn:active:not(:disabled) {
+  background-color: #e2e8f0;
+}
+
+.pill-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pill-btn__icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.pill-btn__label {
+  line-height: 1;
+}

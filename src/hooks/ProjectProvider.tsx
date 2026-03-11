@@ -2,19 +2,24 @@ import { type PropsWithChildren, useEffect, useState } from 'react';
 
 import type { Component } from '../types/component';
 import type { Project } from '../types/project';
+import type { Wire } from '../types/wire';
 import {
   addComponentToLibrary,
+  addWire,
   createNewProject,
   loadProjectFromFile,
   movePlacedComponent,
   placeComponentOnCanvas,
   removePlacedComponent,
+  removeWire,
   renameProjectLibrary,
   rotatePlacedComponent,
   saveProjectToFile,
   setPlacedComponentRotation,
   updateComponentInLibrary,
   updateProjectName,
+  updateWireColor,
+  updateWireWaypoints,
 } from '../utils/projectManager';
 import { ProjectContext, type ProjectContextValue } from './ProjectContext';
 import { useProjectStorage } from './useProjectStorage';
@@ -115,6 +120,29 @@ export function ProjectProvider({ children }: PropsWithChildren) {
     setProject(setPlacedComponentRotation(project, instanceId, rotation));
   };
 
+  const handleAddWire = (wire: Wire) => {
+    if (!project) return;
+    setProject(addWire(project, wire));
+  };
+
+  const handleRemoveWire = (wireId: string) => {
+    if (!project) return;
+    setProject(removeWire(project, wireId));
+  };
+
+  const handleUpdateWireWaypoints = (
+    wireId: string,
+    waypoints: Wire['waypoints']
+  ) => {
+    if (!project) return;
+    setProject(updateWireWaypoints(project, wireId, waypoints));
+  };
+
+  const handleUpdateWireColor = (wireId: string, color: string) => {
+    if (!project) return;
+    setProject(updateWireColor(project, wireId, color));
+  };
+
   const value: ProjectContextValue = {
     project,
     isProjectLoaded: !!project,
@@ -131,6 +159,10 @@ export function ProjectProvider({ children }: PropsWithChildren) {
     removePlacedComponent: handleRemovePlaced,
     rotatePlacedComponent: handleRotatePlaced,
     setPlacedComponentRotation: handleSetRotation,
+    addWire: handleAddWire,
+    removeWire: handleRemoveWire,
+    updateWireWaypoints: handleUpdateWireWaypoints,
+    updateWireColor: handleUpdateWireColor,
   };
 
   return (

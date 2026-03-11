@@ -1,6 +1,7 @@
 import type { Component } from '../types/component';
 import type { Library } from '../types/library';
 import type { PlacedComponent, Project } from '../types/project';
+import type { Wire } from '../types/wire';
 import { sanitizeFilename, saveFile } from './fileHelper';
 
 export function createDefaultLibrary(): Library {
@@ -181,6 +182,50 @@ export function updateComponentInLibrary(
             ),
           }
         : lib
+    ),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export function addWire(project: Project, wire: Wire): Project {
+  return {
+    ...project,
+    wires: [...(project.wires ?? []), wire],
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export function removeWire(project: Project, wireId: string): Project {
+  return {
+    ...project,
+    wires: (project.wires ?? []).filter(w => w.id !== wireId),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export function updateWireWaypoints(
+  project: Project,
+  wireId: string,
+  waypoints: Wire['waypoints']
+): Project {
+  return {
+    ...project,
+    wires: (project.wires ?? []).map(w =>
+      w.id === wireId ? { ...w, waypoints } : w
+    ),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export function updateWireColor(
+  project: Project,
+  wireId: string,
+  color: string
+): Project {
+  return {
+    ...project,
+    wires: (project.wires ?? []).map(w =>
+      w.id === wireId ? { ...w, color } : w
     ),
     updatedAt: new Date().toISOString(),
   };

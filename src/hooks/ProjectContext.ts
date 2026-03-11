@@ -2,6 +2,7 @@ import { createContext } from 'react';
 
 import type { Component } from '../types/component';
 import type { Project } from '../types/project';
+import type { Wire } from '../types/wire';
 
 export interface ProjectContextValue {
   project: Project | null;
@@ -28,6 +29,10 @@ export interface ProjectContextValue {
     instanceId: string,
     rotation: 0 | 90 | 180 | 270
   ) => void;
+  addWire: (wire: Wire) => void;
+  removeWire: (wireId: string) => void;
+  updateWireWaypoints: (wireId: string, waypoints: Wire['waypoints']) => void;
+  updateWireColor: (wireId: string, color: string) => void;
 }
 
 export const ProjectContext = createContext<ProjectContextValue | undefined>(
