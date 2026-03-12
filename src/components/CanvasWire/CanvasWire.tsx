@@ -137,7 +137,11 @@ export function CanvasWire({
       <polyline
         className={polylineClass}
         points={ptStr}
-        style={{ stroke: color, strokeWidth: CANVAS_STROKE_WIDTH }}
+        style={{
+          stroke: color,
+          strokeWidth: CANVAS_STROKE_WIDTH,
+          fill: 'none',
+        }}
       />
 
       {showWaypoints &&

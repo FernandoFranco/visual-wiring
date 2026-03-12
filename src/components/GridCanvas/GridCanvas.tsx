@@ -17,6 +17,7 @@ import {
 export type { GridCanvasContextValue };
 
 export interface GridCanvasProps {
+  id?: string;
   grid?: number;
   noBackground?: boolean;
   panX?: number;
@@ -25,6 +26,7 @@ export interface GridCanvasProps {
 }
 
 export function GridCanvas({
+  id,
   grid = GRID,
   noBackground = false,
   panX = 0,
@@ -70,6 +72,7 @@ export function GridCanvas({
       }}
     >
       <div
+        id={id}
         className="grid-canvas"
         ref={containerRef}
         style={{ '--gc-grid': `${grid}px` } as { [key: `--${string}`]: string }}

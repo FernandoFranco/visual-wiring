@@ -1,6 +1,6 @@
 import './ProjectPage.css';
 
-import { Braces, Download, History, Settings } from 'lucide-react';
+import { Braces, Download, FileImage, History, Settings } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,6 +14,10 @@ import { ProjectCanvas } from '../components/ProjectCanvas';
 import { ProjectSidebar } from '../components/ProjectSidebar';
 import { useProject } from '../hooks/useProject';
 import { ROUTES } from '../routes';
+import {
+  exportProjectAsImage,
+  exportProjectAsSVG,
+} from '../utils/projectExport';
 
 export function ProjectPage() {
   const navigate = useNavigate();
@@ -59,13 +63,30 @@ export function ProjectPage() {
         projectName={project.name}
         onGoHome={() => setIsCloseConfirmOpen(true)}
       >
-        <IconButton
-          className="app-bar__action-btn"
-          onClick={saveProject}
-          title="Save project"
-        >
-          <Download size={17} />
-        </IconButton>
+        <DropdownMenu
+          trigger={
+            <IconButton className="app-bar__action-btn" title="Download">
+              <Download size={17} />
+            </IconButton>
+          }
+          items={[
+            {
+              label: 'Download JSON',
+              icon: <Braces size={14} />,
+              onClick: saveProject,
+            },
+            {
+              label: 'Download as PNG',
+              icon: <FileImage size={14} />,
+              onClick: () => exportProjectAsImage(project),
+            },
+            {
+              label: 'Download as SVG',
+              icon: <FileImage size={14} />,
+              onClick: () => exportProjectAsSVG(project),
+            },
+          ]}
+        />
         <DropdownMenu
           trigger={
             <IconButton className="app-bar__action-btn" title="Settings">
