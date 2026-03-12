@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { AppBar } from '../components/AppBar';
-import { DEFAULT_SWATCHES } from '../components/ColorPicker';
 import { ComponentEditorCanvas } from '../components/ComponentEditorCanvas';
 import { ComponentEditorSidebar } from '../components/ComponentEditorSidebar';
 import { ConfirmationModal } from '../components/ConfirmationModal';
@@ -25,7 +24,8 @@ export function ComponentEditorPage() {
   }>();
   const isEditMode = !!componentId;
 
-  const { project, addComponent, updateComponent } = useProject();
+  const { project, addComponent, updateComponent, addColor, removeColor } =
+    useProject();
 
   const library = project?.libraries.find(l => l.id === libraryId);
   const existingComponent = isEditMode
@@ -37,9 +37,7 @@ export function ComponentEditorPage() {
   const [pins, setPins] = useState<Pin[]>(existingComponent?.pins ?? []);
   const [minWidth, setMinWidth] = useState(existingComponent?.minWidth ?? 4);
   const [minHeight, setMinHeight] = useState(existingComponent?.minHeight ?? 4);
-  const [color, setColor] = useState(
-    existingComponent?.color ?? DEFAULT_SWATCHES[0]
-  );
+  const [color, setColor] = useState(existingComponent?.color ?? '#1e293b');
   const [defaultLabelPosition, setDefaultLabelPosition] =
     useState<LabelPosition>(
       existingComponent?.defaultLabelPosition ?? 'center'
@@ -159,7 +157,10 @@ export function ComponentEditorPage() {
           minHeight={minHeight}
           onMinHeightChange={setMinHeight}
           color={color}
+          colors={project?.colors ?? []}
           onColorChange={setColor}
+          onAddColor={addColor}
+          onRemoveColor={removeColor}
           defaultLabelPosition={defaultLabelPosition}
           onDefaultLabelPositionChange={setDefaultLabelPosition}
           pins={pins}

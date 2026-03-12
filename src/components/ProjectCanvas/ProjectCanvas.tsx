@@ -88,6 +88,8 @@ export function ProjectCanvas() {
     removeWire,
     updateWireWaypoints,
     updateWireColor,
+    addColor,
+    removeColor,
   } = useProject();
   const containerRef = useRef<HTMLDivElement>(null);
   const trashRef = useRef<HTMLDivElement>(null);
@@ -736,6 +738,36 @@ export function ProjectCanvas() {
     ? findComponent(selectedPlaced.libraryId, selectedPlaced.componentId)
     : null;
 
+  const connectedWires =
+    selectedInstanceId && selectedComp
+      ? (project?.wires ?? [])
+          .filter((wire: Wire) => {
+            const isStartConnected =
+              wire.start.type === 'pin' &&
+              wire.start.instanceId === selectedInstanceId;
+            const isEndConnected =
+              wire.end.type === 'pin' &&
+              wire.end.instanceId === selectedInstanceId;
+            return isStartConnected || isEndConnected;
+          })
+          .map((wire: Wire) => {
+            const isStartPin =
+              wire.start.type === 'pin' &&
+              wire.start.instanceId === selectedInstanceId;
+            const pinId = isStartPin
+              ? (wire.start as Extract<WireEndpoint, { type: 'pin' }>).pinId
+              : (wire.end as Extract<WireEndpoint, { type: 'pin' }>).pinId;
+            const pin = selectedComp.pins.find(p => p.id === pinId);
+            return {
+              wireId: wire.id,
+              pinId,
+              pinName: pin?.name || 'Unknown',
+              pinSide: pin?.side || 'up',
+              color: wire.color,
+            };
+          })
+      : [];
+
   return (
     <div
       ref={containerRef}
@@ -943,6 +975,11 @@ export function ProjectCanvas() {
               labelPosition: pos,
             })
           }
+          connectedWires={connectedWires}
+          onWireClick={wireId => {
+            setSelectedInstanceId(null);
+            setSelectedWireId(wireId);
+          }}
           onClose={() => setSelectedInstanceId(null)}
         />
       )}
@@ -987,7 +1024,10 @@ export function ProjectCanvas() {
               startLabel={startLabel}
               endLabel={endLabel}
               color={wire.color ?? DEFAULT_WIRE_COLOR}
+              colors={project?.colors ?? []}
               onColorChange={c => updateWireColor(wire.id, c)}
+              onAddColor={addColor}
+              onRemoveColor={removeColor}
               onClose={() => setSelectedWireId(null)}
             />
           );

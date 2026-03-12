@@ -1,3 +1,4 @@
+import { DEFAULT_SWATCHES } from '../components/ColorPicker';
 import type { Component } from '../types/component';
 import type { Library } from '../types/library';
 import type { LabelPosition, PlacedComponent, Project } from '../types/project';
@@ -25,7 +26,38 @@ export function createNewProject(name: string): Project {
     createdAt: now,
     updatedAt: now,
     version: CURRENT_PROJECT_VERSION,
+    colors: [...DEFAULT_SWATCHES],
     libraries: [createDefaultLibrary()],
+  };
+}
+
+export function addColorToProject(project: Project, color: string): Project {
+  if (project.colors.includes(color)) {
+    return project;
+  }
+
+  return {
+    ...project,
+    colors: [...project.colors, color],
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export function removeColorFromProject(
+  project: Project,
+  color: string
+): Project {
+  const colors = project.colors.filter(c => c !== color);
+
+  const wires = (project.wires ?? []).map(w =>
+    w.color === color ? { ...w, color: '#000000' } : w
+  );
+
+  return {
+    ...project,
+    colors,
+    wires,
+    updatedAt: new Date().toISOString(),
   };
 }
 
@@ -42,6 +74,9 @@ export function loadProjectFromFile(file: File): Promise<Project> {
         }
         if (!Array.isArray(project.libraries)) {
           project.libraries = [createDefaultLibrary()];
+        }
+        if (!Array.isArray(project.colors)) {
+          project.colors = [...DEFAULT_SWATCHES];
         }
 
         if (needsMigration(project)) {
@@ -207,7 +242,7 @@ export function updateComponentInLibrary(
   libraryId: string,
   component: Component
 ): Project {
-  return {
+  const updated = {
     ...project,
     libraries: project.libraries.map(lib =>
       lib.id === libraryId
@@ -221,6 +256,10 @@ export function updateComponentInLibrary(
     ),
     updatedAt: new Date().toISOString(),
   };
+  if (component.color) {
+    return addColorToProject(updated, component.color);
+  }
+  return updated;
 }
 
 export function addWire(project: Project, wire: Wire): Project {
@@ -258,13 +297,45 @@ export function updateWireColor(
   wireId: string,
   color: string
 ): Project {
-  return {
+  const wires = project.wires ?? [];
+
+  const connectedWireIds = new Set<string>();
+  const findConnectedWires = (currentWireId: string) => {
+    if (connectedWireIds.has(currentWireId)) return;
+    connectedWireIds.add(currentWireId);
+
+    wires.forEach(w => {
+      if (
+        (w.start.type === 'waypoint' && w.start.wireId === currentWireId) ||
+        (w.end.type === 'waypoint' && w.end.wireId === currentWireId)
+      ) {
+        findConnectedWires(w.id);
+      }
+
+      if (currentWireId !== w.id) {
+        const currentWire = wires.find(wire => wire.id === currentWireId);
+        if (currentWire) {
+          if (
+            (currentWire.start.type === 'waypoint' &&
+              currentWire.start.wireId === w.id) ||
+            (currentWire.end.type === 'waypoint' &&
+              currentWire.end.wireId === w.id)
+          ) {
+            findConnectedWires(w.id);
+          }
+        }
+      }
+    });
+  };
+
+  findConnectedWires(wireId);
+
+  const updated = {
     ...project,
-    wires: (project.wires ?? []).map(w =>
-      w.id === wireId ? { ...w, color } : w
-    ),
+    wires: wires.map(w => (connectedWireIds.has(w.id) ? { ...w, color } : w)),
     updatedAt: new Date().toISOString(),
   };
+  return addColorToProject(updated, color);
 }
 
 export function removeComponentFromLibrary(

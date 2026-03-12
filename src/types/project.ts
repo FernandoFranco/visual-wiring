@@ -16,9 +16,10 @@ export interface PlacedComponent {
 
 export interface Project {
   name: string;
+  version?: number;
   createdAt: string;
   updatedAt: string;
-  version?: number;
+  colors: string[];
   libraries: Library[];
   placedComponents?: PlacedComponent[];
   wires?: Wire[];

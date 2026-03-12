@@ -4,12 +4,14 @@ import type { Component } from '../types/component';
 import type { Project } from '../types/project';
 import type { Wire } from '../types/wire';
 import {
+  addColorToProject,
   addComponentToLibrary,
   addWire,
   createNewProject,
   loadProjectFromFile,
   movePlacedComponent,
   placeComponentOnCanvas,
+  removeColorFromProject,
   removeComponentFromLibrary,
   removePlacedComponent,
   removeWire,
@@ -177,6 +179,16 @@ export function ProjectProvider({ children }: PropsWithChildren) {
     setProject(updateWireColor(project, wireId, color));
   };
 
+  const handleAddColor = (color: string) => {
+    if (!project) return;
+    setProject(addColorToProject(project, color));
+  };
+
+  const handleRemoveColor = (color: string) => {
+    if (!project) return;
+    setProject(removeColorFromProject(project, color));
+  };
+
   const handleUndo = () => {
     const previousProject = history.undo();
     if (previousProject) {
@@ -220,6 +232,8 @@ export function ProjectProvider({ children }: PropsWithChildren) {
     removeWire: handleRemoveWire,
     updateWireWaypoints: handleUpdateWireWaypoints,
     updateWireColor: handleUpdateWireColor,
+    addColor: handleAddColor,
+    removeColor: handleRemoveColor,
     canUndo: history.canUndo,
     canRedo: history.canRedo,
     undo: handleUndo,

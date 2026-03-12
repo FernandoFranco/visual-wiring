@@ -16,7 +16,10 @@ export interface ComponentEditorSidebarProps {
   minHeight: number;
   onMinHeightChange: (value: number) => void;
   color: string;
+  colors: string[];
   onColorChange: (value: string) => void;
+  onAddColor: (color: string) => void;
+  onRemoveColor: (color: string) => void;
   defaultLabelPosition: LabelPosition;
   onDefaultLabelPositionChange: (value: LabelPosition) => void;
   pins: Pin[];
@@ -35,7 +38,10 @@ export function ComponentEditorSidebar({
   minHeight,
   onMinHeightChange,
   color,
+  colors,
   onColorChange,
+  onAddColor,
+  onRemoveColor,
   defaultLabelPosition,
   onDefaultLabelPositionChange,
   pins,
@@ -107,7 +113,10 @@ export function ComponentEditorSidebar({
         <ColorPicker
           label="Background color"
           value={color}
+          colors={colors}
           onChange={onColorChange}
+          onAddColor={onAddColor}
+          onRemoveColor={onRemoveColor}
         />
       </div>
 

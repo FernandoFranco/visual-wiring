@@ -1,10 +1,20 @@
 import './ComponentPropertiesSidebar.css';
 
+import type { PinSide } from '../../types/pin';
 import type { LabelPosition } from '../../types/project';
+import { ConnectedWireItem } from '../ConnectedWireItem';
 import { Input } from '../Input';
 import { LabelPositionPicker } from '../LabelPositionPicker';
 import { PropertiesSidebar } from '../PropertiesSidebar';
 import { RotationPicker } from '../RotationPicker';
+
+interface ConnectedWire {
+  wireId: string;
+  pinId: string;
+  pinName: string;
+  pinSide: PinSide;
+  color?: string;
+}
 
 export interface ComponentPropertiesSidebarProps {
   componentName: string;
@@ -18,6 +28,8 @@ export interface ComponentPropertiesSidebarProps {
   onAliasChange: (alias: string) => void;
   labelPosition: LabelPosition;
   onLabelPositionChange: (pos: LabelPosition) => void;
+  connectedWires: ConnectedWire[];
+  onWireClick: (wireId: string) => void;
   onClose: () => void;
 }
 
@@ -33,6 +45,8 @@ export function ComponentPropertiesSidebar({
   onAliasChange,
   labelPosition,
   onLabelPositionChange,
+  connectedWires,
+  onWireClick,
   onClose,
 }: ComponentPropertiesSidebarProps) {
   const footer = (
@@ -78,6 +92,26 @@ export function ComponentPropertiesSidebar({
         value={labelPosition}
         onChange={onLabelPositionChange}
       />
+
+      {connectedWires.length > 0 && (
+        <div className="component-properties-sidebar__section">
+          <label className="component-properties-sidebar__label">
+            Connected wires ({connectedWires.length})
+          </label>
+          <ul className="component-properties-sidebar__wires">
+            {connectedWires.map(wire => (
+              <ConnectedWireItem
+                key={wire.wireId}
+                wireId={wire.wireId}
+                pinName={wire.pinName}
+                pinSide={wire.pinSide}
+                color={wire.color}
+                onClick={onWireClick}
+              />
+            ))}
+          </ul>
+        </div>
+      )}
     </PropertiesSidebar>
   );
 }
