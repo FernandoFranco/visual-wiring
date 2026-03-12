@@ -8,7 +8,10 @@ export interface WirePropertiesSidebarProps {
   startLabel: string;
   endLabel: string;
   color: string;
+  colors: string[];
   onColorChange: (color: string) => void;
+  onAddColor: (color: string) => void;
+  onRemoveColor: (color: string) => void;
   onClose: () => void;
 }
 
@@ -17,7 +20,10 @@ export function WirePropertiesSidebar({
   startLabel,
   endLabel,
   color,
+  colors,
   onColorChange,
+  onAddColor,
+  onRemoveColor,
   onClose,
 }: WirePropertiesSidebarProps) {
   const footer = (
@@ -53,7 +59,14 @@ export function WirePropertiesSidebar({
 
   return (
     <PropertiesSidebar title="Wire" onClose={onClose} footer={footer}>
-      <ColorPicker label="Color" value={color} onChange={onColorChange} />
+      <ColorPicker
+        label="Color"
+        value={color}
+        colors={colors}
+        onChange={onColorChange}
+        onAddColor={onAddColor}
+        onRemoveColor={onRemoveColor}
+      />
     </PropertiesSidebar>
   );
 }

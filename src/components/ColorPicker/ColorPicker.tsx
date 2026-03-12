@@ -1,26 +1,34 @@
 import './ColorPicker.css';
 
-import { DEFAULT_SWATCHES } from './constants';
-
 export interface ColorPickerProps {
   value: string;
   onChange: (color: string) => void;
-  swatches?: string[];
+  colors: string[];
   label?: string;
-  allowNone?: boolean;
+  onAddColor?: (color: string) => void;
+  onRemoveColor?: (color: string) => void;
 }
 
 export function ColorPicker({
   value,
   onChange,
-  swatches = DEFAULT_SWATCHES,
+  colors,
   label,
+  onAddColor,
+  onRemoveColor,
 }: ColorPickerProps) {
+  const handleColorInputChange = (newColor: string) => {
+    onChange(newColor);
+    if (onAddColor && !colors.includes(newColor)) {
+      onAddColor(newColor);
+    }
+  };
+
   return (
     <div className="color-picker">
       {label && <p className="color-picker__label">{label}</p>}
       <div className="color-picker__swatches">
-        {swatches.map(c => (
+        {colors.map(c => (
           <button
             key={c}
             type="button"
@@ -33,6 +41,12 @@ export function ColorPicker({
             style={{ background: c }}
             title={c}
             onClick={() => onChange(c)}
+            onContextMenu={e => {
+              if (onRemoveColor) {
+                e.preventDefault();
+                onRemoveColor(c);
+              }
+            }}
           />
         ))}
       </div>
@@ -40,7 +54,7 @@ export function ColorPicker({
         type="color"
         className="color-picker__input"
         value={value || '#ffffff'}
-        onChange={e => onChange(e.target.value)}
+        onChange={e => handleColorInputChange(e.target.value)}
         title="Custom color"
       />
     </div>

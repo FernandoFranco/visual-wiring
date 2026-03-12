@@ -39,6 +39,8 @@ export interface ProjectContextValue {
   removeWire: (wireId: string) => void;
   updateWireWaypoints: (wireId: string, waypoints: Wire['waypoints']) => void;
   updateWireColor: (wireId: string, color: string) => void;
+  addColor: (color: string) => void;
+  removeColor: (color: string) => void;
 
   canUndo: boolean;
   canRedo: boolean;

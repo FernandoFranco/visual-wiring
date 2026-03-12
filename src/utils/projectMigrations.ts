@@ -1,7 +1,8 @@
+import { DEFAULT_SWATCHES } from '../components/ColorPicker';
 import type { Project } from '../types/project';
 import type { Wire } from '../types/wire';
 
-export const CURRENT_PROJECT_VERSION = 1;
+export const CURRENT_PROJECT_VERSION = 2;
 
 interface LegacyWireEndpoint {
   instanceId: string;
@@ -44,8 +45,24 @@ function migrateV0toV1(project: Project): Project {
   };
 }
 
+function migrateV1toV2(project: Project): Project {
+  if (!Array.isArray(project.colors)) {
+    return {
+      ...project,
+      version: 2,
+      colors: [...DEFAULT_SWATCHES],
+    };
+  }
+
+  return {
+    ...project,
+    version: 2,
+  };
+}
+
 const MIGRATIONS: Record<number, (project: Project) => Project> = {
   1: migrateV0toV1,
+  2: migrateV1toV2,
 };
 
 export function migrateProject(project: Project): Project {
