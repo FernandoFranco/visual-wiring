@@ -9,9 +9,10 @@ import { Library } from '../Library';
 import { SidebarSearch } from '../SidebarSearch';
 
 export function ProjectSidebar() {
-  const { project, renameLibrary } = useProject();
+  const { project, renameLibrary, removeComponent } = useProject();
   const navigate = useNavigate();
   const libraries = project?.libraries ?? [];
+  const placedComponents = project?.placedComponents ?? [];
   const [query, setQuery] = useState('');
 
   const trimmedQuery = query.trim();
@@ -47,10 +48,14 @@ export function ProjectSidebar() {
             <Library
               key={library.id}
               library={library}
+              placedComponents={placedComponents}
               onRename={renameLibrary}
               onAddComponent={() => navigate(ROUTES.toNewComponent(library.id))}
               onEditComponent={componentId =>
                 navigate(ROUTES.toEditComponent(library.id, componentId))
+              }
+              onRemoveComponent={componentId =>
+                removeComponent(library.id, componentId)
               }
               query={trimmedQuery}
             />

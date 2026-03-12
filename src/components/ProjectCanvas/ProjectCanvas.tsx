@@ -15,6 +15,7 @@ import type { PlacedComponent } from '../../types/project';
 import type { Wire } from '../../types/wire';
 import { centeredSnapPosition } from '../../utils/componentSize';
 import { getComponentDragPayload } from '../../utils/dragState';
+import { GRID, snapToGrid } from '../../utils/gridUtils';
 import { getPinConnectionPoint, getPinSide } from '../../utils/pinPosition';
 import {
   buildAutoRouteWaypoints,
@@ -29,9 +30,6 @@ import { ContextMenu } from '../ContextMenu';
 import { GridCanvas } from '../GridCanvas';
 import { PillButton } from '../PillButton';
 import { WirePropertiesSidebar } from '../WirePropertiesSidebar';
-
-const GRID = 10;
-const snap = (v: number) => Math.round(v / GRID) * GRID;
 
 interface MoveState {
   instanceId: string;
@@ -74,6 +72,7 @@ export function ProjectCanvas() {
     movePlacedComponent,
     removePlacedComponent,
     setPlacedComponentRotation,
+    updatePlacedComponentInstance,
     addWire,
     removeWire,
     updateWireWaypoints,
@@ -167,7 +166,7 @@ export function ProjectCanvas() {
       const cx = clientX - rect.left - pan.x;
       const cy = clientY - rect.top - pan.y;
       const comp = findComponent(libraryId, componentId);
-      if (!comp) return { x: snap(cx), y: snap(cy) };
+      if (!comp) return { x: snapToGrid(cx), y: snapToGrid(cy) };
       return centeredSnapPosition(comp, GRID, cx, cy);
     },
     [findComponent, pan]
@@ -226,8 +225,8 @@ export function ProjectCanvas() {
       if (moveState && rect) {
         const rawX = canvasX - moveState.offsetX;
         const rawY = canvasY - moveState.offsetY;
-        const nx = snap(rawX);
-        const ny = snap(rawY);
+        const nx = snapToGrid(rawX);
+        const ny = snapToGrid(rawY);
         if (nx !== moveState.currentX || ny !== moveState.currentY) {
           setMoveState(s =>
             s ? { ...s, currentX: nx, currentY: ny, hasMoved: true } : null
@@ -252,7 +251,13 @@ export function ProjectCanvas() {
       }
       if (isDrawingWireRef.current) {
         setWireInProgressState(w =>
-          w ? { ...w, previewX: snap(canvasX), previewY: snap(canvasY) } : null
+          w
+            ? {
+                ...w,
+                previewX: snapToGrid(canvasX),
+                previewY: snapToGrid(canvasY),
+              }
+            : null
         );
       }
       if (wireSegDrag) {
@@ -264,7 +269,7 @@ export function ProjectCanvas() {
           wireSegDrag.segmentIndex,
           wireSegDrag.isHorizontal,
           delta,
-          snap
+          snapToGrid
         );
         setWireSegDrag(s => (s ? { ...s, liveWaypoints: newWaypoints } : null));
       }
@@ -382,8 +387,8 @@ export function ProjectCanvas() {
     (instanceId: string, pinId: string, e: React.MouseEvent<SVGGElement>) => {
       e.stopPropagation();
       const rect = containerRef.current?.getBoundingClientRect();
-      const canvasX = rect ? snap(e.clientX - rect.left - pan.x) : 0;
-      const canvasY = rect ? snap(e.clientY - rect.top - pan.y) : 0;
+      const canvasX = rect ? snapToGrid(e.clientX - rect.left - pan.x) : 0;
+      const canvasY = rect ? snapToGrid(e.clientY - rect.top - pan.y) : 0;
 
       if (!isDrawingWireRef.current) {
         const placedForPin = project?.placedComponents?.find(
@@ -445,7 +450,7 @@ export function ProjectCanvas() {
                     startPt,
                     current.startPinSide,
                     endPt,
-                    snap
+                    snapToGrid
                   );
                 }
               }
@@ -550,11 +555,11 @@ export function ProjectCanvas() {
         eps.endPt,
         ghostX,
         ghostY,
-        snap
+        snapToGrid
       );
       updateWireWaypoints(wireId, newWaypoints);
     },
-    [project, getWireEndpoints, updateWireWaypoints, snap]
+    [project, getWireEndpoints, updateWireWaypoints]
   );
 
   if (!project) return null;
@@ -704,10 +709,9 @@ export function ProjectCanvas() {
           return (
             <ComponentBody
               key={placed.instanceId}
-              name={comp.name}
-              pins={comp.pins}
-              minWidth={comp.minWidth}
-              minHeight={comp.minHeight}
+              component={comp}
+              displayLabel={placed.alias || comp.name}
+              labelPosition={placed.labelPosition}
               x={x}
               y={y}
               rotation={placed.rotation ?? 0}
@@ -731,10 +735,7 @@ export function ProjectCanvas() {
             if (!comp) return null;
             return (
               <ComponentBody
-                name={comp.name}
-                pins={comp.pins}
-                minWidth={comp.minWidth}
-                minHeight={comp.minHeight}
+                component={comp}
                 x={dropPreview.x}
                 y={dropPreview.y}
                 isDragging
@@ -799,6 +800,18 @@ export function ProjectCanvas() {
           onRotationChange={r =>
             setPlacedComponentRotation(selectedPlaced.instanceId, r)
           }
+          alias={selectedPlaced.alias ?? ''}
+          onAliasChange={a =>
+            updatePlacedComponentInstance(selectedPlaced.instanceId, {
+              alias: a,
+            })
+          }
+          labelPosition={selectedPlaced.labelPosition ?? 'center'}
+          onLabelPositionChange={pos =>
+            updatePlacedComponentInstance(selectedPlaced.instanceId, {
+              labelPosition: pos,
+            })
+          }
           onClose={() => setSelectedInstanceId(null)}
         />
       )}
@@ -856,7 +869,7 @@ export function ProjectCanvas() {
                     eps.endPt,
                     mx,
                     my,
-                    snap
+                    snapToGrid
                   )
                 );
                 setWireCtxMenu(null);

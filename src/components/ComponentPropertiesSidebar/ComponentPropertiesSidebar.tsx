@@ -1,16 +1,10 @@
 import './ComponentPropertiesSidebar.css';
 
-import { X } from 'lucide-react';
-
-import { IconButton } from '../IconButton';
-import { ToggleGroup } from '../ToggleGroup';
-
-const ROTATION_OPTIONS = [
-  { value: '0', label: '0°' },
-  { value: '90', label: '90°' },
-  { value: '180', label: '180°' },
-  { value: '270', label: '270°' },
-];
+import type { LabelPosition } from '../../types/project';
+import { Input } from '../Input';
+import { LabelPositionPicker } from '../LabelPositionPicker';
+import { PropertiesSidebar } from '../PropertiesSidebar';
+import { RotationPicker } from '../RotationPicker';
 
 export interface ComponentPropertiesSidebarProps {
   componentName: string;
@@ -20,6 +14,10 @@ export interface ComponentPropertiesSidebarProps {
   y: number;
   rotation: 0 | 90 | 180 | 270;
   onRotationChange: (rotation: 0 | 90 | 180 | 270) => void;
+  alias: string;
+  onAliasChange: (alias: string) => void;
+  labelPosition: LabelPosition;
+  onLabelPositionChange: (pos: LabelPosition) => void;
   onClose: () => void;
 }
 
@@ -31,57 +29,55 @@ export function ComponentPropertiesSidebar({
   y,
   rotation,
   onRotationChange,
+  alias,
+  onAliasChange,
+  labelPosition,
+  onLabelPositionChange,
   onClose,
 }: ComponentPropertiesSidebarProps) {
-  const handleRotationChange = (value: string) => {
-    onRotationChange(Number(value) as 0 | 90 | 180 | 270);
-  };
+  const footer = (
+    <>
+      <div className="component-properties-sidebar__info-row">
+        <span className="component-properties-sidebar__info-label">Pins</span>
+        <span className="component-properties-sidebar__info-value">
+          {pinCount}
+        </span>
+      </div>
+      <div className="component-properties-sidebar__info-row">
+        <span className="component-properties-sidebar__info-label">
+          Position
+        </span>
+        <span className="component-properties-sidebar__info-value">
+          {x}, {y}
+        </span>
+      </div>
+      <span className="component-properties-sidebar__id" title={instanceId}>
+        id: {instanceId}
+      </span>
+    </>
+  );
 
   return (
-    <aside
-      className="component-properties-sidebar"
-      onClick={e => e.stopPropagation()}
-    >
-      <div className="component-properties-sidebar__header">
-        <span
-          className="component-properties-sidebar__title"
-          title={componentName}
-        >
-          {componentName}
-        </span>
-        <IconButton title="Close properties" onClick={onClose}>
-          <X size={14} />
-        </IconButton>
-      </div>
-
-      <div className="component-properties-sidebar__body">
-        <ToggleGroup
-          label="Rotation"
-          options={ROTATION_OPTIONS}
-          value={String(rotation)}
-          onChange={handleRotationChange}
-        />
-      </div>
-
-      <div className="component-properties-sidebar__footer">
-        <div className="component-properties-sidebar__info-row">
-          <span className="component-properties-sidebar__info-label">Pins</span>
-          <span className="component-properties-sidebar__info-value">
-            {pinCount}
-          </span>
-        </div>
-        <div className="component-properties-sidebar__info-row">
-          <span className="component-properties-sidebar__info-label">
-            Position
-          </span>
-          <span className="component-properties-sidebar__info-value">
-            {x}, {y}
-          </span>
-        </div>
-        <span className="component-properties-sidebar__id" title={instanceId}>
-          id: {instanceId.slice(0, 8)}…
-        </span>
-      </div>
-    </aside>
+    <PropertiesSidebar title={componentName} onClose={onClose} footer={footer}>
+      <Input
+        id="component-alias"
+        variant="sm"
+        label="Alias"
+        type="text"
+        placeholder={componentName}
+        value={alias}
+        onChange={e => onAliasChange(e.target.value)}
+      />
+      <RotationPicker
+        label="Rotation"
+        value={rotation}
+        onChange={onRotationChange}
+      />
+      <LabelPositionPicker
+        label="Label position"
+        value={labelPosition}
+        onChange={onLabelPositionChange}
+      />
+    </PropertiesSidebar>
   );
 }

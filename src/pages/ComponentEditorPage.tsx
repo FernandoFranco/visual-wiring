@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { AppBar } from '../components/AppBar';
+import { DEFAULT_SWATCHES } from '../components/ColorPicker';
 import { ComponentEditorCanvas } from '../components/ComponentEditorCanvas';
 import { ComponentEditorSidebar } from '../components/ComponentEditorSidebar';
 import { ConfirmationModal } from '../components/ConfirmationModal';
@@ -14,6 +15,7 @@ import { JsonViewerModal } from '../components/JsonViewerModal';
 import { useProject } from '../hooks/useProject';
 import { ROUTES } from '../routes';
 import type { Pin } from '../types/pin';
+import type { LabelPosition } from '../types/project';
 
 export function ComponentEditorPage() {
   const navigate = useNavigate();
@@ -35,6 +37,13 @@ export function ComponentEditorPage() {
   const [pins, setPins] = useState<Pin[]>(existingComponent?.pins ?? []);
   const [minWidth, setMinWidth] = useState(existingComponent?.minWidth ?? 4);
   const [minHeight, setMinHeight] = useState(existingComponent?.minHeight ?? 4);
+  const [color, setColor] = useState(
+    existingComponent?.color ?? DEFAULT_SWATCHES[0]
+  );
+  const [defaultLabelPosition, setDefaultLabelPosition] =
+    useState<LabelPosition>(
+      existingComponent?.defaultLabelPosition ?? 'center'
+    );
   const [isDiscardOpen, setIsDiscardOpen] = useState(false);
   const [isJsonModalOpen, setIsJsonModalOpen] = useState(false);
 
@@ -47,7 +56,10 @@ export function ComponentEditorPage() {
     ? name.trim() !== existingComponent!.name ||
       JSON.stringify(pins) !== JSON.stringify(existingComponent!.pins) ||
       minWidth !== (existingComponent!.minWidth ?? 4) ||
-      minHeight !== (existingComponent!.minHeight ?? 4)
+      minHeight !== (existingComponent!.minHeight ?? 4) ||
+      color !== (existingComponent!.color ?? '') ||
+      defaultLabelPosition !==
+        (existingComponent!.defaultLabelPosition ?? 'center')
     : name.trim() !== '' || pins.length > 0;
 
   const handleBack = () => {
@@ -60,6 +72,16 @@ export function ComponentEditorPage() {
 
   const handleDiscard = () => {
     navigate(ROUTES.PROJECT);
+  };
+
+  const previewComponent = {
+    id: componentId ?? 'preview',
+    name,
+    pins,
+    minWidth,
+    minHeight,
+    color: color || undefined,
+    defaultLabelPosition,
   };
 
   const handleSave = () => {
@@ -76,6 +98,8 @@ export function ComponentEditorPage() {
         pins,
         minWidth,
         minHeight,
+        color: color || undefined,
+        defaultLabelPosition,
       });
     } else {
       addComponent(libraryId, {
@@ -84,6 +108,8 @@ export function ComponentEditorPage() {
         pins,
         minWidth,
         minHeight,
+        color: color || undefined,
+        defaultLabelPosition,
       });
     }
 
@@ -132,16 +158,15 @@ export function ComponentEditorPage() {
           onMinWidthChange={setMinWidth}
           minHeight={minHeight}
           onMinHeightChange={setMinHeight}
+          color={color}
+          onColorChange={setColor}
+          defaultLabelPosition={defaultLabelPosition}
+          onDefaultLabelPositionChange={setDefaultLabelPosition}
           pins={pins}
           onPinsChange={setPins}
           onSave={handleSave}
         />
-        <ComponentEditorCanvas
-          name={name}
-          pins={pins}
-          minWidth={minWidth}
-          minHeight={minHeight}
-        />
+        <ComponentEditorCanvas component={previewComponent} />
       </div>
 
       <ConfirmationModal

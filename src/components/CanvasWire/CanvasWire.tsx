@@ -2,6 +2,8 @@ import './CanvasWire.css';
 
 import React, { useState } from 'react';
 
+import { CANVAS_STROKE_WIDTH } from '../../utils/canvasConstants';
+
 export const DEFAULT_WIRE_COLOR = '#1e293b';
 
 export interface WirePoint {
@@ -125,7 +127,7 @@ export function CanvasWire({
       <polyline
         className={polylineClass}
         points={ptStr}
-        style={{ stroke: color }}
+        style={{ stroke: color, strokeWidth: CANVAS_STROKE_WIDTH }}
       />
 
       {showWaypoints &&

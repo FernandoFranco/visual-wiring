@@ -8,6 +8,7 @@ import {
   useState,
 } from 'react';
 
+import { GRID } from '../../utils/gridUtils';
 import {
   GridCanvasContext,
   type GridCanvasContextValue,
@@ -20,23 +21,26 @@ export interface GridCanvasProps {
   noBackground?: boolean;
   panX?: number;
   panY?: number;
+  viewBox?: { width: number; height: number };
 }
 
 export function GridCanvas({
-  grid = 10,
+  grid = GRID,
   noBackground = false,
   panX = 0,
   panY = 0,
+  viewBox,
   children,
 }: PropsWithChildren<GridCanvasProps>) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [cw, setCw] = useState(600);
-  const [ch, setCh] = useState(400);
+  const [cw, setCw] = useState(0);
+  const [ch, setCh] = useState(0);
 
   const uid = useId().replace(/:/g, '');
   const patternId = `gc-dots-${uid}`;
 
   useEffect(() => {
+    if (viewBox) return; // Não precisa do ResizeObserver quando usa viewBox
     const el = containerRef.current;
     if (!el) return;
     const ro = new ResizeObserver(([entry]) => {
@@ -45,18 +49,38 @@ export function GridCanvas({
     });
     ro.observe(el);
     return () => ro.disconnect();
-  }, []);
+  }, [viewBox]);
+
+  const svgWidth = viewBox ? '100%' : cw;
+  const svgHeight = viewBox ? '100%' : ch;
+  const svgViewBox = viewBox
+    ? `0 0 ${viewBox.width} ${viewBox.height}`
+    : undefined;
+  const displayWidth = viewBox ? viewBox.width : cw;
+  const displayHeight = viewBox ? viewBox.height : ch;
 
   return (
     <GridCanvasContext.Provider
-      value={{ grid, canvasWidth: cw, canvasHeight: ch, panX, panY }}
+      value={{
+        grid,
+        canvasWidth: displayWidth,
+        canvasHeight: displayHeight,
+        panX,
+        panY,
+      }}
     >
       <div
         className="grid-canvas"
         ref={containerRef}
         style={{ '--gc-grid': `${grid}px` } as { [key: `--${string}`]: string }}
       >
-        <svg className="grid-canvas__svg" width={cw} height={ch}>
+        <svg
+          className="grid-canvas__svg"
+          width={svgWidth}
+          height={svgHeight}
+          viewBox={svgViewBox}
+          preserveAspectRatio={viewBox ? 'xMidYMid meet' : undefined}
+        >
           {!noBackground && (
             <>
               <defs>
@@ -74,15 +98,15 @@ export function GridCanvas({
               <rect
                 x="0"
                 y="0"
-                width={cw}
-                height={ch}
+                width={displayWidth}
+                height={displayHeight}
                 className="grid-canvas__bg"
               />
               <rect
                 x="0"
                 y="0"
-                width={cw}
-                height={ch}
+                width={displayWidth}
+                height={displayHeight}
                 fill={`url(#${patternId})`}
               />
             </>
