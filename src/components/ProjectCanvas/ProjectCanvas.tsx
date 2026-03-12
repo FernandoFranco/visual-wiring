@@ -789,7 +789,7 @@ export function ProjectCanvas() {
       onClick={handleCanvasClick}
       onContextMenu={e => e.preventDefault()}
     >
-      <GridCanvas grid={GRID} panX={pan.x} panY={pan.y}>
+      <GridCanvas id="project-grid" grid={GRID} panX={pan.x} panY={pan.y}>
         {(project?.wires ?? []).map(wire => {
           const eps = getWireEndpoints(wire);
           if (!eps) return null;
