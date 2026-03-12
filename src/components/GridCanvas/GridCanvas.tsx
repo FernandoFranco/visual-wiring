@@ -40,7 +40,7 @@ export function GridCanvas({
   const patternId = `gc-dots-${uid}`;
 
   useEffect(() => {
-    if (viewBox) return; // Não precisa do ResizeObserver quando usa viewBox
+    if (viewBox) return;
     const el = containerRef.current;
     if (!el) return;
     const ro = new ResizeObserver(([entry]) => {

@@ -114,7 +114,6 @@ export function ComponentBody({
     const centerX = tx + bodyCx;
     const centerY = ty + bodyCy;
 
-    // Calculate visual dimensions based on rotation
     const visualW = rotation === 90 || rotation === 270 ? bodyH : bodyW;
     const visualH = rotation === 90 || rotation === 270 ? bodyW : bodyH;
 

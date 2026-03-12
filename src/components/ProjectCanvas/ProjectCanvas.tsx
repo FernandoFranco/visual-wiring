@@ -11,8 +11,9 @@ import {
 } from 'react';
 
 import { useProject } from '../../hooks/useProject';
+import type { Component } from '../../types/component';
 import type { PlacedComponent } from '../../types/project';
-import type { Wire } from '../../types/wire';
+import type { Wire, WireEndpoint } from '../../types/wire';
 import { centeredSnapPosition } from '../../utils/componentSize';
 import { getComponentDragPayload } from '../../utils/dragState';
 import { GRID, snapToGrid } from '../../utils/gridUtils';
@@ -48,17 +49,27 @@ interface DropPreview {
 }
 
 interface WireCreationState {
-  startInstanceId: string;
-  startPinId: string;
+  start: WireEndpoint;
   startPinSide: 'up' | 'down' | 'left' | 'right';
+  startPosition: { x: number; y: number };
   previewX: number;
   previewY: number;
+  color?: string;
 }
 
 interface WireSegmentDragState {
   wireId: string;
   segmentIndex: number;
   isHorizontal: boolean;
+  startMouseX: number;
+  startMouseY: number;
+  originalWaypoints: { x: number; y: number }[];
+  liveWaypoints: { x: number; y: number }[];
+}
+
+interface WaypointDragState {
+  wireId: string;
+  waypointIndex: number;
   startMouseX: number;
   startMouseY: number;
   originalWaypoints: { x: number; y: number }[];
@@ -114,6 +125,9 @@ export function ProjectCanvas() {
   const [wireSegDrag, setWireSegDrag] = useState<WireSegmentDragState | null>(
     null
   );
+  const [waypointDrag, setWaypointDrag] = useState<WaypointDragState | null>(
+    null
+  );
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
   const panDragRef = useRef<{
@@ -131,21 +145,6 @@ export function ProjectCanvas() {
     setWireInProgressState(w);
   }, []);
 
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        if (isDrawingWireRef.current) setWireInProgress(null);
-        setSelectedWireId(null);
-      }
-      if (e.key === 'Delete' && selectedWireId) {
-        removeWire(selectedWireId);
-        setSelectedWireId(null);
-      }
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [setWireInProgress, selectedWireId, removeWire]);
-
   const findComponent = useCallback(
     (libraryId: string, componentId: string) => {
       const lib = project?.libraries.find(l => l.id === libraryId);
@@ -153,6 +152,53 @@ export function ProjectCanvas() {
     },
     [project]
   );
+
+  const getEndpointPosition = useCallback(
+    (endpoint: WireEndpoint): { x: number; y: number } | null => {
+      if (endpoint.type === 'pin') {
+        const placed = project?.placedComponents?.find(
+          p => p.instanceId === endpoint.instanceId
+        );
+        if (!placed) return null;
+        const comp = findComponent(placed.libraryId, placed.componentId);
+        if (!comp) return null;
+        return getPinConnectionPoint(placed, comp, endpoint.pinId, GRID);
+      } else {
+        const wire = project?.wires?.find(w => w.id === endpoint.wireId);
+        if (!wire) return null;
+        const waypoint = wire.waypoints[endpoint.waypointIndex];
+        return waypoint ?? null;
+      }
+    },
+    [project, findComponent]
+  );
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (isDrawingWireRef.current) setWireInProgress(null);
+        setSelectedWireId(null);
+        setSelectedInstanceId(null);
+      }
+      if (e.key === 'Delete') {
+        if (selectedWireId) {
+          removeWire(selectedWireId);
+          setSelectedWireId(null);
+        } else if (selectedInstanceId) {
+          removePlacedComponent(selectedInstanceId);
+          setSelectedInstanceId(null);
+        }
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [
+    setWireInProgress,
+    selectedWireId,
+    selectedInstanceId,
+    removeWire,
+    removePlacedComponent,
+  ]);
 
   const getCenteredPos = useCallback(
     (
@@ -273,8 +319,23 @@ export function ProjectCanvas() {
         );
         setWireSegDrag(s => (s ? { ...s, liveWaypoints: newWaypoints } : null));
       }
+      if (waypointDrag) {
+        const dx = e.clientX - waypointDrag.startMouseX;
+        const dy = e.clientY - waypointDrag.startMouseY;
+        const original =
+          waypointDrag.originalWaypoints[waypointDrag.waypointIndex];
+        if (original) {
+          const newX = snapToGrid(original.x + dx);
+          const newY = snapToGrid(original.y + dy);
+          const newWaypoints = [...waypointDrag.liveWaypoints];
+          newWaypoints[waypointDrag.waypointIndex] = { x: newX, y: newY };
+          setWaypointDrag(s =>
+            s ? { ...s, liveWaypoints: newWaypoints } : null
+          );
+        }
+      }
     },
-    [moveState, pan, wireSegDrag]
+    [moveState, pan, wireSegDrag, waypointDrag]
   );
 
   const commitMove = useCallback(() => {
@@ -291,6 +352,17 @@ export function ProjectCanvas() {
         );
       updateWireWaypoints(wireSegDrag.wireId, wireSegDrag.liveWaypoints);
       setWireSegDrag(null);
+      if (hasMoved) justDraggedWireRef.current = true;
+      return;
+    }
+    if (waypointDrag) {
+      const hasMoved = waypointDrag.liveWaypoints.some(
+        (wp, i) =>
+          wp.x !== waypointDrag.originalWaypoints[i]?.x ||
+          wp.y !== waypointDrag.originalWaypoints[i]?.y
+      );
+      updateWireWaypoints(waypointDrag.wireId, waypointDrag.liveWaypoints);
+      setWaypointDrag(null);
       if (hasMoved) justDraggedWireRef.current = true;
       return;
     }
@@ -313,6 +385,7 @@ export function ProjectCanvas() {
     setIsOverTrash(false);
   }, [
     wireSegDrag,
+    waypointDrag,
     updateWireWaypoints,
     moveState,
     isOverTrash,
@@ -398,19 +471,32 @@ export function ProjectCanvas() {
           ? findComponent(placedForPin.libraryId, placedForPin.componentId)
           : null;
         const pinSide = compForPin ? getPinSide(compForPin, pinId) : null;
+        const startPosition =
+          compForPin && placedForPin
+            ? getPinConnectionPoint(placedForPin, compForPin, pinId, GRID)
+            : null;
+
+        if (!startPosition) return;
+
         setWireInProgress({
-          startInstanceId: instanceId,
-          startPinId: pinId,
+          start: {
+            type: 'pin',
+            instanceId,
+            pinId,
+          },
           startPinSide: pinSide ?? 'right',
+          startPosition,
           previewX: canvasX,
           previewY: canvasY,
         });
       } else {
         setWireInProgressState(current => {
           if (!current) return null;
+
           if (
-            current.startInstanceId === instanceId &&
-            current.startPinId === pinId
+            current.start.type === 'pin' &&
+            current.start.instanceId === instanceId &&
+            current.start.pinId === pinId
           ) {
             isDrawingWireRef.current = false;
             return null;
@@ -419,35 +505,22 @@ export function ProjectCanvas() {
           let waypoints: { x: number; y: number }[] = [];
           if (project) {
             const placed = project.placedComponents ?? [];
-            const startPlaced = placed.find(
-              p => p.instanceId === current.startInstanceId
-            );
             const endPlaced = placed.find(p => p.instanceId === instanceId);
-            if (startPlaced && endPlaced) {
-              const startComp = findComponent(
-                startPlaced.libraryId,
-                startPlaced.componentId
-              );
+            if (endPlaced) {
               const endComp = findComponent(
                 endPlaced.libraryId,
                 endPlaced.componentId
               );
-              if (startComp && endComp) {
-                const startPt = getPinConnectionPoint(
-                  startPlaced,
-                  startComp,
-                  current.startPinId,
-                  GRID
-                );
+              if (endComp) {
                 const endPt = getPinConnectionPoint(
                   endPlaced,
                   endComp,
                   pinId,
                   GRID
                 );
-                if (startPt && endPt) {
+                if (endPt) {
                   waypoints = buildAutoRouteWaypoints(
-                    startPt,
+                    current.startPosition,
                     current.startPinSide,
                     endPt,
                     snapToGrid
@@ -459,12 +532,14 @@ export function ProjectCanvas() {
 
           const wire: Wire = {
             id: crypto.randomUUID(),
-            start: {
-              instanceId: current.startInstanceId,
-              pinId: current.startPinId,
+            start: current.start,
+            end: {
+              type: 'pin',
+              instanceId,
+              pinId,
             },
-            end: { instanceId, pinId },
             waypoints,
+            color: current.color,
           };
           addWire(wire);
           isDrawingWireRef.current = false;
@@ -473,6 +548,70 @@ export function ProjectCanvas() {
       }
     },
     [pan, setWireInProgress, addWire, project, findComponent]
+  );
+
+  const handleWaypointClick = useCallback(
+    (wireId: string, waypointIndex: number, e: React.MouseEvent) => {
+      e.stopPropagation();
+      const rect = containerRef.current?.getBoundingClientRect();
+      const canvasX = rect ? snapToGrid(e.clientX - rect.left - pan.x) : 0;
+      const canvasY = rect ? snapToGrid(e.clientY - rect.top - pan.y) : 0;
+
+      const sourceWire = project?.wires?.find(w => w.id === wireId);
+      if (!sourceWire) return;
+
+      const waypointPos = sourceWire.waypoints[waypointIndex];
+      if (!waypointPos) return;
+
+      if (!isDrawingWireRef.current) {
+        setWireInProgress({
+          start: {
+            type: 'waypoint',
+            wireId,
+            waypointIndex,
+          },
+          startPinSide: 'right',
+          startPosition: waypointPos,
+          previewX: canvasX,
+          previewY: canvasY,
+          color: sourceWire.color,
+        });
+      } else {
+        setWireInProgressState(current => {
+          if (!current) return null;
+
+          if (
+            current.start.type === 'waypoint' &&
+            current.start.wireId === wireId &&
+            current.start.waypointIndex === waypointIndex
+          ) {
+            isDrawingWireRef.current = false;
+            return null;
+          }
+
+          const wire: Wire = {
+            id: crypto.randomUUID(),
+            start: current.start,
+            end: {
+              type: 'waypoint',
+              wireId,
+              waypointIndex,
+            },
+            waypoints: buildAutoRouteWaypoints(
+              current.startPosition,
+              current.startPinSide,
+              waypointPos,
+              snapToGrid
+            ),
+            color: current.color,
+          };
+          addWire(wire);
+          isDrawingWireRef.current = false;
+          return null;
+        });
+      }
+    },
+    [pan, setWireInProgress, addWire, project]
   );
 
   const handleSegmentMouseDown = useCallback(
@@ -498,6 +637,23 @@ export function ProjectCanvas() {
     [project]
   );
 
+  const handleWaypointMouseDown = useCallback(
+    (wireId: string, waypointIndex: number, e: React.MouseEvent) => {
+      e.stopPropagation();
+      const wire = project?.wires?.find(w => w.id === wireId);
+      if (!wire) return;
+      setWaypointDrag({
+        wireId,
+        waypointIndex,
+        startMouseX: e.clientX,
+        startMouseY: e.clientY,
+        originalWaypoints: [...wire.waypoints],
+        liveWaypoints: [...wire.waypoints],
+      });
+    },
+    [project]
+  );
+
   const handleWireClick = useCallback((wireId: string, e: React.MouseEvent) => {
     if (isDrawingWireRef.current) return;
     if (justDraggedWireRef.current) {
@@ -511,34 +667,39 @@ export function ProjectCanvas() {
 
   const getWireEndpoints = useCallback(
     (wire: Wire) => {
-      const placed = project!.placedComponents ?? [];
-      const startPlaced = placed.find(
-        p => p.instanceId === wire.start.instanceId
-      );
-      const endPlaced = placed.find(p => p.instanceId === wire.end.instanceId);
-      if (!startPlaced || !endPlaced) return null;
-      const startComp = findComponent(
-        startPlaced.libraryId,
-        startPlaced.componentId
-      );
-      const endComp = findComponent(endPlaced.libraryId, endPlaced.componentId);
-      if (!startComp || !endComp) return null;
-      const startPt = getPinConnectionPoint(
-        startPlaced,
-        startComp,
-        wire.start.pinId,
-        GRID
-      );
-      const endPt = getPinConnectionPoint(
-        endPlaced,
-        endComp,
-        wire.end.pinId,
-        GRID
-      );
+      const startPt = getEndpointPosition(wire.start);
+      const endPt = getEndpointPosition(wire.end);
       if (!startPt || !endPt) return null;
+
+      let startPlaced: PlacedComponent | undefined;
+      let startComp: Component | undefined;
+      let endPlaced: PlacedComponent | undefined;
+      let endComp: Component | undefined;
+
+      if (wire.start.type === 'pin') {
+        const placed = project?.placedComponents ?? [];
+        const instanceId = wire.start.instanceId;
+        startPlaced = placed.find(p => p.instanceId === instanceId);
+        if (startPlaced) {
+          startComp = findComponent(
+            startPlaced.libraryId,
+            startPlaced.componentId
+          );
+        }
+      }
+
+      if (wire.end.type === 'pin') {
+        const placed = project?.placedComponents ?? [];
+        const instanceId = wire.end.instanceId;
+        endPlaced = placed.find(p => p.instanceId === instanceId);
+        if (endPlaced) {
+          endComp = findComponent(endPlaced.libraryId, endPlaced.componentId);
+        }
+      }
+
       return { startPlaced, endPlaced, startComp, endComp, startPt, endPt };
     },
-    [project, findComponent]
+    [project, findComponent, getEndpointPosition]
   );
 
   const handleGhostClick = useCallback(
@@ -597,36 +758,11 @@ export function ProjectCanvas() {
       onContextMenu={e => e.preventDefault()}
     >
       <GridCanvas grid={GRID} panX={pan.x} panY={pan.y}>
-        {(project.wires ?? []).map(wire => {
-          const startPlaced = placedComponents.find(
-            p => p.instanceId === wire.start.instanceId
-          );
-          const endPlaced = placedComponents.find(
-            p => p.instanceId === wire.end.instanceId
-          );
-          if (!startPlaced || !endPlaced) return null;
-          const startComp = findComponent(
-            startPlaced.libraryId,
-            startPlaced.componentId
-          );
-          const endComp = findComponent(
-            endPlaced.libraryId,
-            endPlaced.componentId
-          );
-          if (!startComp || !endComp) return null;
-          const startPt = getPinConnectionPoint(
-            startPlaced,
-            startComp,
-            wire.start.pinId,
-            GRID
-          );
-          const endPt = getPinConnectionPoint(
-            endPlaced,
-            endComp,
-            wire.end.pinId,
-            GRID
-          );
-          if (!startPt || !endPt) return null;
+        {(project?.wires ?? []).map(wire => {
+          const eps = getWireEndpoints(wire);
+          if (!eps) return null;
+          const { startPt, endPt } = eps;
+
           return (
             <CanvasWire
               key={wire.id}
@@ -636,12 +772,20 @@ export function ProjectCanvas() {
                 startPt,
                 ...(wireSegDrag?.wireId === wire.id
                   ? wireSegDrag.liveWaypoints
-                  : wire.waypoints),
+                  : waypointDrag?.wireId === wire.id
+                    ? waypointDrag.liveWaypoints
+                    : wire.waypoints),
                 endPt,
               ]}
               onWireClick={e => handleWireClick(wire.id, e)}
               onSegmentMouseDown={(segIdx, isHoriz, e) =>
                 handleSegmentMouseDown(wire.id, segIdx, isHoriz, e)
+              }
+              onWaypointMouseDown={(wpIdx, e) =>
+                handleWaypointMouseDown(wire.id, wpIdx, e)
+              }
+              onWaypointClick={(wpIdx, e) =>
+                handleWaypointClick(wire.id, wpIdx, e)
               }
               onGhostClick={(segIdx, gx, gy) =>
                 handleGhostClick(wire.id, segIdx, gx, gy)
@@ -670,21 +814,7 @@ export function ProjectCanvas() {
 
         {wireInProgress &&
           (() => {
-            const startPlaced = placedComponents.find(
-              p => p.instanceId === wireInProgress.startInstanceId
-            );
-            if (!startPlaced) return null;
-            const startComp = findComponent(
-              startPlaced.libraryId,
-              startPlaced.componentId
-            );
-            if (!startComp) return null;
-            const startPt = getPinConnectionPoint(
-              startPlaced,
-              startComp,
-              wireInProgress.startPinId,
-              GRID
-            );
+            const startPt = wireInProgress.startPosition;
             if (!startPt) return null;
             return (
               <CanvasWire
@@ -694,6 +824,7 @@ export function ProjectCanvas() {
                   wireInProgress.startPinSide,
                   { x: wireInProgress.previewX, y: wireInProgress.previewY }
                 )}
+                color={wireInProgress.color}
               />
             );
           })()}
@@ -818,19 +949,43 @@ export function ProjectCanvas() {
 
       {selectedWireId &&
         (() => {
-          const wire = project.wires?.find(w => w.id === selectedWireId);
+          const wire = project?.wires?.find(w => w.id === selectedWireId);
           if (!wire) return null;
           const eps = getWireEndpoints(wire);
           if (!eps) return null;
-          const startPin = eps.startComp.pins.find(
-            p => p.id === wire.start.pinId
-          );
-          const endPin = eps.endComp.pins.find(p => p.id === wire.end.pinId);
+
+          let startLabel = 'Unknown';
+          let endLabel = 'Unknown';
+
+          if (wire.start.type === 'pin' && eps.startComp) {
+            const pinId = wire.start.pinId;
+            const startPin = eps.startComp.pins.find(
+              (p: { id: string; name?: string }) => p.id === pinId
+            );
+            startLabel = `${eps.startComp.name} / ${startPin?.name ?? pinId}`;
+          } else if (wire.start.type === 'waypoint') {
+            const wireId = wire.start.wireId;
+            const sourceWire = project?.wires?.find(w => w.id === wireId);
+            startLabel = `Waypoint on Wire ${sourceWire ? sourceWire.id.substring(0, 8) : wireId}`;
+          }
+
+          if (wire.end.type === 'pin' && eps.endComp) {
+            const pinId = wire.end.pinId;
+            const endPin = eps.endComp.pins.find(
+              (p: { id: string; name?: string }) => p.id === pinId
+            );
+            endLabel = `${eps.endComp.name} / ${endPin?.name ?? pinId}`;
+          } else if (wire.end.type === 'waypoint') {
+            const wireId = wire.end.wireId;
+            const sourceWire = project?.wires?.find(w => w.id === wireId);
+            endLabel = `Waypoint on Wire ${sourceWire ? sourceWire.id.substring(0, 8) : wireId}`;
+          }
+
           return (
             <WirePropertiesSidebar
               wireId={wire.id}
-              startLabel={`${eps.startComp.name} / ${startPin?.name ?? wire.start.pinId}`}
-              endLabel={`${eps.endComp.name} / ${endPin?.name ?? wire.end.pinId}`}
+              startLabel={startLabel}
+              endLabel={endLabel}
               color={wire.color ?? DEFAULT_WIRE_COLOR}
               onColorChange={c => updateWireColor(wire.id, c)}
               onClose={() => setSelectedWireId(null)}
@@ -879,6 +1034,7 @@ export function ProjectCanvas() {
               label: 'Delete wire',
               icon: <Trash2 size={13} />,
               danger: true,
+              shortcut: 'Del',
               onClick: () => {
                 removeWire(wireCtxMenu.wireId);
                 setSelectedWireId(null);
@@ -917,6 +1073,7 @@ export function ProjectCanvas() {
               label: 'Delete wire',
               icon: <Trash2 size={13} />,
               danger: true,
+              shortcut: 'Del',
               onClick: () => {
                 removeWire(wireCtxMenu.wireId);
                 setSelectedWireId(null);
@@ -973,6 +1130,7 @@ export function ProjectCanvas() {
                   label: 'Delete',
                   icon: <Trash2 size={13} />,
                   danger: true,
+                  shortcut: 'Del',
                   onClick: () => {
                     removePlacedComponent(contextMenu.instanceId);
                     setSelectedInstanceId(null);

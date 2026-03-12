@@ -3,6 +3,7 @@ import { createContext } from 'react';
 import type { Component } from '../types/component';
 import type { LabelPosition, Project } from '../types/project';
 import type { Wire } from '../types/wire';
+import type { HistoryEntry } from './useProjectHistory';
 
 export interface ProjectContextValue {
   project: Project | null;
@@ -38,6 +39,14 @@ export interface ProjectContextValue {
   removeWire: (wireId: string) => void;
   updateWireWaypoints: (wireId: string, waypoints: Wire['waypoints']) => void;
   updateWireColor: (wireId: string, color: string) => void;
+
+  canUndo: boolean;
+  canRedo: boolean;
+  undo: () => void;
+  redo: () => void;
+  restoreToPoint: (index: number) => void;
+  past: HistoryEntry[];
+  future: HistoryEntry[];
 }
 
 export const ProjectContext = createContext<ProjectContextValue | undefined>(

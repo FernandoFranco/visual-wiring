@@ -1,12 +1,13 @@
 import './ProjectPage.css';
 
-import { Braces, Download, Settings } from 'lucide-react';
-import { useState } from 'react';
+import { Braces, Download, History, Settings } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AppBar } from '../components/AppBar';
 import { ConfirmationModal } from '../components/ConfirmationModal';
 import { DropdownMenu } from '../components/DropdownMenu';
+import { HistoryModal } from '../components/HistoryModal';
 import { IconButton } from '../components/IconButton';
 import { JsonViewerModal } from '../components/JsonViewerModal';
 import { ProjectCanvas } from '../components/ProjectCanvas';
@@ -16,9 +17,32 @@ import { ROUTES } from '../routes';
 
 export function ProjectPage() {
   const navigate = useNavigate();
-  const { project, saveProject, closeProject } = useProject();
+  const {
+    project,
+    saveProject,
+    closeProject,
+    undo,
+    canUndo,
+    past,
+    restoreToPoint,
+  } = useProject();
   const [isCloseConfirmOpen, setIsCloseConfirmOpen] = useState(false);
   const [isJsonModalOpen, setIsJsonModalOpen] = useState(false);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        if (canUndo) {
+          undo();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [undo, canUndo]);
 
   if (!project) {
     return null;
@@ -50,6 +74,11 @@ export function ProjectPage() {
           }
           items={[
             {
+              label: 'View History',
+              icon: <History size={14} />,
+              onClick: () => setIsHistoryModalOpen(true),
+            },
+            {
               label: 'View JSON',
               icon: <Braces size={14} />,
               onClick: () => setIsJsonModalOpen(true),
@@ -68,6 +97,13 @@ export function ProjectPage() {
         title="Project JSON"
         data={project}
         defaultExpandDepth={2}
+      />
+
+      <HistoryModal
+        isOpen={isHistoryModalOpen}
+        onClose={() => setIsHistoryModalOpen(false)}
+        past={past}
+        onRestoreToPoint={restoreToPoint}
       />
 
       <ConfirmationModal

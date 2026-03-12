@@ -19,12 +19,7 @@ export function JsonViewerModal({
   defaultExpandDepth = 1,
 }: JsonViewerModalProps) {
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={title}
-      className="json-viewer-modal"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title={title}>
       <JsonViewer data={data} defaultExpandDepth={defaultExpandDepth} />
     </Modal>
   );

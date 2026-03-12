@@ -121,45 +121,47 @@ export function PinSection({ side, pins, onChange }: PinSectionProps) {
         isOpen={isOpen}
         onToggle={() => setIsOpen(o => !o)}
       >
-        {pins.length === 0 ? (
-          <p className="pin-section__empty">No pins yet</p>
-        ) : (
-          <ul className="pin-section__list">
-            {pins.map(pin => (
-              <li key={pin.id} className="pin-section__item">
-                {editingId === pin.id ? (
-                  <input
-                    ref={inputRef}
-                    className="pin-section__input"
-                    value={draftName}
-                    placeholder="Pin name..."
-                    onChange={e => setDraftName(e.target.value)}
-                    onBlur={commitAndClose}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter') commitAndContinue();
-                      if (e.key === 'Escape') cancel();
-                    }}
-                  />
-                ) : (
-                  <span
-                    className="pin-section__name"
-                    onDoubleClick={() => startEdit(pin)}
-                    title="Double-click to rename"
+        <div className="pin-section__content">
+          {pins.length === 0 ? (
+            <p className="pin-section__empty">No pins yet</p>
+          ) : (
+            <ul className="pin-section__list">
+              {pins.map(pin => (
+                <li key={pin.id} className="pin-section__item">
+                  {editingId === pin.id ? (
+                    <input
+                      ref={inputRef}
+                      className="pin-section__input"
+                      value={draftName}
+                      placeholder="Pin name..."
+                      onChange={e => setDraftName(e.target.value)}
+                      onBlur={commitAndClose}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') commitAndContinue();
+                        if (e.key === 'Escape') cancel();
+                      }}
+                    />
+                  ) : (
+                    <span
+                      className="pin-section__name"
+                      onDoubleClick={() => startEdit(pin)}
+                      title="Double-click to rename"
+                    >
+                      {pin.name}
+                    </span>
+                  )}
+                  <IconButton
+                    className="pin-section__delete-btn"
+                    title="Delete pin"
+                    onClick={() => deletePin(pin.id)}
                   >
-                    {pin.name}
-                  </span>
-                )}
-                <IconButton
-                  className="pin-section__delete-btn"
-                  title="Delete pin"
-                  onClick={() => deletePin(pin.id)}
-                >
-                  <Trash2 size={11} />
-                </IconButton>
-              </li>
-            ))}
-          </ul>
-        )}
+                    <Trash2 size={11} />
+                  </IconButton>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </ExpansionPanel>
     </div>
   );
