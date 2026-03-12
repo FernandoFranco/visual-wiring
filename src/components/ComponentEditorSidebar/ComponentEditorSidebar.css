@@ -35,7 +35,7 @@
   gap: 0.5rem;
 }
 
-.component-editor-sidebar__size-row .input-wrapper {
+.component-editor-sidebar__size-input {
   flex: 1;
   min-width: 0;
 }

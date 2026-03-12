@@ -70,30 +70,34 @@ export function ComponentEditorSidebar({
           Minimum size (grid units)
         </p>
         <div className="component-editor-sidebar__size-row">
-          <Input
-            id="min-width"
-            variant="sm"
-            inline
-            label="W"
-            type="number"
-            min={1}
-            value={minWidth}
-            onChange={e =>
-              onMinWidthChange(Math.max(1, Number(e.target.value)))
-            }
-          />
-          <Input
-            id="min-height"
-            variant="sm"
-            inline
-            label="H"
-            type="number"
-            min={1}
-            value={minHeight}
-            onChange={e =>
-              onMinHeightChange(Math.max(1, Number(e.target.value)))
-            }
-          />
+          <div className="component-editor-sidebar__size-input">
+            <Input
+              id="min-width"
+              variant="sm"
+              inline
+              label="W"
+              type="number"
+              min={1}
+              value={minWidth}
+              onChange={e =>
+                onMinWidthChange(Math.max(1, Number(e.target.value)))
+              }
+            />
+          </div>
+          <div className="component-editor-sidebar__size-input">
+            <Input
+              id="min-height"
+              variant="sm"
+              inline
+              label="H"
+              type="number"
+              min={1}
+              value={minHeight}
+              onChange={e =>
+                onMinHeightChange(Math.max(1, Number(e.target.value)))
+              }
+            />
+          </div>
         </div>
       </div>
 

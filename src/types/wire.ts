@@ -1,7 +1,14 @@
-export interface WireEndpoint {
-  instanceId: string;
-  pinId: string;
-}
+export type WireEndpoint =
+  | {
+      type: 'pin';
+      instanceId: string;
+      pinId: string;
+    }
+  | {
+      type: 'waypoint';
+      wireId: string;
+      waypointIndex: number;
+    };
 
 export interface Wire {
   id: string;

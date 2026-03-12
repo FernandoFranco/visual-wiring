@@ -15,6 +15,7 @@ export interface ContextMenuItem {
   onClick?: () => void;
   subItems?: ContextMenuSubItem[];
   danger?: boolean;
+  shortcut?: string;
 }
 
 export interface ContextMenuProps {
@@ -32,14 +33,12 @@ export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const [openSubIndex, setOpenSubIndex] = useState<number | null>(null);
 
-  // Adjust position so menu never overflows viewport — computed at render time
   const estimatedH = items.length * ITEM_HEIGHT + MENU_PADDING;
   const ax =
     x + MENU_WIDTH > window.innerWidth ? Math.max(0, x - MENU_WIDTH) : x;
   const ay =
     y + estimatedH > window.innerHeight ? Math.max(0, y - estimatedH) : y;
 
-  // Close on outside click or Escape
   useEffect(() => {
     const handleDown = (e: MouseEvent) => {
       if (!menuRef.current?.contains(e.target as Node)) onClose();
@@ -74,6 +73,9 @@ export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
         >
           {item.icon && <span className="context-menu__icon">{item.icon}</span>}
           <span className="context-menu__label">{item.label}</span>
+          {item.shortcut && (
+            <span className="context-menu__shortcut">{item.shortcut}</span>
+          )}
           {item.subItems && (
             <ChevronRight size={12} className="context-menu__chevron" />
           )}

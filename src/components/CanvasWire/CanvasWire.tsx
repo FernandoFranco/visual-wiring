@@ -33,6 +33,14 @@ export interface CanvasWireProps {
     mouseX: number,
     mouseY: number
   ) => void;
+  onWaypointMouseDown?: (
+    waypointIndex: number,
+    e: React.MouseEvent<SVGCircleElement>
+  ) => void;
+  onWaypointClick?: (
+    waypointIndex: number,
+    e: React.MouseEvent<SVGCircleElement>
+  ) => void;
 }
 
 const WAYPOINT_R = 4;
@@ -49,6 +57,8 @@ export function CanvasWire({
   onSegmentContextMenu,
   onGhostClick,
   onWaypointContextMenu,
+  onWaypointMouseDown,
+  onWaypointClick,
 }: CanvasWireProps) {
   const [hoveredSegIdx, setHoveredSegIdx] = useState<number | null>(null);
 
@@ -200,6 +210,14 @@ export function CanvasWire({
             cx={wp.x}
             cy={wp.y}
             r={WAYPOINT_HIT_R}
+            onClick={e => {
+              e.stopPropagation();
+              onWaypointClick?.(i, e);
+            }}
+            onMouseDown={e => {
+              e.stopPropagation();
+              onWaypointMouseDown?.(i, e);
+            }}
             onContextMenu={e => {
               e.preventDefault();
               e.stopPropagation();

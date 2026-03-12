@@ -18,6 +18,7 @@ export interface Project {
   name: string;
   createdAt: string;
   updatedAt: string;
+  version?: number;
   libraries: Library[];
   placedComponents?: PlacedComponent[];
   wires?: Wire[];

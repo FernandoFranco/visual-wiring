@@ -3,6 +3,12 @@ import type { Library } from '../types/library';
 import type { LabelPosition, PlacedComponent, Project } from '../types/project';
 import type { Wire } from '../types/wire';
 import { sanitizeFilename, saveFile } from './fileHelper';
+import {
+  CURRENT_PROJECT_VERSION,
+  getMigrationPath,
+  migrateProject,
+  needsMigration,
+} from './projectMigrations';
 
 export function createDefaultLibrary(): Library {
   return {
@@ -18,6 +24,7 @@ export function createNewProject(name: string): Project {
     name,
     createdAt: now,
     updatedAt: now,
+    version: CURRENT_PROJECT_VERSION,
     libraries: [createDefaultLibrary()],
   };
 }
@@ -29,13 +36,24 @@ export function loadProjectFromFile(file: File): Promise<Project> {
     reader.onload = event => {
       try {
         const content = event.target?.result as string;
-        const project = JSON.parse(content) as Project;
+        let project = JSON.parse(content) as Project;
         if (!project.name) {
           throw new Error('Invalid project format: missing name field');
         }
         if (!Array.isArray(project.libraries)) {
           project.libraries = [createDefaultLibrary()];
         }
+
+        if (needsMigration(project)) {
+          const migrationPath = getMigrationPath(project);
+          console.log(
+            `Imported project needs migration from v${project.version ?? 0} to v${CURRENT_PROJECT_VERSION}`,
+            `Path: ${migrationPath.join(' → ')}`
+          );
+
+          project = migrateProject(project);
+        }
+
         resolve(project);
       } catch (error) {
         reject(
@@ -53,7 +71,11 @@ export function loadProjectFromFile(file: File): Promise<Project> {
 }
 
 export function saveProjectToFile(project: Project): void {
-  const projectToSave = { ...project, updatedAt: new Date().toISOString() };
+  const projectToSave = {
+    ...project,
+    version: CURRENT_PROJECT_VERSION,
+    updatedAt: new Date().toISOString(),
+  };
   const json = JSON.stringify(projectToSave, null, 2);
   saveFile(json, `${sanitizeFilename(project.name)}.json`);
 }
@@ -255,11 +277,14 @@ export function removeComponentFromLibrary(
     .map(p => p.instanceId);
 
   const wiresToRemove = (project.wires ?? [])
-    .filter(
-      w =>
-        instancesToRemove.includes(w.start.instanceId) ||
-        instancesToRemove.includes(w.end.instanceId)
-    )
+    .filter(w => {
+      const startInRemove =
+        w.start.type === 'pin' &&
+        instancesToRemove.includes(w.start.instanceId);
+      const endInRemove =
+        w.end.type === 'pin' && instancesToRemove.includes(w.end.instanceId);
+      return startInRemove || endInRemove;
+    })
     .map(w => w.id);
 
   return {

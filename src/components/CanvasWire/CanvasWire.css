@@ -57,7 +57,7 @@
   fill: transparent;
   stroke: none;
   pointer-events: all;
-  cursor: pointer;
+  cursor: move;
 }
 
 .canvas-wire__ghost {
