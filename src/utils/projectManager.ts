@@ -1,6 +1,6 @@
 import type { Component } from '../types/component';
 import type { Library } from '../types/library';
-import type { PlacedComponent, Project } from '../types/project';
+import type { LabelPosition, PlacedComponent, Project } from '../types/project';
 import type { Wire } from '../types/wire';
 import { sanitizeFilename, saveFile } from './fileHelper';
 
@@ -153,6 +153,20 @@ export function setPlacedComponentRotation(
   };
 }
 
+export function updatePlacedComponentInstance(
+  project: Project,
+  instanceId: string,
+  updates: { alias?: string; labelPosition?: LabelPosition }
+): Project {
+  return {
+    ...project,
+    placedComponents: (project.placedComponents ?? []).map(p =>
+      p.instanceId === instanceId ? { ...p, ...updates } : p
+    ),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
 export function removePlacedComponent(
   project: Project,
   instanceId: string
@@ -227,6 +241,41 @@ export function updateWireColor(
     wires: (project.wires ?? []).map(w =>
       w.id === wireId ? { ...w, color } : w
     ),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export function removeComponentFromLibrary(
+  project: Project,
+  libraryId: string,
+  componentId: string
+): Project {
+  const instancesToRemove = (project.placedComponents ?? [])
+    .filter(p => p.libraryId === libraryId && p.componentId === componentId)
+    .map(p => p.instanceId);
+
+  const wiresToRemove = (project.wires ?? [])
+    .filter(
+      w =>
+        instancesToRemove.includes(w.start.instanceId) ||
+        instancesToRemove.includes(w.end.instanceId)
+    )
+    .map(w => w.id);
+
+  return {
+    ...project,
+    libraries: project.libraries.map(lib =>
+      lib.id === libraryId
+        ? {
+            ...lib,
+            components: lib.components.filter(c => c.id !== componentId),
+          }
+        : lib
+    ),
+    placedComponents: (project.placedComponents ?? []).filter(
+      p => !instancesToRemove.includes(p.instanceId)
+    ),
+    wires: (project.wires ?? []).filter(w => !wiresToRemove.includes(w.id)),
     updatedAt: new Date().toISOString(),
   };
 }

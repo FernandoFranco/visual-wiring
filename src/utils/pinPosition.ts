@@ -1,11 +1,11 @@
 import type { Component } from '../types/component';
 import type { PlacedComponent } from '../types/project';
+import { snapToGridCeil } from './gridUtils';
 
 function buildLayout(comp: Component, grid: number) {
   const PIN_HALF = grid / 2;
   const PIN_SPACING = grid * 2;
   const BODY_PAD = grid;
-  const snap = (v: number) => Math.ceil(v / grid) * grid;
 
   const topPins = comp.pins.filter(p => p.side === 'up');
   const bottomPins = comp.pins.filter(p => p.side === 'down');
@@ -18,11 +18,13 @@ function buildLayout(comp: Component, grid: number) {
   const minWidth = comp.minWidth ?? 4;
   const minHeight = comp.minHeight ?? 4;
 
-  const bodyW = snap(
-    Math.max(grid * minWidth, 2 * BODY_PAD + (hCount - 1) * PIN_SPACING)
+  const bodyW = snapToGridCeil(
+    Math.max(grid * minWidth, 2 * BODY_PAD + (hCount - 1) * PIN_SPACING),
+    grid
   );
-  const bodyH = snap(
-    Math.max(grid * minHeight, 2 * BODY_PAD + (vCount - 1) * PIN_SPACING)
+  const bodyH = snapToGridCeil(
+    Math.max(grid * minHeight, 2 * BODY_PAD + (vCount - 1) * PIN_SPACING),
+    grid
   );
 
   const bx = grid;

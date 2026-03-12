@@ -1,5 +1,7 @@
 import { createContext, useContext } from 'react';
 
+import { GRID } from '../../utils/gridUtils';
+
 export interface GridCanvasContextValue {
   grid: number;
   canvasWidth: number;
@@ -9,7 +11,7 @@ export interface GridCanvasContextValue {
 }
 
 export const GridCanvasContext = createContext<GridCanvasContextValue>({
-  grid: 10,
+  grid: GRID,
   canvasWidth: 600,
   canvasHeight: 400,
   panX: 0,

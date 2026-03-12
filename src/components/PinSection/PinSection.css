@@ -116,3 +116,7 @@
   background-color: #fee2e2;
   color: #dc2626;
 }
+
+.pin-section .expansion-panel__body-inner {
+  padding: 0 0.48rem;
+}

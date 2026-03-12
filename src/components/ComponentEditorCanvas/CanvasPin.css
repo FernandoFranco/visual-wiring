@@ -11,8 +11,8 @@
   pointer-events: none;
 }
 
-.cec-pin__label--outside {
-  fill: #475569;
+.cec-pin__label--inside {
+  fill: #334155;
 }
 
 .cec-pin--connectable {
@@ -22,7 +22,7 @@
 .cec-pin--connectable:hover .cec-pin__rect {
   fill: #22c55e;
   stroke: #16a34a;
-  stroke-width: 1;
+  stroke-width: 1.5;
 }
 
 .cec-pin--wire-target .cec-pin__rect {

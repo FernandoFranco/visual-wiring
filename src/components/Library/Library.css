@@ -145,6 +145,12 @@
   text-overflow: ellipsis;
 }
 
+.library__component__header-actions {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+
 .library__component__header-edit-btn {
   display: flex;
   align-items: center;
@@ -174,10 +180,52 @@
   color: #0284c7;
 }
 
-.library__component .grid-canvas {
+.library__component__header-delete-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  border-radius: 0.25rem;
+  opacity: 0;
+  padding: 0;
+  transition:
+    opacity 0.15s ease,
+    background-color 0.1s ease,
+    color 0.1s ease;
+}
+
+.library__component:hover .library__component__header-delete-btn {
+  opacity: 1;
+}
+
+.library__component__header-delete-btn:hover {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.library__component__preview {
   position: relative;
   width: 100%;
-  height: 80px;
+  height: 100px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.library__component__preview .grid-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.library__component .grid-canvas {
+  position: relative;
 }
 
 .library__empty {

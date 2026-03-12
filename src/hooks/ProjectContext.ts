@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 
 import type { Component } from '../types/component';
-import type { Project } from '../types/project';
+import type { LabelPosition, Project } from '../types/project';
 import type { Wire } from '../types/wire';
 
 export interface ProjectContextValue {
@@ -16,6 +16,7 @@ export interface ProjectContextValue {
   renameLibrary: (id: string, name: string) => void;
   addComponent: (libraryId: string, component: Component) => void;
   updateComponent: (libraryId: string, component: Component) => void;
+  removeComponent: (libraryId: string, componentId: string) => void;
   placeComponent: (
     libraryId: string,
     componentId: string,
@@ -28,6 +29,10 @@ export interface ProjectContextValue {
   setPlacedComponentRotation: (
     instanceId: string,
     rotation: 0 | 90 | 180 | 270
+  ) => void;
+  updatePlacedComponentInstance: (
+    instanceId: string,
+    updates: { alias?: string; labelPosition?: LabelPosition }
   ) => void;
   addWire: (wire: Wire) => void;
   removeWire: (wireId: string) => void;

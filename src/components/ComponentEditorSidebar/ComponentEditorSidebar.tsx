@@ -1,7 +1,10 @@
 import './ComponentEditorSidebar.css';
 
 import type { Pin, PinSide } from '../../types/pin';
+import type { LabelPosition } from '../../types/project';
+import { ColorPicker } from '../ColorPicker';
 import { Input } from '../Input';
+import { LabelPositionPicker } from '../LabelPositionPicker';
 import { PinSection } from '../PinSection';
 
 export interface ComponentEditorSidebarProps {
@@ -12,6 +15,10 @@ export interface ComponentEditorSidebarProps {
   onMinWidthChange: (value: number) => void;
   minHeight: number;
   onMinHeightChange: (value: number) => void;
+  color: string;
+  onColorChange: (value: string) => void;
+  defaultLabelPosition: LabelPosition;
+  onDefaultLabelPositionChange: (value: LabelPosition) => void;
   pins: Pin[];
   onPinsChange: (pins: Pin[]) => void;
   onSave: () => void;
@@ -27,6 +34,10 @@ export function ComponentEditorSidebar({
   onMinWidthChange,
   minHeight,
   onMinHeightChange,
+  color,
+  onColorChange,
+  defaultLabelPosition,
+  onDefaultLabelPositionChange,
   pins,
   onPinsChange,
 }: ComponentEditorSidebarProps) {
@@ -84,6 +95,26 @@ export function ComponentEditorSidebar({
             }
           />
         </div>
+      </div>
+
+      <div className="component-editor-sidebar__divider" />
+
+      <div className="component-editor-sidebar__section">
+        <ColorPicker
+          label="Background color"
+          value={color}
+          onChange={onColorChange}
+        />
+      </div>
+
+      <div className="component-editor-sidebar__divider" />
+
+      <div className="component-editor-sidebar__section">
+        <LabelPositionPicker
+          label="Default label position"
+          value={defaultLabelPosition}
+          onChange={onDefaultLabelPositionChange}
+        />
       </div>
 
       <div className="component-editor-sidebar__divider" />

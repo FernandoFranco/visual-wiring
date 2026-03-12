@@ -28,6 +28,14 @@
   pointer-events: none;
   user-select: none;
 }
+
+.cec-name--external {
+  fill: #1e293b;
+}
+
+.component-body--dragging .cec-name--external {
+  fill: #0284c7;
+}
 .component-body--selected .cec-body {
   stroke: #3b82f6;
   stroke-width: 2;

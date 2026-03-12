@@ -10,6 +10,7 @@ import {
   loadProjectFromFile,
   movePlacedComponent,
   placeComponentOnCanvas,
+  removeComponentFromLibrary,
   removePlacedComponent,
   removeWire,
   renameProjectLibrary,
@@ -17,6 +18,7 @@ import {
   saveProjectToFile,
   setPlacedComponentRotation,
   updateComponentInLibrary,
+  updatePlacedComponentInstance,
   updateProjectName,
   updateWireColor,
   updateWireWaypoints,
@@ -74,6 +76,11 @@ export function ProjectProvider({ children }: PropsWithChildren) {
     setProject(updateComponentInLibrary(project, libraryId, component));
   };
 
+  const removeComponent = (libraryId: string, componentId: string) => {
+    if (!project) return;
+    setProject(removeComponentFromLibrary(project, libraryId, componentId));
+  };
+
   const renameLibrary = (id: string, name: string) => {
     if (!project) return;
     setProject(renameProjectLibrary(project, id, name));
@@ -120,6 +127,17 @@ export function ProjectProvider({ children }: PropsWithChildren) {
     setProject(setPlacedComponentRotation(project, instanceId, rotation));
   };
 
+  const handleUpdatePlacedInstance = (
+    instanceId: string,
+    updates: {
+      alias?: string;
+      labelPosition?: import('../types/project').LabelPosition;
+    }
+  ) => {
+    if (!project) return;
+    setProject(updatePlacedComponentInstance(project, instanceId, updates));
+  };
+
   const handleAddWire = (wire: Wire) => {
     if (!project) return;
     setProject(addWire(project, wire));
@@ -149,6 +167,7 @@ export function ProjectProvider({ children }: PropsWithChildren) {
     createProject,
     loadProject,
     saveProject,
+    removeComponent,
     updateName,
     closeProject,
     renameLibrary,
@@ -159,6 +178,7 @@ export function ProjectProvider({ children }: PropsWithChildren) {
     removePlacedComponent: handleRemovePlaced,
     rotatePlacedComponent: handleRotatePlaced,
     setPlacedComponentRotation: handleSetRotation,
+    updatePlacedComponentInstance: handleUpdatePlacedInstance,
     addWire: handleAddWire,
     removeWire: handleRemoveWire,
     updateWireWaypoints: handleUpdateWireWaypoints,
