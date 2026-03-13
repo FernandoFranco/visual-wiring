@@ -4,6 +4,7 @@ import { BookCopy, Cloud, FolderInput } from 'lucide-react';
 import { useState } from 'react';
 
 import { useProject } from '../../hooks/useProject';
+import { useSnackbar } from '../../hooks/useSnackbar';
 import { Button } from '../Button';
 import { ConfirmationModal } from '../ConfirmationModal';
 import { Input } from '../Input';
@@ -25,6 +26,7 @@ export function LibraryManager(props: LibraryManagerProps) {
     renameLibrary,
     externalLibrariesStatus,
   } = useProject();
+  const { showSuccess, showError } = useSnackbar();
 
   const [isRenameLibraryModalOpen, setIsRenameLibraryModalOpen] =
     useState(false);
@@ -88,7 +90,12 @@ export function LibraryManager(props: LibraryManagerProps) {
   };
 
   const handleExport = (libraryId: string) => {
-    exportLibrary(libraryId);
+    try {
+      exportLibrary(libraryId);
+      showSuccess('Library exported successfully');
+    } catch {
+      showError('Failed to export library');
+    }
   };
 
   const handleRemove = (libraryId: string) => {
@@ -101,7 +108,12 @@ export function LibraryManager(props: LibraryManagerProps) {
       message: `Are you sure you want to remove the library "${library.name}"? This action cannot be undone.`,
       variant: 'danger',
       onConfirm: () => {
-        removeLibrary(libraryId);
+        try {
+          removeLibrary(libraryId);
+          showSuccess('Library removed successfully');
+        } catch {
+          showError('Failed to remove library');
+        }
         setConfirmModal(prev => ({ ...prev, isOpen: false }));
       },
     });
@@ -117,7 +129,12 @@ export function LibraryManager(props: LibraryManagerProps) {
       message: `Convert "${library.name}" to an internal library? This will create an editable copy with new component IDs. The external reference will be removed.`,
       variant: 'warning',
       onConfirm: () => {
-        convertExternalToInternal(libraryId);
+        try {
+          convertExternalToInternal(libraryId);
+          showSuccess('Library converted to internal successfully');
+        } catch {
+          showError('Failed to convert library');
+        }
         setConfirmModal(prev => ({ ...prev, isOpen: false }));
       },
     });
@@ -133,7 +150,12 @@ export function LibraryManager(props: LibraryManagerProps) {
 
   const handleRenameLibrary = () => {
     if (libraryToRename && libraryToRename.name.trim()) {
-      renameLibrary(libraryToRename.id, libraryToRename.name.trim());
+      try {
+        renameLibrary(libraryToRename.id, libraryToRename.name.trim());
+        showSuccess('Library renamed successfully');
+      } catch {
+        showError('Failed to rename library');
+      }
       setIsRenameLibraryModalOpen(false);
       setLibraryToRename(null);
     }

@@ -44,9 +44,11 @@ import {
 } from './ProjectContext';
 import { useProjectHistory } from './useProjectHistory';
 import { useProjectStorage } from './useProjectStorage';
+import { useSnackbar } from './useSnackbar';
 
 export function ProjectProvider(props: PropsWithChildren) {
   const storage = useProjectStorage();
+  const { showSuccess, showError, showInfo } = useSnackbar();
   const [project, setProject] = useState<Project | null>(() => {
     return storage.loadProject();
   });
@@ -357,23 +359,59 @@ export function ProjectProvider(props: PropsWithChildren) {
   ) => {
     if (!project) return;
 
-    if (asExternal && url) {
-      const updatedProject = addExternalLibrary(project, url, library.id);
-      setProject(updatedProject);
-    } else {
-      const libraryToAdd: Library = {
-        ...library,
-        sourceType: 'imported',
-        sourceUrl: url,
-      };
+    try {
+      if (asExternal && url) {
+        const libraryWithMetadata: Library = {
+          ...library,
+          sourceType: 'external',
+          sourceUrl: url,
+          lastFetched: new Date().toISOString(),
+        };
 
-      const updatedProject = {
-        ...project,
-        libraries: [...project.libraries, libraryToAdd],
-        updatedAt: new Date().toISOString(),
-      };
+        let updatedProject = addExternalLibrary(project, url, library.id);
+        updatedProject = {
+          ...updatedProject,
+          libraries: [...updatedProject.libraries, libraryWithMetadata],
+        };
 
-      setProject(updatedProject);
+        updatedProject = updateExternalLibraryStatus(
+          updatedProject,
+          library.id,
+          'online',
+          new Date().toISOString()
+        );
+
+        setProject(updatedProject);
+
+        loadedExternalLibraries.current.add(url);
+
+        setExternalLibrariesStatus(prev => [
+          ...prev,
+          {
+            url,
+            status: 'online',
+          },
+        ]);
+
+        showSuccess(`External library "${library.name}" added successfully`);
+      } else {
+        const libraryToAdd: Library = {
+          ...library,
+          sourceType: 'imported',
+          sourceUrl: url,
+        };
+
+        const updatedProject = {
+          ...project,
+          libraries: [...project.libraries, libraryToAdd],
+          updatedAt: new Date().toISOString(),
+        };
+
+        setProject(updatedProject);
+        showSuccess(`Library "${library.name}" imported successfully`);
+      }
+    } catch {
+      showError('Failed to import library');
     }
   };
 
@@ -384,39 +422,61 @@ export function ProjectProvider(props: PropsWithChildren) {
     let updatedProject = addExternalLibrary(project, url, tempId);
     setProject(updatedProject);
 
-    const result = await loadExternalLibrary(url);
+    showInfo('Loading external library...');
 
-    if (result.library) {
-      const libraryWithMetadata: Library = {
-        ...result.library,
-        id: tempId,
-        sourceType: 'external',
-        sourceUrl: url,
-      };
+    try {
+      const result = await loadExternalLibrary(url);
 
-      updatedProject = {
-        ...updatedProject,
-        libraries: [...updatedProject.libraries, libraryWithMetadata],
-      };
+      if (result.library) {
+        const libraryWithMetadata: Library = {
+          ...result.library,
+          id: tempId,
+          sourceType: 'external',
+          sourceUrl: url,
+        };
+
+        updatedProject = {
+          ...updatedProject,
+          libraries: [...updatedProject.libraries, libraryWithMetadata],
+        };
+
+        loadedExternalLibraries.current.add(url);
+
+        if (result.status === 'online') {
+          showSuccess(
+            `External library "${result.library.name}" loaded successfully`
+          );
+        } else if (result.status === 'cached') {
+          showInfo(
+            `External library "${result.library.name}" loaded from cache`
+          );
+        }
+      } else {
+        showError(
+          `Failed to load external library: ${result.error || 'Unknown error'}`
+        );
+      }
+
+      updatedProject = updateExternalLibraryStatus(
+        updatedProject,
+        tempId,
+        result.status,
+        result.status === 'online' ? new Date().toISOString() : undefined
+      );
+
+      setProject(updatedProject);
+
+      setExternalLibrariesStatus(prev => [
+        ...prev,
+        {
+          url,
+          status: result.status,
+          error: result.error,
+        },
+      ]);
+    } catch {
+      showError('Failed to load external library');
     }
-
-    updatedProject = updateExternalLibraryStatus(
-      updatedProject,
-      tempId,
-      result.status,
-      result.status === 'online' ? new Date().toISOString() : undefined
-    );
-
-    setProject(updatedProject);
-
-    setExternalLibrariesStatus(prev => [
-      ...prev,
-      {
-        url,
-        status: result.status,
-        error: result.error,
-      },
-    ]);
   };
 
   const handleRemoveLibrary = (libraryId: string) => {
@@ -427,6 +487,10 @@ export function ProjectProvider(props: PropsWithChildren) {
     if (library?.sourceType === 'external') {
       const updatedProject = removeExternalLibrary(project, libraryId);
       setProject(updatedProject);
+
+      if (library.sourceUrl) {
+        loadedExternalLibraries.current.delete(library.sourceUrl);
+      }
 
       setExternalLibrariesStatus(prev =>
         prev.filter(status => status.url !== library.sourceUrl)
@@ -450,6 +514,10 @@ export function ProjectProvider(props: PropsWithChildren) {
     if (library?.sourceType === 'external') {
       const updatedProject = convertExternalToInternal(project, libraryId);
       setProject(updatedProject);
+
+      if (library.sourceUrl) {
+        loadedExternalLibraries.current.delete(library.sourceUrl);
+      }
 
       setExternalLibrariesStatus(prev =>
         prev.filter(status => status.url !== library.sourceUrl)

@@ -8,6 +8,7 @@ import { AppBar } from '../components/AppBar';
 import { Button } from '../components/Button';
 import { ConfirmationModal } from '../components/ConfirmationModal';
 import { DropdownMenu } from '../components/DropdownMenu';
+import { ExternalLibrariesLoadingModal } from '../components/ExternalLibrariesLoadingModal';
 import { HistoryModal } from '../components/HistoryModal';
 import { IconButton } from '../components/IconButton';
 import { ImportLibraryModal } from '../components/ImportLibraryModal';
@@ -19,6 +20,7 @@ import { Modal } from '../components/Modal';
 import { ProjectCanvas } from '../components/ProjectCanvas';
 import { ProjectSidebar } from '../components/ProjectSidebar';
 import { useProject } from '../hooks/useProject';
+import { useSnackbar } from '../hooks/useSnackbar';
 import { ROUTES } from '../routes';
 import type { Library } from '../types/library';
 import {
@@ -38,7 +40,10 @@ export function ProjectPage() {
     restoreToPoint,
     createLibrary,
     importLibrary,
+    externalLibrariesStatus,
+    isLoadingExternalLibraries,
   } = useProject();
+  const { showSuccess } = useSnackbar();
   const [isCloseConfirmOpen, setIsCloseConfirmOpen] = useState(false);
   const [isJsonModalOpen, setIsJsonModalOpen] = useState(false);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
@@ -83,6 +88,7 @@ export function ProjectPage() {
       createLibrary(newLibraryName.trim());
       setNewLibraryName('');
       setIsCreateLibraryModalOpen(false);
+      showSuccess(`Library "${newLibraryName.trim()}" created successfully`);
     }
   };
 
@@ -274,6 +280,12 @@ export function ProjectPage() {
         confirmLabel="Close"
         cancelLabel="Stay"
         variant="warning"
+      />
+
+      <ExternalLibrariesLoadingModal
+        isLoading={isLoadingExternalLibraries}
+        statuses={externalLibrariesStatus}
+        onClose={() => {}}
       />
     </div>
   );

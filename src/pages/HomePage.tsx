@@ -15,7 +15,7 @@ import { validateProject } from '../utils/typeValidators';
 
 export function HomePage() {
   const { createProject, loadProject } = useProject();
-  const { showError } = useSnackbar();
+  const { showError, showSuccess } = useSnackbar();
   const [isCreating, setIsCreating] = useState(false);
   const [isImportProjectModalOpen, setIsImportProjectModalOpen] =
     useState(false);
@@ -57,6 +57,7 @@ export function HomePage() {
   const handleNewProject = (name: string) => {
     try {
       createProject(name);
+      showSuccess(`Project "${name}" created successfully`);
     } catch {
       showError('Failed to create project. Please try again.');
     }
@@ -75,6 +76,7 @@ export function HomePage() {
       const file = new File([blob], filename, { type: 'application/json' });
 
       await loadProject(file);
+      showSuccess('Project loaded successfully');
     } catch (err) {
       showError(
         err instanceof Error
