@@ -1,7 +1,11 @@
 import { Locate, RotateCw, Scissors, Trash2, X } from 'lucide-react';
 
 import type { Component } from '../../types/component';
-import type { PlacedComponent, Project } from '../../types/project';
+import type {
+  ComponentRotation,
+  PlacedComponent,
+  Project,
+} from '../../types/project';
 import type { Wire } from '../../types/wire';
 import { snapToGrid } from '../../utils/gridUtils';
 import { splitSegmentWaypoints } from '../../utils/wireRouting';
@@ -38,7 +42,7 @@ export interface ProjectCanvasOverlayProps {
   onResetPan: () => void;
   onCloseContextMenu: () => void;
   onCloseWireCtxMenu: () => void;
-  onSetRotation: (instanceId: string, rotation: 0 | 90 | 180 | 270) => void;
+  onSetRotation: (instanceId: string, rotation: ComponentRotation) => void;
   onRemovePlacedComponent: (instanceId: string) => void;
   onSetSelectedInstanceId: (id: string | null) => void;
   onUpdateWireWaypoints: (

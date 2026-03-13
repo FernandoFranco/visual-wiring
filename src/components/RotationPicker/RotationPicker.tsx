@@ -1,8 +1,9 @@
+import type { ComponentRotation } from '../../types/project';
 import { ToggleGroup } from '../ToggleGroup';
 
 export interface RotationPickerProps {
-  value: 0 | 90 | 180 | 270;
-  onChange: (rotation: 0 | 90 | 180 | 270) => void;
+  value: ComponentRotation;
+  onChange: (rotation: ComponentRotation) => void;
   label?: string;
 }
 
@@ -18,7 +19,7 @@ export function RotationPicker(props: RotationPickerProps) {
     <ToggleGroup
       options={OPTIONS}
       value={String(props.value)}
-      onChange={v => props.onChange(Number(v) as 0 | 90 | 180 | 270)}
+      onChange={v => props.onChange(Number(v) as ComponentRotation)}
       label={props.label}
     />
   );

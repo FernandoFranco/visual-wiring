@@ -3,6 +3,7 @@ import './ProjectCanvas.css';
 import { useCallback } from 'react';
 
 import { useProject } from '../../hooks/useProject';
+import type { ComponentRotation } from '../../types/project';
 import type { Wire } from '../../types/wire';
 import { GRID } from '../../utils/gridUtils';
 import { snapToGrid } from '../../utils/gridUtils';
@@ -192,7 +193,7 @@ export function ProjectCanvas() {
         connectedWires={connectedWires}
         getWireEndpoints={getWireEndpoints}
         onRotationChange={(instanceId, rotation) =>
-          setPlacedComponentRotation(instanceId, rotation as 0 | 90 | 180 | 270)
+          setPlacedComponentRotation(instanceId, rotation as ComponentRotation)
         }
         onAliasChange={(instanceId, alias) =>
           updatePlacedComponentInstance(instanceId, { alias })

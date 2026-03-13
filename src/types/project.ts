@@ -4,13 +4,15 @@ import type { Wire } from './wire';
 
 export type LabelPosition = 'center' | 'top' | 'bottom' | 'left' | 'right';
 
+export type ComponentRotation = 0 | 90 | 180 | 270;
+
 export interface PlacedComponent {
   instanceId: string;
   componentId: string;
   libraryId: string;
   x: number;
   y: number;
-  rotation?: 0 | 90 | 180 | 270;
+  rotation?: ComponentRotation;
   alias?: string;
   labelPosition?: LabelPosition;
 }
