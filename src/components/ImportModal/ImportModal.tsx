@@ -3,6 +3,8 @@ import './ImportModal.css';
 import { FileJson, Globe } from 'lucide-react';
 import { useState } from 'react';
 
+import { useLoadFromURL } from '../../hooks/useLoadFromURL';
+import { validateProject } from '../../utils/typeValidators';
 import { Button } from '../Button';
 import { FileDropZone } from '../FileDropZone';
 import { Modal } from '../Modal';
@@ -15,14 +17,26 @@ export interface ImportModalProps {
 
 export function ImportModal(props: ImportModalProps) {
   const [importUrl, setImportUrl] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const { loadFromURL, isLoading } = useLoadFromURL({
+    validator: validateProject,
+    onSuccess: async result => {
+      await props.onImport(result.data, result.filename);
+      setImportUrl('');
+      props.onClose();
+    },
+    onError: err => {
+      setError(err.message);
+    },
+  });
 
   const handleFileSelect = async (file: File) => {
     setError(null);
     try {
       const text = await file.text();
       const data = JSON.parse(text);
+      validateProject(data);
       await props.onImport(data, file.name);
       props.onClose();
     } catch (err) {
@@ -31,38 +45,8 @@ export function ImportModal(props: ImportModalProps) {
   };
 
   const handleUrlImport = async () => {
-    if (!importUrl.startsWith('http')) {
-      setError('Please enter a valid URL starting with http:// or https://');
-      return;
-    }
-
-    setIsLoading(true);
     setError(null);
-
-    try {
-      const response = await fetch(importUrl);
-      if (!response.ok)
-        throw new Error(
-          `HTTP error: ${response.status} ${response.statusText}`
-        );
-      const data = await response.json();
-      const filename = importUrl.split('/').pop() || 'imported.json';
-      await props.onImport(data, filename);
-      setImportUrl('');
-      props.onClose();
-    } catch (err) {
-      if (err instanceof TypeError && err.message.includes('fetch')) {
-        setError(
-          'Could not reach the URL. This may be caused by a CORS restriction on the server.'
-        );
-      } else {
-        setError(
-          err instanceof Error ? err.message : 'Failed to fetch from URL'
-        );
-      }
-    } finally {
-      setIsLoading(false);
-    }
+    await loadFromURL(importUrl);
   };
 
   return (
