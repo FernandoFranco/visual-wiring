@@ -1,6 +1,10 @@
 import { DEFAULT_SWATCHES } from '../components/ColorPicker';
 import type { Component } from '../types/component';
 import type { Library } from '../types/library';
+import type {
+  ExternalLibraryReference,
+  LibraryLoadStatus,
+} from '../types/librarySource';
 import type { LabelPosition, PlacedComponent, Project } from '../types/project';
 import type { Wire } from '../types/wire';
 import { sanitizeFilename, saveFile } from './fileHelper';
@@ -372,6 +376,80 @@ export function removeComponentFromLibrary(
       p => !instancesToRemove.includes(p.instanceId)
     ),
     wires: (project.wires ?? []).filter(w => !wiresToRemove.includes(w.id)),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export function exportLibrary(project: Project, libraryId: string): void {
+  const library = project.libraries.find(lib => lib.id === libraryId);
+
+  if (!library) {
+    throw new Error(`Library with id ${libraryId} not found`);
+  }
+
+  const libraryToExport: Library = { ...library, sourceType: 'imported' };
+  const json = JSON.stringify(libraryToExport, null, 2);
+  saveFile(json, `${sanitizeFilename(library.name)}.json`);
+}
+
+export function addExternalLibrary(
+  project: Project,
+  url: string,
+  libraryId?: string
+): Project {
+  const externalLibraries = project.externalLibraries ?? [];
+
+  const exists = externalLibraries.some(lib => lib.url === url);
+  if (exists) return project;
+
+  const newReference: ExternalLibraryReference = {
+    id: libraryId ?? crypto.randomUUID(),
+    url,
+    status: 'loading',
+  };
+
+  return {
+    ...project,
+    externalLibraries: [...externalLibraries, newReference],
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export function removeExternalLibrary(
+  project: Project,
+  libraryId: string
+): Project {
+  const externalLibraries = project.externalLibraries ?? [];
+
+  return {
+    ...project,
+    externalLibraries: externalLibraries.filter(lib => lib.id !== libraryId),
+    libraries: project.libraries.filter(
+      lib => lib.id !== libraryId && lib.sourceType !== 'external'
+    ),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export function updateExternalLibraryStatus(
+  project: Project,
+  libraryId: string,
+  status: LibraryLoadStatus,
+  lastFetched?: string
+): Project {
+  const externalLibraries = project.externalLibraries ?? [];
+
+  return {
+    ...project,
+    externalLibraries: externalLibraries.map(lib =>
+      lib.id === libraryId
+        ? {
+            ...lib,
+            status,
+            lastFetched: lastFetched ?? lib.lastFetched,
+          }
+        : lib
+    ),
     updatedAt: new Date().toISOString(),
   };
 }
