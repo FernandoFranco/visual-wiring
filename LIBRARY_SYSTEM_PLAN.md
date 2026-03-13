@@ -6,16 +6,28 @@ Implementar sistema de importação/exportação de bibliotecas com suporte a re
 
 ---
 
-## ⚠️ REGRA DE IMPLEMENTAÇÃO IMPORTANTE
+## ⚠️ REGRA DE IMPLEMENTAÇÃO IMPORTANTE - FLUXO OBRIGATÓRIO
 
-Após completar cada fase:
+**Para cada fase, seguir EXATAMENTE esta sequência:**
 
-1. ✅ Marcar fase como concluída no plano (`[x]`)
-2. 💾 **Fazer commit das alterações da fase**
-3. ➡️ **Aguardar confirmação para prosseguir**
-4. 🚀 Só então iniciar a próxima fase
+1. 🔨 **Implementar**: Fazer todas as adições/alterações da fase atual
+2. ❓ **Perguntar**: "Está tudo OK?" e aguardar resposta do usuário
+3. 🔄 **Iterar se necessário**:
+   - Se houver alterações solicitadas → voltar para o passo 1
+   - Se tudo estiver correto → ir para o passo 4
+4. ✅ **Confirmação final**: Informar "implementação da fase concluída" e aguardar resposta
+5. 🚀 **Ao receber confirmação para próxima fase**:
+   - Marcar fase atual como concluída no PLAN (`[x]`)
+   - Fazer commit das alterações
+   - Iniciar próxima fase automaticamente (volta para passo 1)
 
-**Nunca pular fases ou fazer múltiplas fases sem commit intermediário!**
+**IMPORTANTE:**
+
+- ❌ Nunca fazer commit antes da confirmação do usuário
+- ❌ Nunca pular fases ou fazer múltiplas fases sem commit intermediário
+- ✅ Commit só acontece DEPOIS da confirmação e ANTES de iniciar próxima fase
+- ✅ Após commit, já iniciar próxima fase sem nova interação
+- ⚠️ **SEMPRE usar comandos git no terminal (git add, git commit) - NUNCA usar ferramentas MCP de git**
 
 ---
 
@@ -230,7 +242,7 @@ Após completar cada fase:
 - [x] Fase 8: UI - Modal de Importação ✅
 - [x] Fase 9: UI - Indicadores de Status ✅
 - [x] Fase 10: Atualizar Sidebar ✅
-- [ ] Fase 11: UI - Gerenciador de Bibliotecas
+- [x] Fase 11: UI - Gerenciador de Bibliotecas ✅
 - [ ] Fase 12: Feedback ao Usuário
 - [ ] Fase 13: Migrações
 - [ ] Fase 14: Testes Finais

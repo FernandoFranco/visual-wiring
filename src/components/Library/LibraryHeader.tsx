@@ -64,14 +64,14 @@ export function LibraryHeader(props: LibraryHeaderProps) {
             e.stopPropagation();
             props.onAddComponent?.();
           }}
-          title="Add component"
+          tooltip="Add component"
         >
           <Plus size={11} />
         </IconButton>
         <IconButton
           className="library__rename-btn"
           onClick={props.onStartRename}
-          title="Rename library"
+          tooltip="Rename library"
         >
           <Pencil size={11} />
         </IconButton>

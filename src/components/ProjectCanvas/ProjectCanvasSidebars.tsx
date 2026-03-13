@@ -6,10 +6,9 @@ import type {
   Project,
 } from '../../types/project';
 import type { Wire } from '../../types/wire';
+import { DEFAULT_WIRE_COLOR } from '../CanvasWire';
 import { ComponentPropertiesSidebar } from '../ComponentPropertiesSidebar';
 import { WirePropertiesSidebar } from '../WirePropertiesSidebar';
-
-const DEFAULT_WIRE_COLOR = '#00ffff';
 
 export interface ProjectCanvasSidebarsProps {
   project: Project | null;

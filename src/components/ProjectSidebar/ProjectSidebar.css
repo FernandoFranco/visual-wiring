@@ -17,6 +17,12 @@
   flex-shrink: 0;
 }
 
+.project-sidebar__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
 .project-sidebar__title {
   font-size: 0.6875rem;
   font-weight: 700;

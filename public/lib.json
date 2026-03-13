@@ -1,0 +1,502 @@
+{
+  "id": "71623129-b970-4c92-9ed3-1b24b6560676",
+  "name": "IHM - Config",
+  "components": [
+    {
+      "id": "da7d2f12-88f0-425f-b8c7-63f7a9db688f",
+      "name": "SATA",
+      "pins": [
+        {
+          "id": "1f0a80a6-2f1c-4010-81cf-891421543495",
+          "name": "GND",
+          "side": "right"
+        },
+        {
+          "id": "b6eca196-74c0-4b4b-a4cd-1c87a3dbd787",
+          "name": "VCC",
+          "side": "right"
+        },
+        {
+          "id": "04613449-a267-4b60-80f4-695f38e2fc7b",
+          "name": "INT",
+          "side": "right"
+        },
+        {
+          "id": "4c62e43f-e754-470c-aca4-7fa1df3f0c01",
+          "name": "GND",
+          "side": "right"
+        },
+        {
+          "id": "95a3472b-6b69-4894-b4d8-f37f47f2936c",
+          "name": "SDA",
+          "side": "right"
+        },
+        {
+          "id": "dedcd8ac-7b46-4687-b337-8e76c177b529",
+          "name": "SCL",
+          "side": "right"
+        },
+        {
+          "id": "ec760a04-903e-4be5-8220-aa8bf6d8d9ae",
+          "name": "GND",
+          "side": "right"
+        }
+      ],
+      "minWidth": 4,
+      "minHeight": 4,
+      "color": "#F44336",
+      "defaultLabelPosition": "left"
+    },
+    {
+      "id": "f55f7b8d-ff3c-48b9-b3ab-547d46bcdfb2",
+      "name": "PCF8574 I/O",
+      "pins": [
+        {
+          "id": "71fb3455-50d6-49f3-b75f-2bcb3a532fa7",
+          "name": "VCC",
+          "side": "right"
+        },
+        {
+          "id": "44510cd5-7cbe-462a-bb5f-1f5267e0040d",
+          "name": "GND",
+          "side": "right"
+        },
+        {
+          "id": "71d8cc0e-94a7-4880-b708-df81355b907e",
+          "name": "SDA",
+          "side": "right"
+        },
+        {
+          "id": "d744d7f7-e6dc-4323-bdf5-db5cd51ba1e7",
+          "name": "SCL",
+          "side": "right"
+        },
+        {
+          "id": "bd58bfa7-3145-4166-b16a-681cae54e290",
+          "name": "P0",
+          "side": "up"
+        },
+        {
+          "id": "391eb2d9-fedd-4831-b619-925f2fe1d084",
+          "name": "P1",
+          "side": "up"
+        },
+        {
+          "id": "9c6aee3f-00ac-44ab-8e2e-f208509b1c29",
+          "name": "P2",
+          "side": "up"
+        },
+        {
+          "id": "827c4573-f37f-40f0-98fe-6bd9d70daa94",
+          "name": "P3",
+          "side": "up"
+        },
+        {
+          "id": "50e7583d-37ac-4e2d-ad17-86f058557b27",
+          "name": "P4",
+          "side": "up"
+        },
+        {
+          "id": "0033ee89-249c-45e9-99d5-134e850b2b44",
+          "name": "P5",
+          "side": "up"
+        },
+        {
+          "id": "f32977fd-9af6-4a3d-95ab-7fc640b1d316",
+          "name": "P6",
+          "side": "up"
+        },
+        {
+          "id": "ec5cd1a5-186d-4e60-b2e8-6ae033d0371d",
+          "name": "P7",
+          "side": "up"
+        },
+        {
+          "id": "8a515592-5060-4891-b515-c0ce47cb05a0",
+          "name": "INT",
+          "side": "up"
+        },
+        {
+          "id": "27246cce-b4db-494d-a685-61955e6c8838",
+          "name": "VCC",
+          "side": "left"
+        },
+        {
+          "id": "fe1b1359-939b-41f3-ac1e-db8dc8fed80a",
+          "name": "GND",
+          "side": "left"
+        },
+        {
+          "id": "5fb9e065-77df-4003-a363-35f1d08030e4",
+          "name": "SDA",
+          "side": "left"
+        },
+        {
+          "id": "74d3055e-a254-48af-98c9-5757243cdf14",
+          "name": "SCL",
+          "side": "left"
+        }
+      ],
+      "minWidth": 24,
+      "minHeight": 8,
+      "color": "#3F51B5",
+      "defaultLabelPosition": "center"
+    },
+    {
+      "id": "62f74044-ad5e-4f9f-addd-c09c4157635e",
+      "name": "Teclado Matricial 4x4",
+      "pins": [
+        {
+          "id": "d41e052c-0de4-47ba-a44d-e40352fc563b",
+          "name": "NC",
+          "side": "down"
+        },
+        {
+          "id": "9df3658a-3e71-48d3-9671-ef96438bca13",
+          "name": "R1",
+          "side": "down"
+        },
+        {
+          "id": "90bd9da4-500b-4391-a568-ec92bcedfba8",
+          "name": "R2",
+          "side": "down"
+        },
+        {
+          "id": "74acb724-ed75-49c2-9ee7-b1a8f6bd231f",
+          "name": "R3",
+          "side": "down"
+        },
+        {
+          "id": "525d765a-70e2-4f45-928f-92b525e9947c",
+          "name": "R4",
+          "side": "down"
+        },
+        {
+          "id": "9c10a7ff-f70d-4836-a342-375755f96be6",
+          "name": "C1",
+          "side": "down"
+        },
+        {
+          "id": "a6b14716-906c-4a40-8ef6-15eab9676e02",
+          "name": "C2",
+          "side": "down"
+        },
+        {
+          "id": "4fd5b91a-b87c-4c62-8856-ecaa6313154b",
+          "name": "C3",
+          "side": "down"
+        },
+        {
+          "id": "c3680cdd-306c-492e-bac8-cda81269aa98",
+          "name": "C4",
+          "side": "down"
+        },
+        {
+          "id": "fd782e9c-cf57-4c08-af0a-29773db18eea",
+          "name": "NC",
+          "side": "down"
+        }
+      ],
+      "minWidth": 20,
+      "minHeight": 20,
+      "color": "#212121",
+      "defaultLabelPosition": "center"
+    },
+    {
+      "id": "eea133c7-8096-427b-bbd5-3dee2688d562",
+      "name": "PCF8574 LCD",
+      "pins": [
+        {
+          "id": "ad9c0319-7b68-4c7b-bd5c-4aae778fe0f2",
+          "name": "GND",
+          "side": "left"
+        },
+        {
+          "id": "e0d4769a-1708-4841-93ea-3bf28630a7ee",
+          "name": "VCC",
+          "side": "left"
+        },
+        {
+          "id": "09e4a194-ea76-47d4-8c59-fde2e3d2514e",
+          "name": "SDA",
+          "side": "left"
+        },
+        {
+          "id": "6653d211-34ca-4189-8117-00d90698376e",
+          "name": "SCL",
+          "side": "left"
+        },
+        {
+          "id": "e0600129-a4fb-46e9-83f4-48ae7b5b7853",
+          "name": "LED",
+          "side": "right"
+        },
+        {
+          "id": "528b04ab-9f7f-42d5-9328-99b6b3cc8708",
+          "name": "LED",
+          "side": "right"
+        },
+        {
+          "id": "561fd566-1587-43ab-8fdd-c94398550edd",
+          "name": "LEDK",
+          "side": "up"
+        },
+        {
+          "id": "db46eda0-821b-48db-bf98-136fbfc92d51",
+          "name": "LEDA",
+          "side": "up"
+        },
+        {
+          "id": "2f331004-a62f-491f-8e12-e777bb4f4ef2",
+          "name": "DB7",
+          "side": "up"
+        },
+        {
+          "id": "e7269aae-ed62-469c-90dc-e1d2e672284b",
+          "name": "DB6",
+          "side": "up"
+        },
+        {
+          "id": "e62bec43-d734-4464-bd99-f6e862e6ddd6",
+          "name": "DB5",
+          "side": "up"
+        },
+        {
+          "id": "c7402998-ebeb-438d-9bf4-e0af3c2099a1",
+          "name": "DB4",
+          "side": "up"
+        },
+        {
+          "id": "b09bb8f6-ce0f-4ece-9bda-f60c13c6ce05",
+          "name": "DB3",
+          "side": "up"
+        },
+        {
+          "id": "5ed1befa-502c-49e7-abfd-32abeeb7afc2",
+          "name": "DB2",
+          "side": "up"
+        },
+        {
+          "id": "9eacd035-c29f-4938-9dad-ab018b8c239d",
+          "name": "DB1",
+          "side": "up"
+        },
+        {
+          "id": "ca8bf094-b0e0-4682-b4cb-4b7f0e532f28",
+          "name": "DB0",
+          "side": "up"
+        },
+        {
+          "id": "848649ea-3c64-4113-be84-36b7edd29a1e",
+          "name": "E",
+          "side": "up"
+        },
+        {
+          "id": "b14ed73f-bcf2-4d85-94b5-7c5db467880f",
+          "name": "RW",
+          "side": "up"
+        },
+        {
+          "id": "0822a1d1-8236-451d-8818-b07cce3c447e",
+          "name": "RS",
+          "side": "up"
+        },
+        {
+          "id": "64bfb198-84b9-4863-817d-ddd2f0733de8",
+          "name": "V0",
+          "side": "up"
+        },
+        {
+          "id": "78335bbd-2bcb-437d-9964-ef454d20b148",
+          "name": "VDD",
+          "side": "up"
+        },
+        {
+          "id": "aa5d97f2-cd2b-445c-a374-d37f936830d2",
+          "name": "VSS",
+          "side": "up"
+        }
+      ],
+      "minWidth": 38,
+      "minHeight": 8,
+      "color": "#212121",
+      "defaultLabelPosition": "center"
+    },
+    {
+      "id": "328c27d3-5146-486a-b5cd-3b16a77ff58b",
+      "name": "LCD 1604A",
+      "pins": [
+        {
+          "id": "54eb8d35-12b0-4f6c-a975-e7c1e33f8491",
+          "name": "LEDK",
+          "side": "down"
+        },
+        {
+          "id": "210cacc8-9ada-460c-9390-a25c0de0738c",
+          "name": "LEDA",
+          "side": "down"
+        },
+        {
+          "id": "8987c4ad-ecf8-4d9c-9eeb-c7574a325556",
+          "name": "DB7",
+          "side": "down"
+        },
+        {
+          "id": "d28692d8-1c00-41fd-b511-4880e1b5dc0a",
+          "name": "DB6",
+          "side": "down"
+        },
+        {
+          "id": "db636533-435c-44b9-bc07-eb2574202a6f",
+          "name": "DB5",
+          "side": "down"
+        },
+        {
+          "id": "33892663-aa2a-422f-b739-96507aa39b59",
+          "name": "DB4",
+          "side": "down"
+        },
+        {
+          "id": "50ce8530-48f9-418e-9d1a-1e7cf345c2a0",
+          "name": "DB3",
+          "side": "down"
+        },
+        {
+          "id": "3448dd46-1bca-486e-824a-4363bcb698b7",
+          "name": "DB2",
+          "side": "down"
+        },
+        {
+          "id": "85109005-6d08-4699-b4c3-703a0b8fe981",
+          "name": "DB1",
+          "side": "down"
+        },
+        {
+          "id": "a48f2f73-2fa2-4d2f-8289-9a6766e629ed",
+          "name": "DB0",
+          "side": "down"
+        },
+        {
+          "id": "d419313f-f470-47da-8736-bae81303357d",
+          "name": "E",
+          "side": "down"
+        },
+        {
+          "id": "57de8907-2ade-495c-88a9-c2c2215d4920",
+          "name": "RW",
+          "side": "down"
+        },
+        {
+          "id": "233781b6-6ddd-463e-b741-a30e0314ca9a",
+          "name": "RS",
+          "side": "down"
+        },
+        {
+          "id": "71b55d1d-a946-4d7e-a74e-a3db0b2e1718",
+          "name": "V0",
+          "side": "down"
+        },
+        {
+          "id": "524338b9-92e4-40ae-a7c8-4a2c850de24e",
+          "name": "VDD",
+          "side": "down"
+        },
+        {
+          "id": "2124f4c5-afc7-47d6-9b4f-36924a2d7e08",
+          "name": "VSS",
+          "side": "down"
+        }
+      ],
+      "minWidth": 32,
+      "minHeight": 14,
+      "color": "#3F51B5",
+      "defaultLabelPosition": "center"
+    },
+    {
+      "id": "b1582762-e09d-414c-b6ac-56100d9147d3",
+      "name": "Resistor",
+      "pins": [
+        {
+          "id": "49cbbe9e-81aa-4e00-8c97-8f6d0fc37896",
+          "name": "p1",
+          "side": "up"
+        },
+        {
+          "id": "e5c40f8f-1ed4-4b8b-a3af-7878f018c3bc",
+          "name": "p2",
+          "side": "down"
+        }
+      ],
+      "minWidth": 2,
+      "minHeight": 4,
+      "color": "#795548",
+      "defaultLabelPosition": "left"
+    },
+    {
+      "id": "1574d5de-45dc-4ef9-9443-4d17dc682298",
+      "name": "LED",
+      "pins": [
+        {
+          "id": "e3f5347d-a94b-426c-905b-5c272d2434fd",
+          "name": "+",
+          "side": "down"
+        },
+        {
+          "id": "c0d57b9f-35ce-4a6d-85be-68f86e624cb1",
+          "name": "-",
+          "side": "down"
+        }
+      ],
+      "minWidth": 4,
+      "minHeight": 4,
+      "color": "#4CAF50",
+      "defaultLabelPosition": "center"
+    },
+    {
+      "id": "b2fd5abd-102a-4105-ab8c-f7e980227cc7",
+      "name": "Buzzer",
+      "pins": [
+        {
+          "id": "ce78cde0-6d46-4db0-b929-39effdc47eac",
+          "name": "+",
+          "side": "down"
+        },
+        {
+          "id": "fee1546d-40d1-4f04-b0cd-9fe57047c5a2",
+          "name": "-",
+          "side": "down"
+        }
+      ],
+      "minWidth": 4,
+      "minHeight": 4,
+      "color": "#212121",
+      "defaultLabelPosition": "center"
+    },
+    {
+      "id": "df8a1380-7daf-46d1-8eb8-b67d032d62f4",
+      "name": "DS2431",
+      "pins": [
+        {
+          "id": "a4b689e5-402c-4985-b2bc-3210a4298a25",
+          "name": "GND",
+          "side": "down"
+        },
+        {
+          "id": "3272b3f3-e164-4b64-88e7-57f345f0c74e",
+          "name": "IO",
+          "side": "down"
+        },
+        {
+          "id": "b4443c4d-e6c5-4850-9ca0-6d31aed671ea",
+          "name": "NC",
+          "side": "down"
+        }
+      ],
+      "minWidth": 4,
+      "minHeight": 3,
+      "color": "#212121",
+      "defaultLabelPosition": "top"
+    }
+  ],
+  "sourceType": "imported"
+}

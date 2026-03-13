@@ -28,6 +28,26 @@ export function createDefaultLibrary(): Library {
   };
 }
 
+export function createLibrary(name: string): Library {
+  return {
+    id: crypto.randomUUID(),
+    name,
+    components: [],
+    sourceType: 'internal',
+  };
+}
+
+export function addLibraryToProject(
+  project: Project,
+  library: Library
+): Project {
+  return {
+    ...project,
+    libraries: [...project.libraries, library],
+    updatedAt: new Date().toISOString(),
+  };
+}
+
 export function createNewProject(name: string): Project {
   const now = new Date().toISOString();
   return {
@@ -455,6 +475,43 @@ export function updateExternalLibraryStatus(
           }
         : lib
     ),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export function convertExternalToInternal(
+  project: Project,
+  libraryId: string
+): Project {
+  const library = project.libraries.find(lib => lib.id === libraryId);
+
+  if (!library || library.sourceType !== 'external') {
+    return project;
+  }
+
+  const newLibraryId = crypto.randomUUID();
+
+  const componentsWithNewIds = library.components.map(component => ({
+    ...component,
+    id: crypto.randomUUID(),
+  }));
+
+  const newLibrary: Library = {
+    id: newLibraryId,
+    name: library.name,
+    components: componentsWithNewIds,
+    sourceType: 'internal',
+  };
+
+  const externalLibraries = project.externalLibraries ?? [];
+
+  return {
+    ...project,
+    libraries: [
+      ...project.libraries.filter(lib => lib.id !== libraryId),
+      newLibrary,
+    ],
+    externalLibraries: externalLibraries.filter(lib => lib.id !== libraryId),
     updatedAt: new Date().toISOString(),
   };
 }

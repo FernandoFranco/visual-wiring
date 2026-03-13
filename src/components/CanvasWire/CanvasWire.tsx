@@ -3,8 +3,9 @@ import './CanvasWire.css';
 import React, { useState } from 'react';
 
 import { CANVAS_STROKE_WIDTH } from '../../utils/canvasConstants';
+import { DEFAULT_SWATCHES } from '../ColorPicker';
 
-export const DEFAULT_WIRE_COLOR = '#1e293b';
+export const DEFAULT_WIRE_COLOR = DEFAULT_SWATCHES[0];
 
 export interface WirePoint {
   x: number;

@@ -28,6 +28,7 @@ export interface ProjectContextValue {
   saveProject: () => void;
   updateName: (name: string) => void;
   closeProject: () => void;
+  createLibrary: (name: string) => void;
   renameLibrary: (id: string, name: string) => void;
   addComponent: (libraryId: string, component: Component) => void;
   updateComponent: (libraryId: string, component: Component) => void;
@@ -60,6 +61,7 @@ export interface ProjectContextValue {
   importLibrary: (library: Library, asExternal: boolean, url?: string) => void;
   addExternalLibraryByUrl: (url: string) => Promise<void>;
   removeLibrary: (libraryId: string) => void;
+  convertExternalToInternal: (libraryId: string) => void;
 
   canUndo: boolean;
   canRedo: boolean;

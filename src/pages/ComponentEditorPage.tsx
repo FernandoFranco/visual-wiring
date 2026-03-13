@@ -53,13 +53,18 @@ export function ComponentEditorPage() {
         <IconButton
           className="app-bar__action-btn"
           onClick={editor.handleSave}
-          title={editor.isEditMode ? 'Save changes' : 'Save component'}
+          tooltip={editor.isEditMode ? 'Save changes' : 'Save component'}
+          tooltipPosition="bottom"
         >
           <Save size={17} />
         </IconButton>
         <DropdownMenu
           trigger={
-            <IconButton className="app-bar__action-btn" title="Settings">
+            <IconButton
+              className="app-bar__action-btn"
+              tooltip="Settings"
+              tooltipPosition="bottom"
+            >
               <Settings size={17} />
             </IconButton>
           }

@@ -1,14 +1,22 @@
 import './ProjectSidebar.css';
 
+import { Plus, Settings, Upload } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useProject } from '../../hooks/useProject';
 import { ROUTES } from '../../routes';
+import { IconButton } from '../IconButton';
 import { Library } from '../Library';
 import { SidebarSearch } from '../SidebarSearch';
 
-export function ProjectSidebar() {
+export interface ProjectSidebarProps {
+  onCreateLibrary: () => void;
+  onImportLibrary: () => void;
+  onOpenLibraryManager: () => void;
+}
+
+export function ProjectSidebar(props: ProjectSidebarProps) {
   const { project, renameLibrary, removeComponent, externalLibrariesStatus } =
     useProject();
   const navigate = useNavigate();
@@ -50,7 +58,30 @@ export function ProjectSidebar() {
     <aside className="project-sidebar">
       <div className="project-sidebar__header">
         <span className="project-sidebar__title">Libraries</span>
-        <span className="project-sidebar__count">{libraries.length}</span>
+        <div className="project-sidebar__header-actions">
+          <IconButton
+            onClick={props.onCreateLibrary}
+            tooltip="Create Library"
+            tooltipPosition="bottom"
+          >
+            <Plus size={14} />
+          </IconButton>
+          <IconButton
+            onClick={props.onImportLibrary}
+            tooltip="Import Library"
+            tooltipPosition="bottom"
+          >
+            <Upload size={14} />
+          </IconButton>
+          <IconButton
+            onClick={props.onOpenLibraryManager}
+            tooltip="Library Manager"
+            tooltipPosition="bottom"
+          >
+            <Settings size={14} />
+          </IconButton>
+          <span className="project-sidebar__count">{libraries.length}</span>
+        </div>
       </div>
 
       <SidebarSearch

@@ -22,7 +22,8 @@ export function AppBar(props: PropsWithChildren<AppBarProps>) {
           <IconButton
             className="app-bar__back-btn"
             onClick={props.onGoHome}
-            title="Back to project"
+            tooltip="Back to project"
+            tooltipPosition="bottom"
           >
             <ArrowLeft size={18} />
           </IconButton>

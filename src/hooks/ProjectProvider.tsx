@@ -1,4 +1,4 @@
-import { type PropsWithChildren, useEffect, useState } from 'react';
+import { type PropsWithChildren, useEffect, useRef, useState } from 'react';
 
 import type { Component } from '../types/component';
 import type { Library } from '../types/library';
@@ -12,7 +12,10 @@ import {
   addColorToProject,
   addComponentToLibrary,
   addExternalLibrary,
+  addLibraryToProject,
   addWire,
+  convertExternalToInternal,
+  createLibrary,
   createNewProject,
   exportLibrary,
   loadProjectFromFile,
@@ -54,6 +57,7 @@ export function ProjectProvider(props: PropsWithChildren) {
   const [isLoadingExternalLibraries, setIsLoadingExternalLibraries] =
     useState(false);
 
+  const loadedExternalLibraries = useRef<Set<string>>(new Set());
   const history = useProjectHistory();
 
   useEffect(() => {
@@ -63,97 +67,140 @@ export function ProjectProvider(props: PropsWithChildren) {
   }, [project, storage]);
 
   useEffect(() => {
+    if (!project || !project.externalLibraries) {
+      setExternalLibrariesStatus([]);
+      return;
+    }
+
+    const externalRefs = project.externalLibraries;
+    if (externalRefs.length === 0) {
+      setExternalLibrariesStatus([]);
+      return;
+    }
+
+    const refsToLoad = externalRefs.filter(
+      ref => !loadedExternalLibraries.current.has(ref.url)
+    );
+
+    if (refsToLoad.length === 0) {
+      return;
+    }
+
+    refsToLoad.forEach(ref => {
+      loadedExternalLibraries.current.add(ref.url);
+    });
+
     const loadExternalLibs = async () => {
-      if (!project || !project.externalLibraries) {
-        setExternalLibrariesStatus([]);
-        return;
-      }
-
-      const externalRefs = project.externalLibraries;
-      if (externalRefs.length === 0) {
-        setExternalLibrariesStatus([]);
-        return;
-      }
-
       setIsLoadingExternalLibraries(true);
 
-      const urls = externalRefs.map(ref => ref.url);
-      const results = await loadMultipleExternalLibraries(urls);
+      try {
+        const urlsToLoad = refsToLoad.map(ref => ref.url);
+        const results = await loadMultipleExternalLibraries(urlsToLoad);
 
-      const statusList: ExternalLibraryStatus[] = [];
-      let updatedProject = project;
+        const newStatusList: ExternalLibraryStatus[] = [];
+        const librariesToUpdate: Library[] = [];
 
-      for (const ref of externalRefs) {
-        const result = results.get(ref.url);
+        for (const ref of refsToLoad) {
+          const result = results.get(ref.url);
 
-        if (result) {
-          statusList.push({
-            url: ref.url,
-            status: result.status,
-            error: result.error,
-          });
+          if (result) {
+            newStatusList.push({
+              url: ref.url,
+              status: result.status,
+              error: result.error,
+            });
 
-          updatedProject = updateExternalLibraryStatus(
-            updatedProject,
-            ref.id,
-            result.status,
-            result.status === 'online' ? new Date().toISOString() : undefined
-          );
-
-          if (result.library) {
-            const libraryWithMetadata: Library = {
-              ...result.library,
-              id: ref.id,
-              sourceType: 'external',
-              sourceUrl: ref.url,
-              lastFetched:
-                result.status === 'online'
-                  ? new Date().toISOString()
-                  : ref.lastFetched,
-            };
-
-            const existingLibIndex = updatedProject.libraries.findIndex(
-              lib => lib.id === ref.id
-            );
-
-            if (existingLibIndex >= 0) {
-              updatedProject = {
-                ...updatedProject,
-                libraries: updatedProject.libraries.map(lib =>
-                  lib.id === ref.id ? libraryWithMetadata : lib
-                ),
+            if (result.library) {
+              const libraryWithMetadata: Library = {
+                ...result.library,
+                id: ref.id,
+                sourceType: 'external',
+                sourceUrl: ref.url,
+                lastFetched:
+                  result.status === 'online'
+                    ? new Date().toISOString()
+                    : ref.lastFetched,
               };
-            } else {
-              updatedProject = {
-                ...updatedProject,
-                libraries: [...updatedProject.libraries, libraryWithMetadata],
-              };
+
+              librariesToUpdate.push(libraryWithMetadata);
             }
           }
         }
-      }
 
-      setExternalLibrariesStatus(statusList);
-      if (updatedProject !== project) {
-        setProject(updatedProject);
-      }
+        setExternalLibrariesStatus(prevStatus => {
+          const combined = [...prevStatus];
+          for (const newStatus of newStatusList) {
+            const existingIndex = combined.findIndex(
+              s => s.url === newStatus.url
+            );
+            if (existingIndex >= 0) {
+              combined[existingIndex] = newStatus;
+            } else {
+              combined.push(newStatus);
+            }
+          }
+          return combined;
+        });
 
-      setIsLoadingExternalLibraries(false);
+        if (librariesToUpdate.length > 0) {
+          setProject(prevProject => {
+            if (!prevProject) return prevProject;
+
+            let updatedProject = prevProject;
+
+            for (const lib of librariesToUpdate) {
+              const existingLibIndex = updatedProject.libraries.findIndex(
+                l => l.id === lib.id
+              );
+
+              if (existingLibIndex >= 0) {
+                updatedProject = {
+                  ...updatedProject,
+                  libraries: updatedProject.libraries.map(l =>
+                    l.id === lib.id ? lib : l
+                  ),
+                };
+              } else {
+                updatedProject = {
+                  ...updatedProject,
+                  libraries: [...updatedProject.libraries, lib],
+                };
+              }
+
+              updatedProject = updateExternalLibraryStatus(
+                updatedProject,
+                lib.id,
+                newStatusList.find(s => s.url === lib.sourceUrl)?.status ||
+                  'online',
+                lib.lastFetched
+              );
+            }
+
+            return updatedProject;
+          });
+        }
+      } finally {
+        setIsLoadingExternalLibraries(false);
+      }
     };
 
     loadExternalLibs();
-  }, [project, project?.externalLibraries]);
+  }, [project]);
 
   const createProject = (name: string) => {
     const newProject = createNewProject(name);
     setProject(newProject);
     history.clear();
+    loadedExternalLibraries.current.clear();
+    setExternalLibrariesStatus([]);
   };
 
   const loadProject = async (file: File) => {
     const loadedProject = await loadProjectFromFile(file);
     setProject(loadedProject);
     history.clear();
+    loadedExternalLibraries.current.clear();
+    setExternalLibrariesStatus([]);
   };
 
   const saveProject = () => {
@@ -173,6 +220,8 @@ export function ProjectProvider(props: PropsWithChildren) {
     setProject(null);
     storage.clearProject();
     history.clear();
+    loadedExternalLibraries.current.clear();
+    setExternalLibrariesStatus([]);
   };
 
   const addComponent = (libraryId: string, component: Component) => {
@@ -193,6 +242,12 @@ export function ProjectProvider(props: PropsWithChildren) {
   const renameLibrary = (id: string, name: string) => {
     if (!project) return;
     setProject(renameProjectLibrary(project, id, name));
+  };
+
+  const handleCreateLibrary = (name: string) => {
+    if (!project) return;
+    const newLibrary = createLibrary(name);
+    setProject(addLibraryToProject(project, newLibrary));
   };
 
   const placeComponent = (
@@ -387,6 +442,21 @@ export function ProjectProvider(props: PropsWithChildren) {
     }
   };
 
+  const handleConvertExternalToInternal = (libraryId: string) => {
+    if (!project) return;
+
+    const library = project.libraries.find(lib => lib.id === libraryId);
+
+    if (library?.sourceType === 'external') {
+      const updatedProject = convertExternalToInternal(project, libraryId);
+      setProject(updatedProject);
+
+      setExternalLibrariesStatus(prev =>
+        prev.filter(status => status.url !== library.sourceUrl)
+      );
+    }
+  };
+
   const handleUndo = () => {
     const previousProject = history.undo();
     if (previousProject) {
@@ -419,6 +489,7 @@ export function ProjectProvider(props: PropsWithChildren) {
     removeComponent,
     updateName,
     closeProject,
+    createLibrary: handleCreateLibrary,
     renameLibrary,
     addComponent,
     updateComponent,
@@ -438,6 +509,7 @@ export function ProjectProvider(props: PropsWithChildren) {
     importLibrary: handleImportLibrary,
     addExternalLibraryByUrl: handleAddExternalLibraryByUrl,
     removeLibrary: handleRemoveLibrary,
+    convertExternalToInternal: handleConvertExternalToInternal,
     canUndo: history.canUndo,
     canRedo: history.canRedo,
     undo: handleUndo,

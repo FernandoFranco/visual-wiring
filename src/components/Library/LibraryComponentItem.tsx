@@ -60,14 +60,14 @@ export function LibraryComponentItem(props: LibraryComponentItemProps) {
           <div className="library__component__header-actions">
             <IconButton
               className="library__component__header-edit-btn"
-              title="Edit component"
+              tooltip="Edit component"
               onClick={() => props.onEdit?.(props.component.id)}
             >
               <Pencil size={10} />
             </IconButton>
             <IconButton
               className="library__component__header-delete-btn"
-              title="Delete component"
+              tooltip="Delete component"
               onClick={e => {
                 e.stopPropagation();
                 props.onDelete(props.component.id, props.component.name);
