@@ -12,33 +12,30 @@ export interface AppBarProps {
   backMode?: boolean;
 }
 
-export function AppBar({
-  projectName,
-  onGoHome,
-  backMode = false,
-  children,
-}: PropsWithChildren<AppBarProps>) {
+export function AppBar(props: PropsWithChildren<AppBarProps>) {
+  const backMode = props.backMode || false;
+
   return (
     <header className="app-bar">
       <div className="app-bar__left">
         {backMode ? (
           <IconButton
             className="app-bar__back-btn"
-            onClick={onGoHome}
+            onClick={props.onGoHome}
             title="Back to project"
           >
             <ArrowLeft size={18} />
           </IconButton>
         ) : (
-          <AppLogo size="sm" onClick={onGoHome} />
+          <AppLogo size="sm" onClick={props.onGoHome} />
         )}
         <div className="app-bar__divider" />
-        <span className="app-bar__project-name" title={projectName}>
-          {projectName}
+        <span className="app-bar__project-name" title={props.projectName}>
+          {props.projectName}
         </span>
       </div>
 
-      {children && <div className="app-bar__right">{children}</div>}
+      {props.children && <div className="app-bar__right">{props.children}</div>}
     </header>
   );
 }

@@ -11,16 +11,13 @@ export interface JsonViewerModalProps {
   defaultExpandDepth?: number;
 }
 
-export function JsonViewerModal({
-  isOpen,
-  onClose,
-  title,
-  data,
-  defaultExpandDepth = 1,
-}: JsonViewerModalProps) {
+export function JsonViewerModal(props: JsonViewerModalProps) {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={title}>
-      <JsonViewer data={data} defaultExpandDepth={defaultExpandDepth} />
+    <Modal isOpen={props.isOpen} onClose={props.onClose} title={props.title}>
+      <JsonViewer
+        data={props.data}
+        defaultExpandDepth={props.defaultExpandDepth || 1}
+      />
     </Modal>
   );
 }

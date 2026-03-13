@@ -29,22 +29,26 @@ const MENU_WIDTH = 168;
 const ITEM_HEIGHT = 33;
 const MENU_PADDING = 8;
 
-export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
+export function ContextMenu(props: ContextMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const [openSubIndex, setOpenSubIndex] = useState<number | null>(null);
 
-  const estimatedH = items.length * ITEM_HEIGHT + MENU_PADDING;
+  const estimatedH = props.items.length * ITEM_HEIGHT + MENU_PADDING;
   const ax =
-    x + MENU_WIDTH > window.innerWidth ? Math.max(0, x - MENU_WIDTH) : x;
+    props.x + MENU_WIDTH > window.innerWidth
+      ? Math.max(0, props.x - MENU_WIDTH)
+      : props.x;
   const ay =
-    y + estimatedH > window.innerHeight ? Math.max(0, y - estimatedH) : y;
+    props.y + estimatedH > window.innerHeight
+      ? Math.max(0, props.y - estimatedH)
+      : props.y;
 
   useEffect(() => {
     const handleDown = (e: MouseEvent) => {
-      if (!menuRef.current?.contains(e.target as Node)) onClose();
+      if (!menuRef.current?.contains(e.target as Node)) props.onClose();
     };
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') props.onClose();
     };
     document.addEventListener('mousedown', handleDown);
     document.addEventListener('keydown', handleKey);
@@ -52,11 +56,11 @@ export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
       document.removeEventListener('mousedown', handleDown);
       document.removeEventListener('keydown', handleKey);
     };
-  }, [onClose]);
+  }, [props.onClose]);
 
   return (
     <div ref={menuRef} className="context-menu" style={{ left: ax, top: ay }}>
-      {items.map((item, i) => (
+      {props.items.map((item, i) => (
         <div
           key={i}
           className={`context-menu__item${item.danger ? ' context-menu__item--danger' : ''}${item.subItems ? ' context-menu__item--has-sub' : ''}`}
@@ -67,7 +71,7 @@ export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
           onClick={() => {
             if (!item.subItems) {
               item.onClick?.();
-              onClose();
+              props.onClose();
             }
           }}
         >
@@ -89,7 +93,7 @@ export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
                   onClick={e => {
                     e.stopPropagation();
                     sub.onClick();
-                    onClose();
+                    props.onClose();
                   }}
                 >
                   <span className="context-menu__item-check">

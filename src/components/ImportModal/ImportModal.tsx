@@ -14,7 +14,6 @@ export interface ImportModalProps {
 }
 
 export function ImportModal(props: ImportModalProps) {
-  const { isOpen, onClose, onImport } = props;
   const [importUrl, setImportUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,8 +23,8 @@ export function ImportModal(props: ImportModalProps) {
     try {
       const text = await file.text();
       const data = JSON.parse(text);
-      await onImport(data, file.name);
-      onClose();
+      await props.onImport(data, file.name);
+      props.onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load file');
     }
@@ -48,9 +47,9 @@ export function ImportModal(props: ImportModalProps) {
         );
       const data = await response.json();
       const filename = importUrl.split('/').pop() || 'imported.json';
-      await onImport(data, filename);
+      await props.onImport(data, filename);
       setImportUrl('');
-      onClose();
+      props.onClose();
     } catch (err) {
       if (err instanceof TypeError && err.message.includes('fetch')) {
         setError(
@@ -68,8 +67,8 @@ export function ImportModal(props: ImportModalProps) {
 
   return (
     <Modal
-      isOpen={isOpen}
-      onClose={onClose}
+      isOpen={props.isOpen}
+      onClose={props.onClose}
       title="Import Data"
       subtitle="Components, Libraries or Projects"
       icon={<FileJson size={20} />}

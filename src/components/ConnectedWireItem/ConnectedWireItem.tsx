@@ -17,27 +17,21 @@ const PIN_SIDE_LABELS: Record<PinSide, string> = {
   right: 'Right',
 };
 
-export function ConnectedWireItem({
-  wireId,
-  pinName,
-  pinSide,
-  color,
-  onClick,
-}: ConnectedWireItemProps) {
+export function ConnectedWireItem(props: ConnectedWireItemProps) {
   return (
     <li
       className="connected-wire-item"
-      onClick={() => onClick(wireId)}
+      onClick={() => props.onClick(props.wireId)}
       title="Click to select wire"
     >
       <div
         className="connected-wire-item__color"
-        style={{ backgroundColor: color || '#0f172a' }}
+        style={{ backgroundColor: props.color || '#0f172a' }}
       />
       <div className="connected-wire-item__info">
-        <span className="connected-wire-item__pin">{pinName}</span>
+        <span className="connected-wire-item__pin">{props.pinName}</span>
         <span className="connected-wire-item__side">
-          {PIN_SIDE_LABELS[pinSide]}
+          {PIN_SIDE_LABELS[props.pinSide]}
         </span>
       </div>
     </li>

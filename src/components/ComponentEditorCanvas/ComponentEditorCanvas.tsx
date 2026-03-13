@@ -9,13 +9,11 @@ export interface ComponentEditorCanvasProps {
   component: Component;
 }
 
-export function ComponentEditorCanvas({
-  component,
-}: ComponentEditorCanvasProps) {
+export function ComponentEditorCanvas(props: ComponentEditorCanvasProps) {
   return (
     <div className="component-editor-canvas">
       <GridCanvas grid={GRID}>
-        <ComponentBody component={component} />
+        <ComponentBody component={props.component} />
       </GridCanvas>
       <div className="component-editor-canvas__badge">COMPONENT PREVIEW</div>
     </div>

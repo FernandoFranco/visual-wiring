@@ -119,11 +119,13 @@ function JsonNode({ value, depth, defaultExpandDepth, isLast }: JsonNodeProps) {
   );
 }
 
-export function JsonViewer({ data, defaultExpandDepth = 1 }: JsonViewerProps) {
+export function JsonViewer(props: JsonViewerProps) {
+  const defaultExpandDepth = props.defaultExpandDepth || 1;
+
   return (
     <div className="json-viewer">
       <JsonNode
-        value={data}
+        value={props.data}
         depth={0}
         defaultExpandDepth={defaultExpandDepth}
         isLast={true}

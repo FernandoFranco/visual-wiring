@@ -32,35 +32,30 @@ function formatTimestamp(timestamp: number): string {
   }
 }
 
-export function HistoryModal({
-  isOpen,
-  onClose,
-  past,
-  onRestoreToPoint,
-}: HistoryModalProps) {
+export function HistoryModal(props: HistoryModalProps) {
   const [confirmRestore, setConfirmRestore] = useState<{
     index: number;
     action: string;
     undoCount: number;
   } | null>(null);
 
-  const hasHistory = past.length > 0;
+  const hasHistory = props.past.length > 0;
 
   const handleEntryClick = (originalIndex: number, action: string) => {
-    const undoCount = past.length - originalIndex;
+    const undoCount = props.past.length - originalIndex;
     setConfirmRestore({ index: originalIndex, action, undoCount });
   };
 
   const handleConfirmRestore = () => {
     if (confirmRestore !== null) {
-      onRestoreToPoint(confirmRestore.index);
+      props.onRestoreToPoint(confirmRestore.index);
       setConfirmRestore(null);
-      onClose();
+      props.onClose();
     }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="History">
+    <Modal isOpen={props.isOpen} onClose={props.onClose} title="History">
       {!hasHistory ? (
         <div className="history-modal__empty">
           No history available. Start making changes to see them here.
@@ -68,9 +63,9 @@ export function HistoryModal({
       ) : (
         <>
           <ul className="history-modal__timeline">
-            {[...past].reverse().map((entry, displayIndex) => {
-              const originalIndex = past.length - 1 - displayIndex;
-              const undoCount = past.length - originalIndex;
+            {[...props.past].reverse().map((entry, displayIndex) => {
+              const originalIndex = props.past.length - 1 - displayIndex;
+              const undoCount = props.past.length - originalIndex;
 
               return (
                 <li
@@ -100,7 +95,8 @@ export function HistoryModal({
               </div>
             </div>
             <div>
-              {past.length} action{past.length !== 1 ? 's' : ''} in history
+              {props.past.length} action{props.past.length !== 1 ? 's' : ''} in
+              history
             </div>
           </div>
         </>

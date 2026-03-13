@@ -15,7 +15,7 @@ import {
 
 const AUTO_DISMISS_MS = 4000;
 
-export function SnackbarProvider({ children }: PropsWithChildren) {
+export function SnackbarProvider(props: PropsWithChildren) {
   const [messages, setMessages] = useState<SnackbarMessage[]>([]);
   const nextId = useRef(0);
 
@@ -43,7 +43,7 @@ export function SnackbarProvider({ children }: PropsWithChildren) {
 
   return (
     <SnackbarContext.Provider value={value}>
-      {children}
+      {props.children}
       <Snackbar messages={messages} onDismiss={dismiss} />
     </SnackbarContext.Provider>
   );

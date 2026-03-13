@@ -20,33 +20,20 @@ export interface CanvasPinProps {
   isWireTarget?: boolean;
 }
 
-export function CanvasPin({
-  rectX,
-  rectY,
-  labelX,
-  labelY,
-  textAnchor,
-  dominantBaseline,
-  name,
-  color,
-  labelColor,
-  textTransform,
-  onPinDown,
-  isWireTarget = false,
-}: CanvasPinProps) {
+export function CanvasPin(props: CanvasPinProps) {
   const { grid } = useGridCanvas();
   const pinFont = Math.max(5, grid * 0.9);
 
   const handleMouseDown = (e: React.MouseEvent<SVGGElement>) => {
-    if (!onPinDown) return;
+    if (!props.onPinDown) return;
     e.stopPropagation();
-    onPinDown(e);
+    props.onPinDown(e);
   };
 
   const classes = [
     'cec-pin',
-    onPinDown ? 'cec-pin--connectable' : '',
-    isWireTarget ? 'cec-pin--wire-target' : '',
+    props.onPinDown ? 'cec-pin--connectable' : '',
+    props.isWireTarget ? 'cec-pin--wire-target' : '',
   ]
     .filter(Boolean)
     .join(' ');
@@ -55,36 +42,36 @@ export function CanvasPin({
     <g
       className={classes}
       onMouseDown={handleMouseDown}
-      onClick={onPinDown ? e => e.stopPropagation() : undefined}
+      onClick={props.onPinDown ? e => e.stopPropagation() : undefined}
     >
       <rect
-        x={rectX + CANVAS_STROKE_WIDTH / 2}
-        y={rectY + CANVAS_STROKE_WIDTH / 2}
+        x={props.rectX + CANVAS_STROKE_WIDTH / 2}
+        y={props.rectY + CANVAS_STROKE_WIDTH / 2}
         width={grid - CANVAS_STROKE_WIDTH}
         height={grid - CANVAS_STROKE_WIDTH}
         rx={Math.max(0, 2 - CANVAS_STROKE_WIDTH / 2)}
         className="cec-pin__rect"
         style={
-          color
+          props.color
             ? {
                 fill: '#ffffff',
-                stroke: color,
+                stroke: props.color,
                 strokeWidth: CANVAS_STROKE_WIDTH,
               }
             : undefined
         }
       />
       <text
-        x={labelX}
-        y={labelY}
+        x={props.labelX}
+        y={props.labelY}
         fontSize={pinFont}
         className="cec-pin__label cec-pin__label--inside"
-        textAnchor={textAnchor}
-        dominantBaseline={dominantBaseline}
-        transform={textTransform}
-        style={labelColor ? { fill: labelColor } : undefined}
+        textAnchor={props.textAnchor}
+        dominantBaseline={props.dominantBaseline}
+        transform={props.textTransform}
+        style={props.labelColor ? { fill: props.labelColor } : undefined}
       >
-        {name || '?'}
+        {props.name || '?'}
       </text>
     </g>
   );

@@ -11,44 +11,37 @@ export interface ExpansionPanelProps {
   onToggle: () => void;
 }
 
-export function ExpansionPanel({
-  label,
-  count,
-  actions,
-  isOpen,
-  onToggle,
-  children,
-}: PropsWithChildren<ExpansionPanelProps>) {
+export function ExpansionPanel(props: PropsWithChildren<ExpansionPanelProps>) {
   return (
     <div className="expansion-panel">
       <div className="expansion-panel__header">
         <button
           className="expansion-panel__toggle"
-          onClick={onToggle}
+          onClick={props.onToggle}
           type="button"
-          aria-expanded={isOpen}
+          aria-expanded={props.isOpen}
         >
           <ChevronRight
             size={14}
-            className={`expansion-panel__chevron${isOpen ? ' expansion-panel__chevron--open' : ''}`}
+            className={`expansion-panel__chevron${props.isOpen ? ' expansion-panel__chevron--open' : ''}`}
           />
         </button>
 
-        <div className="expansion-panel__label">{label}</div>
+        <div className="expansion-panel__label">{props.label}</div>
 
-        {count !== undefined && (
-          <span className="expansion-panel__count">{count}</span>
+        {props.count !== undefined && (
+          <span className="expansion-panel__count">{props.count}</span>
         )}
 
-        {actions !== undefined && (
-          <div className="expansion-panel__actions">{actions}</div>
+        {props.actions !== undefined && (
+          <div className="expansion-panel__actions">{props.actions}</div>
         )}
       </div>
 
       <div
-        className={`expansion-panel__body${isOpen ? ' expansion-panel__body--open' : ''}`}
+        className={`expansion-panel__body${props.isOpen ? ' expansion-panel__body--open' : ''}`}
       >
-        <div className="expansion-panel__body-inner">{children}</div>
+        <div className="expansion-panel__body-inner">{props.children}</div>
       </div>
     </div>
   );

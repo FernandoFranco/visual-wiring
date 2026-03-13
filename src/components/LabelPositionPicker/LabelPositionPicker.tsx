@@ -23,17 +23,13 @@ const OPTIONS = [
   { value: 'right', label: <ArrowRight size={13} /> },
 ];
 
-export function LabelPositionPicker({
-  value,
-  onChange,
-  label,
-}: LabelPositionPickerProps) {
+export function LabelPositionPicker(props: LabelPositionPickerProps) {
   return (
     <ToggleGroup
       options={OPTIONS}
-      value={value}
-      onChange={v => onChange(v as LabelPosition)}
-      label={label}
+      value={props.value}
+      onChange={v => props.onChange(v as LabelPosition)}
+      label={props.label}
     />
   );
 }

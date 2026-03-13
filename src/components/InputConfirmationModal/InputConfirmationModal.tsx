@@ -28,52 +28,38 @@ const icons = {
 };
 
 export function InputConfirmationModal(props: InputConfirmationModalProps) {
-  const {
-    isOpen,
-    onClose,
-    onConfirm,
-    title,
-    message,
-    confirmValue,
-    inputLabel = 'Type to confirm',
-    inputPlaceholder = 'Type here',
-    confirmLabel = 'Confirm',
-    cancelLabel = 'Cancel',
-    variant = 'default',
-  } = props;
-
   const [inputValue, setInputValue] = useState('');
 
   const handleConfirm = () => {
-    if (inputValue === confirmValue) {
-      onConfirm();
+    if (inputValue === props.confirmValue) {
+      props.onConfirm();
       setInputValue('');
-      onClose();
+      props.onClose();
     }
   };
 
   const handleClose = () => {
     setInputValue('');
-    onClose();
+    props.onClose();
   };
 
-  const isConfirmDisabled = inputValue !== confirmValue;
+  const isConfirmDisabled = inputValue !== props.confirmValue;
 
   return (
     <Modal
-      isOpen={isOpen}
+      isOpen={props.isOpen}
       onClose={handleClose}
-      title={title}
-      icon={icons[variant]}
+      title={props.title}
+      icon={icons[props.variant ?? 'default']}
       showCloseButton={false}
     >
       <div className="input-confirmation-modal">
-        <p className="input-confirmation-modal__message">{message}</p>
+        <p className="input-confirmation-modal__message">{props.message}</p>
         <Input
-          label={inputLabel}
+          label={props.inputLabel ?? 'Type to confirm'}
           value={inputValue}
           onChange={e => setInputValue(e.target.value)}
-          placeholder={inputPlaceholder}
+          placeholder={props.inputPlaceholder ?? 'Type here'}
           autoFocus
           onKeyDown={e => {
             if (e.key === 'Enter' && !isConfirmDisabled) {
@@ -83,14 +69,16 @@ export function InputConfirmationModal(props: InputConfirmationModalProps) {
         />
         <div className="input-confirmation-modal__actions">
           <Button variant="cancel" onClick={handleClose}>
-            {cancelLabel}
+            {props.cancelLabel ?? 'Cancel'}
           </Button>
           <Button
-            variant={variant === 'danger' ? 'danger' : 'primary'}
+            variant={
+              (props.variant ?? 'default') === 'danger' ? 'danger' : 'primary'
+            }
             onClick={handleConfirm}
             disabled={isConfirmDisabled}
           >
-            {confirmLabel}
+            {props.confirmLabel ?? 'Confirm'}
           </Button>
         </div>
       </div>

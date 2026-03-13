@@ -8,25 +8,21 @@ export interface SidebarSearchProps {
   placeholder?: string;
 }
 
-export function SidebarSearch({
-  value,
-  onChange,
-  placeholder = 'Search...',
-}: SidebarSearchProps) {
+export function SidebarSearch(props: SidebarSearchProps) {
   return (
     <div className="sidebar-search">
       <Search size={13} className="sidebar-search__icon" />
       <input
         className="sidebar-search__input"
         type="text"
-        placeholder={placeholder}
-        value={value}
-        onChange={e => onChange(e.target.value)}
+        placeholder={props.placeholder || 'Search...'}
+        value={props.value}
+        onChange={e => props.onChange(e.target.value)}
       />
-      {value && (
+      {props.value && (
         <button
           className="sidebar-search__clear"
-          onClick={() => onChange('')}
+          onClick={() => props.onChange('')}
           type="button"
           aria-label="Clear search"
         >

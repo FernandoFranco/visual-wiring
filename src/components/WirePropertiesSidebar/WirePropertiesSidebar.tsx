@@ -15,17 +15,7 @@ export interface WirePropertiesSidebarProps {
   onClose: () => void;
 }
 
-export function WirePropertiesSidebar({
-  wireId,
-  startLabel,
-  endLabel,
-  color,
-  colors,
-  onColorChange,
-  onAddColor,
-  onRemoveColor,
-  onClose,
-}: WirePropertiesSidebarProps) {
+export function WirePropertiesSidebar(props: WirePropertiesSidebarProps) {
   const footer = (
     <>
       <div className="wire-properties-sidebar__connections">
@@ -35,37 +25,37 @@ export function WirePropertiesSidebar({
           </span>
           <span
             className="wire-properties-sidebar__connection-value"
-            title={startLabel}
+            title={props.startLabel}
           >
-            {startLabel}
+            {props.startLabel}
           </span>
         </div>
         <div className="wire-properties-sidebar__connection">
           <span className="wire-properties-sidebar__connection-label">To</span>
           <span
             className="wire-properties-sidebar__connection-value"
-            title={endLabel}
+            title={props.endLabel}
           >
-            {endLabel}
+            {props.endLabel}
           </span>
         </div>
       </div>
 
-      <span className="wire-properties-sidebar__id" title={wireId}>
-        id: {wireId}
+      <span className="wire-properties-sidebar__id" title={props.wireId}>
+        id: {props.wireId}
       </span>
     </>
   );
 
   return (
-    <PropertiesSidebar title="Wire" onClose={onClose} footer={footer}>
+    <PropertiesSidebar title="Wire" onClose={props.onClose} footer={footer}>
       <ColorPicker
         label="Color"
-        value={color}
-        colors={colors}
-        onChange={onColorChange}
-        onAddColor={onAddColor}
-        onRemoveColor={onRemoveColor}
+        value={props.color}
+        colors={props.colors}
+        onChange={props.onColorChange}
+        onAddColor={props.onAddColor}
+        onRemoveColor={props.onRemoveColor}
       />
     </PropertiesSidebar>
   );

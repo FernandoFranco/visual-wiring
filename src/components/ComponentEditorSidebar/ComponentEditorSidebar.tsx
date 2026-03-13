@@ -29,28 +29,15 @@ export interface ComponentEditorSidebarProps {
 
 const PIN_SIDES: PinSide[] = ['up', 'down', 'left', 'right'];
 
-export function ComponentEditorSidebar({
-  name,
-  onNameChange,
-  nameError,
-  minWidth,
-  onMinWidthChange,
-  minHeight,
-  onMinHeightChange,
-  color,
-  colors,
-  onColorChange,
-  onAddColor,
-  onRemoveColor,
-  defaultLabelPosition,
-  onDefaultLabelPositionChange,
-  pins,
-  onPinsChange,
-}: ComponentEditorSidebarProps) {
-  const pinsForSide = (side: PinSide) => pins.filter(p => p.side === side);
+export function ComponentEditorSidebar(props: ComponentEditorSidebarProps) {
+  const pinsForSide = (side: PinSide) =>
+    props.pins.filter(p => p.side === side);
 
   const handleSideChange = (side: PinSide, updated: Pin[]) => {
-    onPinsChange([...pins.filter(p => p.side !== side), ...updated]);
+    props.onPinsChange([
+      ...props.pins.filter(p => p.side !== side),
+      ...updated,
+    ]);
   };
 
   return (
@@ -63,10 +50,10 @@ export function ComponentEditorSidebar({
           required
           type="text"
           placeholder="Component name..."
-          value={name}
-          error={nameError}
-          className={nameError ? 'input-field--error' : ''}
-          onChange={e => onNameChange(e.target.value)}
+          value={props.name}
+          error={props.nameError}
+          className={props.nameError ? 'input-field--error' : ''}
+          onChange={e => props.onNameChange(e.target.value)}
           autoFocus
         />
       </div>
@@ -84,9 +71,9 @@ export function ComponentEditorSidebar({
               label="W"
               type="number"
               min={1}
-              value={minWidth}
+              value={props.minWidth}
               onChange={e =>
-                onMinWidthChange(Math.max(1, Number(e.target.value)))
+                props.onMinWidthChange(Math.max(1, Number(e.target.value)))
               }
             />
           </div>
@@ -98,9 +85,9 @@ export function ComponentEditorSidebar({
               label="H"
               type="number"
               min={1}
-              value={minHeight}
+              value={props.minHeight}
               onChange={e =>
-                onMinHeightChange(Math.max(1, Number(e.target.value)))
+                props.onMinHeightChange(Math.max(1, Number(e.target.value)))
               }
             />
           </div>
@@ -112,11 +99,11 @@ export function ComponentEditorSidebar({
       <div className="component-editor-sidebar__section">
         <ColorPicker
           label="Background color"
-          value={color}
-          colors={colors}
-          onChange={onColorChange}
-          onAddColor={onAddColor}
-          onRemoveColor={onRemoveColor}
+          value={props.color}
+          colors={props.colors}
+          onChange={props.onColorChange}
+          onAddColor={props.onAddColor}
+          onRemoveColor={props.onRemoveColor}
         />
       </div>
 
@@ -125,8 +112,8 @@ export function ComponentEditorSidebar({
       <div className="component-editor-sidebar__section">
         <LabelPositionPicker
           label="Default label position"
-          value={defaultLabelPosition}
-          onChange={onDefaultLabelPositionChange}
+          value={props.defaultLabelPosition}
+          onChange={props.onDefaultLabelPositionChange}
         />
       </div>
 
