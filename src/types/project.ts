@@ -1,4 +1,5 @@
 import type { Library } from './library';
+import type { ExternalLibraryReference } from './librarySource';
 import type { Wire } from './wire';
 
 export type LabelPosition = 'center' | 'top' | 'bottom' | 'left' | 'right';
@@ -21,6 +22,7 @@ export interface Project {
   updatedAt: string;
   colors: string[];
   libraries: Library[];
+  externalLibraries?: ExternalLibraryReference[];
   placedComponents?: PlacedComponent[];
   wires?: Wire[];
 }
