@@ -33,28 +33,15 @@ export interface ComponentPropertiesSidebarProps {
   onClose: () => void;
 }
 
-export function ComponentPropertiesSidebar({
-  componentName,
-  instanceId,
-  pinCount,
-  x,
-  y,
-  rotation,
-  onRotationChange,
-  alias,
-  onAliasChange,
-  labelPosition,
-  onLabelPositionChange,
-  connectedWires,
-  onWireClick,
-  onClose,
-}: ComponentPropertiesSidebarProps) {
+export function ComponentPropertiesSidebar(
+  props: ComponentPropertiesSidebarProps
+) {
   const footer = (
     <>
       <div className="component-properties-sidebar__info-row">
         <span className="component-properties-sidebar__info-label">Pins</span>
         <span className="component-properties-sidebar__info-value">
-          {pinCount}
+          {props.pinCount}
         </span>
       </div>
       <div className="component-properties-sidebar__info-row">
@@ -62,51 +49,58 @@ export function ComponentPropertiesSidebar({
           Position
         </span>
         <span className="component-properties-sidebar__info-value">
-          {x}, {y}
+          {props.x}, {props.y}
         </span>
       </div>
-      <span className="component-properties-sidebar__id" title={instanceId}>
-        id: {instanceId}
+      <span
+        className="component-properties-sidebar__id"
+        title={props.instanceId}
+      >
+        id: {props.instanceId}
       </span>
     </>
   );
 
   return (
-    <PropertiesSidebar title={componentName} onClose={onClose} footer={footer}>
+    <PropertiesSidebar
+      title={props.componentName}
+      onClose={props.onClose}
+      footer={footer}
+    >
       <Input
         id="component-alias"
         variant="sm"
         label="Alias"
         type="text"
-        placeholder={componentName}
-        value={alias}
-        onChange={e => onAliasChange(e.target.value)}
+        placeholder={props.componentName}
+        value={props.alias}
+        onChange={e => props.onAliasChange(e.target.value)}
       />
       <RotationPicker
         label="Rotation"
-        value={rotation}
-        onChange={onRotationChange}
+        value={props.rotation}
+        onChange={props.onRotationChange}
       />
       <LabelPositionPicker
         label="Label position"
-        value={labelPosition}
-        onChange={onLabelPositionChange}
+        value={props.labelPosition}
+        onChange={props.onLabelPositionChange}
       />
 
-      {connectedWires.length > 0 && (
+      {props.connectedWires.length > 0 && (
         <div className="component-properties-sidebar__section">
           <label className="component-properties-sidebar__label">
-            Connected wires ({connectedWires.length})
+            Connected wires ({props.connectedWires.length})
           </label>
           <ul className="component-properties-sidebar__wires">
-            {connectedWires.map(wire => (
+            {props.connectedWires.map(wire => (
               <ConnectedWireItem
                 key={wire.wireId}
                 wireId={wire.wireId}
                 pinName={wire.pinName}
                 pinSide={wire.pinSide}
                 color={wire.color}
-                onClick={onWireClick}
+                onClick={props.onWireClick}
               />
             ))}
           </ul>

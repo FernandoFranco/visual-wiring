@@ -9,42 +9,35 @@ export interface ColorPickerProps {
   onRemoveColor?: (color: string) => void;
 }
 
-export function ColorPicker({
-  value,
-  onChange,
-  colors,
-  label,
-  onAddColor,
-  onRemoveColor,
-}: ColorPickerProps) {
+export function ColorPicker(props: ColorPickerProps) {
   const handleColorInputChange = (newColor: string) => {
-    onChange(newColor);
-    if (onAddColor && !colors.includes(newColor)) {
-      onAddColor(newColor);
+    props.onChange(newColor);
+    if (props.onAddColor && !props.colors.includes(newColor)) {
+      props.onAddColor(newColor);
     }
   };
 
   return (
     <div className="color-picker">
-      {label && <p className="color-picker__label">{label}</p>}
+      {props.label && <p className="color-picker__label">{props.label}</p>}
       <div className="color-picker__swatches">
-        {colors.map(c => (
+        {props.colors.map(c => (
           <button
             key={c}
             type="button"
             className={[
               'color-picker__swatch',
-              c === value ? 'color-picker__swatch--active' : '',
+              c === props.value ? 'color-picker__swatch--active' : '',
             ]
               .filter(Boolean)
               .join(' ')}
             style={{ background: c }}
             title={c}
-            onClick={() => onChange(c)}
+            onClick={() => props.onChange(c)}
             onContextMenu={e => {
-              if (onRemoveColor) {
+              if (props.onRemoveColor) {
                 e.preventDefault();
-                onRemoveColor(c);
+                props.onRemoveColor(c);
               }
             }}
           />
@@ -53,7 +46,7 @@ export function ColorPicker({
       <input
         type="color"
         className="color-picker__input"
-        value={value || '#ffffff'}
+        value={props.value || '#ffffff'}
         onChange={e => handleColorInputChange(e.target.value)}
         title="Custom color"
       />

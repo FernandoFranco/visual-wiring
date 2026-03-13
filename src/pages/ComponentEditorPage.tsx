@@ -1,7 +1,6 @@
 import './ComponentEditorPage.css';
 
 import { Braces, Save, Settings } from 'lucide-react';
-import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { AppBar } from '../components/AppBar';
@@ -11,10 +10,9 @@ import { ConfirmationModal } from '../components/ConfirmationModal';
 import { DropdownMenu } from '../components/DropdownMenu';
 import { IconButton } from '../components/IconButton';
 import { JsonViewerModal } from '../components/JsonViewerModal';
+import { useComponentEditor } from '../hooks/useComponentEditor';
 import { useProject } from '../hooks/useProject';
 import { ROUTES } from '../routes';
-import type { Pin } from '../types/pin';
-import type { LabelPosition } from '../types/project';
 
 export function ComponentEditorPage() {
   const navigate = useNavigate();
@@ -22,109 +20,40 @@ export function ComponentEditorPage() {
     libraryId: string;
     componentId?: string;
   }>();
-  const isEditMode = !!componentId;
 
   const { project, addComponent, updateComponent, addColor, removeColor } =
     useProject();
 
   const library = project?.libraries.find(l => l.id === libraryId);
-  const existingComponent = isEditMode
+  const existingComponent = componentId
     ? library?.components.find(c => c.id === componentId)
     : undefined;
 
-  const [name, setName] = useState(existingComponent?.name ?? '');
-  const [nameError, setNameError] = useState('');
-  const [pins, setPins] = useState<Pin[]>(existingComponent?.pins ?? []);
-  const [minWidth, setMinWidth] = useState(existingComponent?.minWidth ?? 4);
-  const [minHeight, setMinHeight] = useState(existingComponent?.minHeight ?? 4);
-  const [color, setColor] = useState(existingComponent?.color ?? '#1e293b');
-  const [defaultLabelPosition, setDefaultLabelPosition] =
-    useState<LabelPosition>(
-      existingComponent?.defaultLabelPosition ?? 'center'
-    );
-  const [isDiscardOpen, setIsDiscardOpen] = useState(false);
-  const [isJsonModalOpen, setIsJsonModalOpen] = useState(false);
+  const editor = useComponentEditor({
+    library,
+    libraryId,
+    componentId,
+    existingComponent,
+    addComponent,
+    updateComponent,
+  });
 
-  if (!project || !library || (isEditMode && !existingComponent)) {
+  if (!project || !library || (editor.isEditMode && !existingComponent)) {
     navigate(ROUTES.PROJECT, { replace: true });
     return null;
   }
 
-  const hasChanges = isEditMode
-    ? name.trim() !== existingComponent!.name ||
-      JSON.stringify(pins) !== JSON.stringify(existingComponent!.pins) ||
-      minWidth !== (existingComponent!.minWidth ?? 4) ||
-      minHeight !== (existingComponent!.minHeight ?? 4) ||
-      color !== (existingComponent!.color ?? '') ||
-      defaultLabelPosition !==
-        (existingComponent!.defaultLabelPosition ?? 'center')
-    : name.trim() !== '' || pins.length > 0;
-
-  const handleBack = () => {
-    if (hasChanges) {
-      setIsDiscardOpen(true);
-    } else {
-      navigate(ROUTES.PROJECT);
-    }
-  };
-
-  const handleDiscard = () => {
-    navigate(ROUTES.PROJECT);
-  };
-
-  const previewComponent = {
-    id: componentId ?? 'preview',
-    name,
-    pins,
-    minWidth,
-    minHeight,
-    color: color || undefined,
-    defaultLabelPosition,
-  };
-
-  const handleSave = () => {
-    const trimmedName = name.trim();
-    if (!trimmedName) {
-      setNameError('Component name is required.');
-      return;
-    }
-
-    if (isEditMode && componentId) {
-      updateComponent(libraryId, {
-        id: componentId,
-        name: trimmedName,
-        pins,
-        minWidth,
-        minHeight,
-        color: color || undefined,
-        defaultLabelPosition,
-      });
-    } else {
-      addComponent(libraryId, {
-        id: crypto.randomUUID(),
-        name: trimmedName,
-        pins,
-        minWidth,
-        minHeight,
-        color: color || undefined,
-        defaultLabelPosition,
-      });
-    }
-
-    navigate(ROUTES.PROJECT);
-  };
-
-  const appBarTitle = isEditMode
-    ? `${library.name}  /  ${existingComponent!.name}`
-    : `${library.name}  /  New Component`;
-
   return (
     <div className="component-editor-page">
-      <AppBar projectName={appBarTitle} onGoHome={handleBack} backMode>
+      <AppBar
+        projectName={editor.appBarTitle}
+        onGoHome={editor.handleBack}
+        backMode
+      >
         <IconButton
           className="app-bar__action-btn"
-          onClick={handleSave}
-          title={isEditMode ? 'Save changes' : 'Save component'}
+          onClick={editor.handleSave}
+          title={editor.isEditMode ? 'Save changes' : 'Save component'}
         >
           <Save size={17} />
         </IconButton>
@@ -138,7 +67,7 @@ export function ComponentEditorPage() {
             {
               label: 'View JSON',
               icon: <Braces size={14} />,
-              onClick: () => setIsJsonModalOpen(true),
+              onClick: () => editor.setIsJsonModalOpen(true),
             },
           ]}
         />
@@ -146,34 +75,34 @@ export function ComponentEditorPage() {
 
       <div className="component-editor-page__body">
         <ComponentEditorSidebar
-          name={name}
+          name={editor.name}
           onNameChange={value => {
-            setName(value);
-            if (value.trim()) setNameError('');
+            editor.setName(value);
+            if (value.trim()) editor.setNameError('');
           }}
-          nameError={nameError}
-          minWidth={minWidth}
-          onMinWidthChange={setMinWidth}
-          minHeight={minHeight}
-          onMinHeightChange={setMinHeight}
-          color={color}
+          nameError={editor.nameError}
+          minWidth={editor.minWidth}
+          onMinWidthChange={editor.setMinWidth}
+          minHeight={editor.minHeight}
+          onMinHeightChange={editor.setMinHeight}
+          color={editor.color}
           colors={project?.colors ?? []}
-          onColorChange={setColor}
+          onColorChange={editor.setColor}
           onAddColor={addColor}
           onRemoveColor={removeColor}
-          defaultLabelPosition={defaultLabelPosition}
-          onDefaultLabelPositionChange={setDefaultLabelPosition}
-          pins={pins}
-          onPinsChange={setPins}
-          onSave={handleSave}
+          defaultLabelPosition={editor.defaultLabelPosition}
+          onDefaultLabelPositionChange={editor.setDefaultLabelPosition}
+          pins={editor.pins}
+          onPinsChange={editor.setPins}
+          onSave={editor.handleSave}
         />
-        <ComponentEditorCanvas component={previewComponent} />
+        <ComponentEditorCanvas component={editor.previewComponent} />
       </div>
 
       <ConfirmationModal
-        isOpen={isDiscardOpen}
-        onClose={() => setIsDiscardOpen(false)}
-        onConfirm={handleDiscard}
+        isOpen={editor.isDiscardOpen}
+        onClose={() => editor.setIsDiscardOpen(false)}
+        onConfirm={editor.handleDiscard}
         title="Discard Changes"
         message="You have unsaved changes. Are you sure you want to leave without saving?"
         confirmLabel="Discard"
@@ -182,15 +111,15 @@ export function ComponentEditorPage() {
       />
 
       <JsonViewerModal
-        isOpen={isJsonModalOpen}
-        onClose={() => setIsJsonModalOpen(false)}
+        isOpen={editor.isJsonModalOpen}
+        onClose={() => editor.setIsJsonModalOpen(false)}
         title="Component JSON"
         data={{
           id: componentId || '(unsaved)',
-          name,
-          pins,
-          minWidth,
-          minHeight,
+          name: editor.name,
+          pins: editor.pins,
+          minWidth: editor.minWidth,
+          minHeight: editor.minHeight,
         }}
         defaultExpandDepth={2}
       />

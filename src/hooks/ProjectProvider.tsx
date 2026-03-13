@@ -29,7 +29,7 @@ import { ProjectContext, type ProjectContextValue } from './ProjectContext';
 import { useProjectHistory } from './useProjectHistory';
 import { useProjectStorage } from './useProjectStorage';
 
-export function ProjectProvider({ children }: PropsWithChildren) {
+export function ProjectProvider(props: PropsWithChildren) {
   const storage = useProjectStorage();
   const [project, setProject] = useState<Project | null>(() => {
     return storage.loadProject();
@@ -244,6 +244,8 @@ export function ProjectProvider({ children }: PropsWithChildren) {
   };
 
   return (
-    <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>
+    <ProjectContext.Provider value={value}>
+      {props.children}
+    </ProjectContext.Provider>
   );
 }

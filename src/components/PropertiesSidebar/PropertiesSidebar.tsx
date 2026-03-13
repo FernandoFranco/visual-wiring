@@ -11,12 +11,9 @@ export interface PropertiesSidebarProps {
   footer?: ReactNode;
 }
 
-export function PropertiesSidebar({
-  title,
-  onClose,
-  footer,
-  children,
-}: PropsWithChildren<PropertiesSidebarProps>) {
+export function PropertiesSidebar(
+  props: PropsWithChildren<PropertiesSidebarProps>
+) {
   return (
     <aside
       className="properties-sidebar"
@@ -27,17 +24,19 @@ export function PropertiesSidebar({
       onContextMenu={e => e.stopPropagation()}
     >
       <div className="properties-sidebar__header">
-        <span className="properties-sidebar__title" title={title}>
-          {title}
+        <span className="properties-sidebar__title" title={props.title}>
+          {props.title}
         </span>
-        <IconButton title="Close" onClick={onClose}>
+        <IconButton title="Close" onClick={props.onClose}>
           <X size={14} />
         </IconButton>
       </div>
 
-      <div className="properties-sidebar__body">{children}</div>
+      <div className="properties-sidebar__body">{props.children}</div>
 
-      {footer && <div className="properties-sidebar__footer">{footer}</div>}
+      {props.footer && (
+        <div className="properties-sidebar__footer">{props.footer}</div>
+      )}
     </aside>
   );
 }

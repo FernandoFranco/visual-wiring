@@ -13,7 +13,8 @@ const iconSizes: Record<NonNullable<AppLogoProps['size']>, number> = {
   lg: 40,
 };
 
-export function AppLogo({ size = 'md', onClick }: AppLogoProps) {
+export function AppLogo(props: AppLogoProps) {
+  const size = props.size || 'md';
   const iconSize = iconSizes[size];
   const content = (
     <>
@@ -27,11 +28,11 @@ export function AppLogo({ size = 'md', onClick }: AppLogoProps) {
     </>
   );
 
-  if (onClick) {
+  if (props.onClick) {
     return (
       <button
         className={`app-logo app-logo--${size} app-logo--clickable`}
-        onClick={onClick}
+        onClick={props.onClick}
         type="button"
       >
         {content}

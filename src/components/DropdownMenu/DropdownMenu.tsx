@@ -14,13 +14,10 @@ export interface DropdownMenuProps {
   align?: 'left' | 'right';
 }
 
-export function DropdownMenu({
-  trigger,
-  items,
-  align = 'right',
-}: DropdownMenuProps) {
+export function DropdownMenu(props: DropdownMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const align = props.align || 'right';
 
   useEffect(() => {
     if (!isOpen) return;
@@ -35,11 +32,11 @@ export function DropdownMenu({
 
   return (
     <div className="dropdown-menu" ref={containerRef}>
-      <div onClick={() => setIsOpen(o => !o)}>{trigger}</div>
+      <div onClick={() => setIsOpen(o => !o)}>{props.trigger}</div>
 
       {isOpen && (
         <div className={`dropdown-menu__list dropdown-menu__list--${align}`}>
-          {items.map((item, i) => (
+          {props.items.map((item, i) => (
             <button
               key={i}
               type="button"

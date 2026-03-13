@@ -12,23 +12,20 @@ export interface ToggleGroupProps {
   label?: string;
 }
 
-export function ToggleGroup({
-  options,
-  value,
-  onChange,
-  label,
-}: ToggleGroupProps) {
+export function ToggleGroup(props: ToggleGroupProps) {
   return (
     <div className="toggle-group">
-      {label && <span className="toggle-group__label">{label}</span>}
+      {props.label && (
+        <span className="toggle-group__label">{props.label}</span>
+      )}
       <div className="toggle-group__buttons" role="group">
-        {options.map(opt => (
+        {props.options.map(opt => (
           <button
             key={opt.value}
             type="button"
-            className={`toggle-group__btn${value === opt.value ? ' toggle-group__btn--active' : ''}`}
-            onClick={() => onChange(opt.value)}
-            aria-pressed={value === opt.value}
+            className={`toggle-group__btn${props.value === opt.value ? ' toggle-group__btn--active' : ''}`}
+            onClick={() => props.onChange(opt.value)}
+            aria-pressed={props.value === opt.value}
           >
             {opt.label}
           </button>

@@ -23,41 +23,32 @@ const icons = {
 };
 
 export function ConfirmationModal(props: ConfirmationModalProps) {
-  const {
-    isOpen,
-    onClose,
-    onConfirm,
-    title,
-    message,
-    confirmLabel = 'Confirm',
-    cancelLabel = 'Cancel',
-    variant = 'default',
-  } = props;
-
   const handleConfirm = () => {
-    onConfirm();
-    onClose();
+    props.onConfirm();
+    props.onClose();
   };
 
   return (
     <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={title}
-      icon={icons[variant]}
+      isOpen={props.isOpen}
+      onClose={props.onClose}
+      title={props.title}
+      icon={icons[props.variant ?? 'default']}
       showCloseButton={false}
     >
       <div className="confirmation-modal">
-        <p className="confirmation-modal__message">{message}</p>
+        <p className="confirmation-modal__message">{props.message}</p>
         <div className="confirmation-modal__actions">
-          <Button variant="cancel" onClick={onClose}>
-            {cancelLabel}
+          <Button variant="cancel" onClick={props.onClose}>
+            {props.cancelLabel ?? 'Cancel'}
           </Button>
           <Button
-            variant={variant === 'danger' ? 'danger' : 'primary'}
+            variant={
+              (props.variant ?? 'default') === 'danger' ? 'danger' : 'primary'
+            }
             onClick={handleConfirm}
           >
-            {confirmLabel}
+            {props.confirmLabel ?? 'Confirm'}
           </Button>
         </div>
       </div>

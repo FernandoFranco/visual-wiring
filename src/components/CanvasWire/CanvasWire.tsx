@@ -47,28 +47,20 @@ const WAYPOINT_R = 4;
 const WAYPOINT_HIT_R = 8;
 const GHOST_R = 5;
 
-export function CanvasWire({
-  points,
-  inProgress = false,
-  color = DEFAULT_WIRE_COLOR,
-  isSelected = false,
-  onWireClick,
-  onSegmentMouseDown,
-  onSegmentContextMenu,
-  onGhostClick,
-  onWaypointContextMenu,
-  onWaypointMouseDown,
-  onWaypointClick,
-}: CanvasWireProps) {
+export function CanvasWire(props: CanvasWireProps) {
   const [hoveredSegIdx, setHoveredSegIdx] = useState<number | null>(null);
 
-  const n = points.length;
+  const inProgress = props.inProgress || false;
+  const color = props.color || DEFAULT_WIRE_COLOR;
+  const isSelected = props.isSelected || false;
+
+  const n = props.points.length;
   if (n < 2) return null;
 
-  const ptStr = points.map(p => `${p.x},${p.y}`).join(' ');
+  const ptStr = props.points.map(p => `${p.x},${p.y}`).join(' ');
 
-  const segments = points.slice(0, -1).map((p, i) => {
-    const p2 = points[i + 1];
+  const segments = props.points.slice(0, -1).map((p, i) => {
+    const p2 = props.points[i + 1];
     const dx = Math.abs(p2.x - p.x);
     const dy = Math.abs(p2.y - p.y);
     return {
@@ -86,7 +78,7 @@ export function CanvasWire({
   const isHovered = hoveredSegIdx !== null;
   const showWaypoints = !inProgress && n >= 3 && (isSelected || isHovered);
 
-  const waypointPoints = n >= 3 ? points.slice(1, n - 1) : [];
+  const waypointPoints = n >= 3 ? props.points.slice(1, n - 1) : [];
 
   const hovSeg =
     hoveredSegIdx !== null && !inProgress ? segments[hoveredSegIdx] : null;
@@ -174,20 +166,24 @@ export function CanvasWire({
               onMouseEnter={() => setHoveredSegIdx(seg.index)}
               onClick={e => {
                 e.stopPropagation();
-                onWireClick?.(e);
+                props.onWireClick?.(e);
               }}
               onMouseDown={
                 isDraggable
                   ? e => {
                       e.stopPropagation();
-                      onSegmentMouseDown?.(seg.index, seg.isHorizontal, e);
+                      props.onSegmentMouseDown?.(
+                        seg.index,
+                        seg.isHorizontal,
+                        e
+                      );
                     }
                   : undefined
               }
               onContextMenu={e => {
                 e.preventDefault();
                 e.stopPropagation();
-                onSegmentContextMenu?.(seg.index, e.clientX, e.clientY);
+                props.onSegmentContextMenu?.(seg.index, e.clientX, e.clientY);
               }}
             />
           );
@@ -201,7 +197,7 @@ export function CanvasWire({
           r={GHOST_R}
           onMouseDown={e => {
             e.stopPropagation();
-            onGhostClick?.(hovSeg.index, ghostX, ghostY);
+            props.onGhostClick?.(hovSeg.index, ghostX, ghostY);
           }}
         />
       )}
@@ -216,16 +212,16 @@ export function CanvasWire({
             r={WAYPOINT_HIT_R}
             onClick={e => {
               e.stopPropagation();
-              onWaypointClick?.(i, e);
+              props.onWaypointClick?.(i, e);
             }}
             onMouseDown={e => {
               e.stopPropagation();
-              onWaypointMouseDown?.(i, e);
+              props.onWaypointMouseDown?.(i, e);
             }}
             onContextMenu={e => {
               e.preventDefault();
               e.stopPropagation();
-              onWaypointContextMenu?.(i, e.clientX, e.clientY);
+              props.onWaypointContextMenu?.(i, e.clientX, e.clientY);
             }}
           />
         ))}

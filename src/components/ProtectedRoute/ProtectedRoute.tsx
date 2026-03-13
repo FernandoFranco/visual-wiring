@@ -9,9 +9,10 @@ export interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute(props: PropsWithChildren<ProtectedRouteProps>) {
-  const { requireProject = true, children } = props;
   const { isProjectLoaded } = useProject();
   const navigate = useNavigate();
+
+  const requireProject = props.requireProject ?? true;
 
   useEffect(() => {
     if (requireProject && !isProjectLoaded) {
@@ -29,5 +30,5 @@ export function ProtectedRoute(props: PropsWithChildren<ProtectedRouteProps>) {
     return null;
   }
 
-  return <>{children}</>;
+  return <>{props.children}</>;
 }

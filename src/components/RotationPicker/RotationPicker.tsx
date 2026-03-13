@@ -13,17 +13,13 @@ const OPTIONS = [
   { value: '270', label: '270°' },
 ];
 
-export function RotationPicker({
-  value,
-  onChange,
-  label,
-}: RotationPickerProps) {
+export function RotationPicker(props: RotationPickerProps) {
   return (
     <ToggleGroup
       options={OPTIONS}
-      value={String(value)}
-      onChange={v => onChange(Number(v) as 0 | 90 | 180 | 270)}
-      label={label}
+      value={String(props.value)}
+      onChange={v => props.onChange(Number(v) as 0 | 90 | 180 | 270)}
+      label={props.label}
     />
   );
 }

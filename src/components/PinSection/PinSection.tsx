@@ -20,7 +20,7 @@ const SIDE_LABELS: Record<PinSide, string> = {
   right: 'Right',
 };
 
-export function PinSection({ side, pins, onChange }: PinSectionProps) {
+export function PinSection(props: PinSectionProps) {
   const [isOpen, setIsOpen] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draftName, setDraftName] = useState('');
@@ -44,11 +44,11 @@ export function PinSection({ side, pins, onChange }: PinSectionProps) {
     if (!editingId) return;
     const trimmed = draftName.trim();
     if (trimmed) {
-      onChange(
-        pins.map(p => (p.id === editingId ? { ...p, name: trimmed } : p))
+      props.onChange(
+        props.pins.map(p => (p.id === editingId ? { ...p, name: trimmed } : p))
       );
     } else {
-      onChange(pins.filter(p => p.id !== editingId));
+      props.onChange(props.pins.filter(p => p.id !== editingId));
     }
     setEditingId(null);
   };
@@ -56,16 +56,16 @@ export function PinSection({ side, pins, onChange }: PinSectionProps) {
   const commitAndContinue = () => {
     if (!editingId) return;
     const trimmed = draftName.trim();
-    let updatedPins = pins;
+    let updatedPins = props.pins;
     if (trimmed) {
-      updatedPins = pins.map(p =>
+      updatedPins = props.pins.map(p =>
         p.id === editingId ? { ...p, name: trimmed } : p
       );
     } else {
-      updatedPins = pins.filter(p => p.id !== editingId);
+      updatedPins = props.pins.filter(p => p.id !== editingId);
     }
-    const newPin: Pin = { id: crypto.randomUUID(), name: '', side };
-    onChange([...updatedPins, newPin]);
+    const newPin: Pin = { id: crypto.randomUUID(), name: '', side: props.side };
+    props.onChange([...updatedPins, newPin]);
     setEditingId(newPin.id);
     setDraftName('');
     setOriginalName('');
@@ -74,34 +74,38 @@ export function PinSection({ side, pins, onChange }: PinSectionProps) {
   const cancel = () => {
     if (!editingId) return;
     if (originalName === '') {
-      onChange(pins.filter(p => p.id !== editingId));
+      props.onChange(props.pins.filter(p => p.id !== editingId));
     } else {
-      onChange(
-        pins.map(p => (p.id === editingId ? { ...p, name: originalName } : p))
+      props.onChange(
+        props.pins.map(p =>
+          p.id === editingId ? { ...p, name: originalName } : p
+        )
       );
     }
     setEditingId(null);
   };
 
   const addPin = () => {
-    const newPin: Pin = { id: crypto.randomUUID(), name: '', side };
-    onChange([...pins, newPin]);
+    const newPin: Pin = { id: crypto.randomUUID(), name: '', side: props.side };
+    props.onChange([...props.pins, newPin]);
     startEdit(newPin);
   };
 
   const deletePin = (id: string) => {
     if (editingId === id) setEditingId(null);
-    onChange(pins.filter(p => p.id !== id));
+    props.onChange(props.pins.filter(p => p.id !== id));
   };
 
-  const label = <span className="pin-section__label">{SIDE_LABELS[side]}</span>;
+  const label = (
+    <span className="pin-section__label">{SIDE_LABELS[props.side]}</span>
+  );
 
-  const count = pins.length > 0 ? pins.length : undefined;
+  const count = props.pins.length > 0 ? props.pins.length : undefined;
 
   const actions = (
     <IconButton
       className="pin-section__add-btn"
-      title={`Add ${SIDE_LABELS[side]} pin`}
+      title={`Add ${SIDE_LABELS[props.side]} pin`}
       onClick={e => {
         e.stopPropagation();
         if (!isOpen) setIsOpen(true);
@@ -122,11 +126,11 @@ export function PinSection({ side, pins, onChange }: PinSectionProps) {
         onToggle={() => setIsOpen(o => !o)}
       >
         <div className="pin-section__content">
-          {pins.length === 0 ? (
+          {props.pins.length === 0 ? (
             <p className="pin-section__empty">No pins yet</p>
           ) : (
             <ul className="pin-section__list">
-              {pins.map(pin => (
+              {props.pins.map(pin => (
                 <li key={pin.id} className="pin-section__item">
                   {editingId === pin.id ? (
                     <input
