@@ -225,7 +225,8 @@ Após completar cada fase:
 - [x] Fase 3: Cache ✅
 - [x] Fase 4: Loader de Bibliotecas Externas ✅
 - [x] Fase 5: Operações de Biblioteca ✅
-- [ ] Fase 6: ImportModal - Suporte a Bibliotecas
+- [x] Fase 6: Hook de Importação ✅
+- [ ] Fase 7: Atualizar Provider
 - [ ] Fase 4: Carregamento Externo
 - [ ] Fase 5: Operações de Biblioteca
 - [ ] Fase 6: Hook de Importação
