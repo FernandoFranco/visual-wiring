@@ -1,0 +1,124 @@
+.library-status-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  cursor: help;
+  transition: all 0.2s ease;
+}
+
+.library-status-icon:hover {
+  transform: scale(1.1);
+}
+
+.library-status-icon:hover .library-status-icon-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Status colors */
+.library-status-icon--online {
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.library-status-icon--cached {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.library-status-icon--unavailable {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.library-status-icon--loading {
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.1);
+}
+
+/* Loading spinner animation */
+.library-status-icon-spinner {
+  animation: library-status-icon-spin 1s linear infinite;
+}
+
+@keyframes library-status-icon-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Tooltip */
+.library-status-icon-tooltip {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  z-index: 1000;
+  min-width: 200px;
+  max-width: 300px;
+  padding: 12px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.3),
+    0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  color: #f1f5f9;
+  font-size: 12px;
+  line-height: 1.4;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.library-status-icon-tooltip::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-bottom-color: #334155;
+}
+
+.library-status-icon-tooltip-header {
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.library-status-icon-tooltip-header strong {
+  font-weight: 600;
+}
+
+.library-status-icon-tooltip-description {
+  margin: 0 0 8px 0;
+  color: #cbd5e1;
+}
+
+.library-status-icon-tooltip-url {
+  margin: 0 0 4px 0;
+  padding: 6px 8px;
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: #94a3b8;
+  overflow-wrap: break-word;
+}
+
+.library-status-icon-tooltip-date {
+  margin: 4px 0 0 0;
+  font-size: 11px;
+  color: #94a3b8;
+}
