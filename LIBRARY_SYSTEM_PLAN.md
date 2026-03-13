@@ -227,7 +227,8 @@ Após completar cada fase:
 - [x] Fase 5: Operações de Biblioteca ✅
 - [x] Fase 6: Hook de Importação ✅
 - [x] Fase 7: Atualizar Provider ✅
-- [ ] Fase 8: UI - Modal de Importação
+- [x] Fase 8: UI - Modal de Importação ✅
+- [ ] Fase 9: UI - Indicadores de Status
 - [ ] Fase 4: Carregamento Externo
 - [ ] Fase 5: Operações de Biblioteca
 - [ ] Fase 6: Hook de Importação

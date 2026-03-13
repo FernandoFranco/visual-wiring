@@ -7,7 +7,7 @@ import packageJson from '../../package.json';
 import { ActionButton } from '../components/ActionButton';
 import { AppLogo } from '../components/AppLogo';
 import { CreateProjectForm } from '../components/CreateProjectForm';
-import { ImportModal } from '../components/ImportModal';
+import { ImportProjectModal } from '../components/ImportProjectModal';
 import { useLoadFromURL } from '../hooks/useLoadFromURL';
 import { useProject } from '../hooks/useProject';
 import { useSnackbar } from '../hooks/useSnackbar';
@@ -17,7 +17,8 @@ export function HomePage() {
   const { createProject, loadProject } = useProject();
   const { showError } = useSnackbar();
   const [isCreating, setIsCreating] = useState(false);
-  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isImportProjectModalOpen, setIsImportProjectModalOpen] =
+    useState(false);
   const hasLoadedFromURL = useRef(false);
 
   const { loadFromURL, isLoading: isLoadingFromURL } = useLoadFromURL({
@@ -62,7 +63,7 @@ export function HomePage() {
   };
 
   const handleLoadProject = () => {
-    setIsImportModalOpen(true);
+    setIsImportProjectModalOpen(true);
   };
 
   const handleImport = async (data: unknown, filename: string) => {
@@ -140,9 +141,9 @@ export function HomePage() {
         </div>
       </div>
 
-      <ImportModal
-        isOpen={isImportModalOpen}
-        onClose={() => setIsImportModalOpen(false)}
+      <ImportProjectModal
+        isOpen={isImportProjectModalOpen}
+        onClose={() => setIsImportProjectModalOpen(false)}
         onImport={handleImport}
       />
     </div>

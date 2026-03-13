@@ -1,0 +1,97 @@
+.library-import-choice-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.library-import-choice-info {
+  padding: 1rem;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+}
+
+.library-import-choice-library-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.5rem 0;
+}
+
+.library-import-choice-library-details {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.library-import-choice-library-url {
+  font-size: 0.625rem;
+  color: #94a3b8;
+  margin: 0.5rem 0 0 0;
+  font-family: 'Courier New', monospace;
+  word-break: break-all;
+}
+
+.library-import-choice-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.library-import-choice-option {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.library-import-choice-option:hover {
+  border-color: #0f172a;
+  background-color: #f8fafc;
+}
+
+.library-import-choice-option-icon {
+  flex-shrink: 0;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #0f172a;
+  color: white;
+  border-radius: 0.75rem;
+}
+
+.library-import-choice-option-icon--external {
+  background-color: #3b82f6;
+}
+
+.library-import-choice-option-content {
+  flex: 1;
+}
+
+.library-import-choice-option-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.25rem 0;
+}
+
+.library-import-choice-option-description {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.library-import-choice-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 0.5rem;
+  border-top: 1px solid #e2e8f0;
+}
