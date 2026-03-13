@@ -18,6 +18,7 @@ export interface LibraryComponentItemProps {
   query: string;
   onEdit?: (componentId: string) => void;
   onDelete: (componentId: string, componentName: string) => void;
+  readOnly?: boolean;
 }
 
 export function LibraryComponentItem(props: LibraryComponentItemProps) {
@@ -55,25 +56,27 @@ export function LibraryComponentItem(props: LibraryComponentItemProps) {
         <span className="library__component__header-name">
           <Highlight text={props.component.name} query={props.query} />
         </span>
-        <div className="library__component__header-actions">
-          <IconButton
-            className="library__component__header-edit-btn"
-            title="Edit component"
-            onClick={() => props.onEdit?.(props.component.id)}
-          >
-            <Pencil size={10} />
-          </IconButton>
-          <IconButton
-            className="library__component__header-delete-btn"
-            title="Delete component"
-            onClick={e => {
-              e.stopPropagation();
-              props.onDelete(props.component.id, props.component.name);
-            }}
-          >
-            <Trash2 size={10} />
-          </IconButton>
-        </div>
+        {!props.readOnly && (
+          <div className="library__component__header-actions">
+            <IconButton
+              className="library__component__header-edit-btn"
+              title="Edit component"
+              onClick={() => props.onEdit?.(props.component.id)}
+            >
+              <Pencil size={10} />
+            </IconButton>
+            <IconButton
+              className="library__component__header-delete-btn"
+              title="Delete component"
+              onClick={e => {
+                e.stopPropagation();
+                props.onDelete(props.component.id, props.component.name);
+              }}
+            >
+              <Trash2 size={10} />
+            </IconButton>
+          </div>
+        )}
       </div>
 
       <div className="library__component__preview">

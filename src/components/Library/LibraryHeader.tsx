@@ -1,6 +1,8 @@
 import { Pencil, Plus } from 'lucide-react';
 
+import type { LibraryLoadStatus } from '../../types/librarySource';
 import { IconButton } from '../IconButton';
+import { LibraryStatusIcon } from '../LibraryStatusIcon';
 
 export interface LibraryHeaderProps {
   libraryName: string;
@@ -12,6 +14,12 @@ export interface LibraryHeaderProps {
   onCancelRename: () => void;
   onAddComponent?: () => void;
   inputRef: React.RefObject<HTMLInputElement | null>;
+  readOnly?: boolean;
+  statusInfo?: {
+    status: LibraryLoadStatus;
+    url: string;
+    lastFetched?: string;
+  };
 }
 
 export function LibraryHeader(props: LibraryHeaderProps) {
@@ -29,36 +37,46 @@ export function LibraryHeader(props: LibraryHeaderProps) {
       autoFocus
     />
   ) : (
-    <span
-      className="library__name"
-      onDoubleClick={props.onStartRename}
-      title="Double-click to rename"
-    >
-      {props.libraryName}
+    <span className="library__name-wrapper">
+      <span
+        className="library__name"
+        onDoubleClick={props.readOnly ? undefined : props.onStartRename}
+        title={props.readOnly ? undefined : 'Double-click to rename'}
+      >
+        {props.libraryName}
+      </span>
+      {props.statusInfo && (
+        <LibraryStatusIcon
+          status={props.statusInfo.status}
+          url={props.statusInfo.url}
+          lastFetched={props.statusInfo.lastFetched}
+        />
+      )}
     </span>
   );
 
-  const actions = !props.isRenaming ? (
-    <>
-      <IconButton
-        className="library__add-btn"
-        onClick={e => {
-          e.stopPropagation();
-          props.onAddComponent?.();
-        }}
-        title="Add component"
-      >
-        <Plus size={11} />
-      </IconButton>
-      <IconButton
-        className="library__rename-btn"
-        onClick={props.onStartRename}
-        title="Rename library"
-      >
-        <Pencil size={11} />
-      </IconButton>
-    </>
-  ) : undefined;
+  const actions =
+    !props.isRenaming && !props.readOnly ? (
+      <>
+        <IconButton
+          className="library__add-btn"
+          onClick={e => {
+            e.stopPropagation();
+            props.onAddComponent?.();
+          }}
+          title="Add component"
+        >
+          <Plus size={11} />
+        </IconButton>
+        <IconButton
+          className="library__rename-btn"
+          onClick={props.onStartRename}
+          title="Rename library"
+        >
+          <Pencil size={11} />
+        </IconButton>
+      </>
+    ) : undefined;
 
   return { label, actions };
 }

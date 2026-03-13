@@ -7,4 +7,5 @@ export interface Library {
   components: Component[];
   sourceType?: LibrarySourceType;
   sourceUrl?: string;
+  lastFetched?: string;
 }

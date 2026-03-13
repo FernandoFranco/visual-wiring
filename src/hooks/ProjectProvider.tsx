@@ -106,6 +106,10 @@ export function ProjectProvider(props: PropsWithChildren) {
               id: ref.id,
               sourceType: 'external',
               sourceUrl: ref.url,
+              lastFetched:
+                result.status === 'online'
+                  ? new Date().toISOString()
+                  : ref.lastFetched,
             };
 
             const existingLibIndex = updatedProject.libraries.findIndex(

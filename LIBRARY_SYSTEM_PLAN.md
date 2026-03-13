@@ -229,7 +229,7 @@ Após completar cada fase:
 - [x] Fase 7: Atualizar Provider ✅
 - [x] Fase 8: UI - Modal de Importação ✅
 - [x] Fase 9: UI - Indicadores de Status ✅
-- [ ] Fase 10: Atualizar Sidebar
+- [x] Fase 10: Atualizar Sidebar ✅
 - [ ] Fase 11: UI - Gerenciador de Bibliotecas
 - [ ] Fase 12: Feedback ao Usuário
 - [ ] Fase 13: Migrações

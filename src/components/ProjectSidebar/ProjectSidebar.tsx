@@ -9,7 +9,8 @@ import { Library } from '../Library';
 import { SidebarSearch } from '../SidebarSearch';
 
 export function ProjectSidebar() {
-  const { project, renameLibrary, removeComponent } = useProject();
+  const { project, renameLibrary, removeComponent, externalLibrariesStatus } =
+    useProject();
   const navigate = useNavigate();
   const libraries = project?.libraries ?? [];
   const placedComponents = project?.placedComponents ?? [];
@@ -24,6 +25,26 @@ export function ProjectSidebar() {
         )
       )
     : libraries;
+
+  const getLibraryInfo = (libraryId: string) => {
+    const library = libraries.find(lib => lib.id === libraryId);
+    const isExternal = library?.sourceType === 'external';
+    const statusEntry = externalLibrariesStatus.find(
+      s => s.url === library?.sourceUrl
+    );
+
+    return {
+      readOnly: isExternal,
+      statusInfo:
+        isExternal && statusEntry
+          ? {
+              status: statusEntry.status,
+              url: statusEntry.url,
+              lastFetched: library?.lastFetched,
+            }
+          : undefined,
+    };
+  };
 
   return (
     <aside className="project-sidebar">
@@ -44,22 +65,29 @@ export function ProjectSidebar() {
             No components match &ldquo;{trimmedQuery}&rdquo;
           </p>
         ) : (
-          visibleLibraries.map(library => (
-            <Library
-              key={library.id}
-              library={library}
-              placedComponents={placedComponents}
-              onRename={renameLibrary}
-              onAddComponent={() => navigate(ROUTES.toNewComponent(library.id))}
-              onEditComponent={componentId =>
-                navigate(ROUTES.toEditComponent(library.id, componentId))
-              }
-              onRemoveComponent={componentId =>
-                removeComponent(library.id, componentId)
-              }
-              query={trimmedQuery}
-            />
-          ))
+          visibleLibraries.map(library => {
+            const libraryInfo = getLibraryInfo(library.id);
+            return (
+              <Library
+                key={library.id}
+                library={library}
+                placedComponents={placedComponents}
+                onRename={renameLibrary}
+                onAddComponent={() =>
+                  navigate(ROUTES.toNewComponent(library.id))
+                }
+                onEditComponent={componentId =>
+                  navigate(ROUTES.toEditComponent(library.id, componentId))
+                }
+                onRemoveComponent={componentId =>
+                  removeComponent(library.id, componentId)
+                }
+                query={trimmedQuery}
+                readOnly={libraryInfo.readOnly}
+                statusInfo={libraryInfo.statusInfo}
+              />
+            );
+          })
         )}
       </div>
     </aside>
