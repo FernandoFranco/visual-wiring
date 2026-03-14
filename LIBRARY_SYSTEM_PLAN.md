@@ -244,7 +244,7 @@ Implementar sistema de importação/exportação de bibliotecas com suporte a re
 - [x] Fase 10: Atualizar Sidebar ✅
 - [x] Fase 11: UI - Gerenciador de Bibliotecas ✅
 - [x] Fase 12: Feedback ao Usuário ✅
-- [ ] Fase 13: Migrações
+- [x] Fase 13: Migrações ✅
 - [ ] Fase 14: Testes Finais
 
 ---
