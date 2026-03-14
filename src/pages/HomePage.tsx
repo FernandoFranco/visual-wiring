@@ -7,7 +7,7 @@ import packageJson from '../../package.json';
 import { ActionButton } from '../components/ActionButton';
 import { AppLogo } from '../components/AppLogo';
 import { CreateProjectForm } from '../components/CreateProjectForm';
-import { ImportModal } from '../components/ImportModal';
+import { ImportProjectModal } from '../components/ImportProjectModal';
 import { useLoadFromURL } from '../hooks/useLoadFromURL';
 import { useProject } from '../hooks/useProject';
 import { useSnackbar } from '../hooks/useSnackbar';
@@ -15,9 +15,10 @@ import { validateProject } from '../utils/typeValidators';
 
 export function HomePage() {
   const { createProject, loadProject } = useProject();
-  const { showError } = useSnackbar();
+  const { showError, showSuccess } = useSnackbar();
   const [isCreating, setIsCreating] = useState(false);
-  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isImportProjectModalOpen, setIsImportProjectModalOpen] =
+    useState(false);
   const hasLoadedFromURL = useRef(false);
 
   const { loadFromURL, isLoading: isLoadingFromURL } = useLoadFromURL({
@@ -56,13 +57,14 @@ export function HomePage() {
   const handleNewProject = (name: string) => {
     try {
       createProject(name);
+      showSuccess(`Project "${name}" created successfully`);
     } catch {
       showError('Failed to create project. Please try again.');
     }
   };
 
   const handleLoadProject = () => {
-    setIsImportModalOpen(true);
+    setIsImportProjectModalOpen(true);
   };
 
   const handleImport = async (data: unknown, filename: string) => {
@@ -74,6 +76,7 @@ export function HomePage() {
       const file = new File([blob], filename, { type: 'application/json' });
 
       await loadProject(file);
+      showSuccess('Project loaded successfully');
     } catch (err) {
       showError(
         err instanceof Error
@@ -140,9 +143,9 @@ export function HomePage() {
         </div>
       </div>
 
-      <ImportModal
-        isOpen={isImportModalOpen}
-        onClose={() => setIsImportModalOpen(false)}
+      <ImportProjectModal
+        isOpen={isImportProjectModalOpen}
+        onClose={() => setIsImportProjectModalOpen(false)}
         onImport={handleImport}
       />
     </div>

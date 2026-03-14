@@ -6,6 +6,14 @@
   opacity: 1;
 }
 
+.library__name-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
 .library__name {
   font-size: 0.8rem;
   font-weight: 600;
@@ -15,6 +23,8 @@
   text-overflow: ellipsis;
   user-select: none;
   display: block;
+  min-width: 0;
+  flex: 1;
 }
 
 .library__rename-input {

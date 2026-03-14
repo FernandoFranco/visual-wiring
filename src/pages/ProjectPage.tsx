@@ -5,15 +5,24 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AppBar } from '../components/AppBar';
+import { Button } from '../components/Button';
 import { ConfirmationModal } from '../components/ConfirmationModal';
 import { DropdownMenu } from '../components/DropdownMenu';
+import { ExternalLibrariesLoadingModal } from '../components/ExternalLibrariesLoadingModal';
 import { HistoryModal } from '../components/HistoryModal';
 import { IconButton } from '../components/IconButton';
+import { ImportLibraryModal } from '../components/ImportLibraryModal';
+import { Input } from '../components/Input';
 import { JsonViewerModal } from '../components/JsonViewerModal';
+import { LibraryImportChoiceModal } from '../components/LibraryImportChoiceModal';
+import { LibraryManager } from '../components/LibraryManager';
+import { Modal } from '../components/Modal';
 import { ProjectCanvas } from '../components/ProjectCanvas';
 import { ProjectSidebar } from '../components/ProjectSidebar';
 import { useProject } from '../hooks/useProject';
+import { useSnackbar } from '../hooks/useSnackbar';
 import { ROUTES } from '../routes';
+import type { Library } from '../types/library';
 import {
   exportProjectAsImage,
   exportProjectAsSVG,
@@ -29,10 +38,27 @@ export function ProjectPage() {
     canUndo,
     past,
     restoreToPoint,
+    createLibrary,
+    importLibrary,
+    externalLibrariesStatus,
+    isLoadingExternalLibraries,
   } = useProject();
+  const { showSuccess } = useSnackbar();
   const [isCloseConfirmOpen, setIsCloseConfirmOpen] = useState(false);
   const [isJsonModalOpen, setIsJsonModalOpen] = useState(false);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const [isLibraryManagerOpen, setIsLibraryManagerOpen] = useState(false);
+  const [isCreateLibraryModalOpen, setIsCreateLibraryModalOpen] =
+    useState(false);
+  const [isImportLibraryModalOpen, setIsImportLibraryModalOpen] =
+    useState(false);
+  const [isLibraryChoiceModalOpen, setIsLibraryChoiceModalOpen] =
+    useState(false);
+  const [newLibraryName, setNewLibraryName] = useState('');
+  const [importedLibrary, setImportedLibrary] = useState<Library | null>(null);
+  const [importedLibraryUrl, setImportedLibraryUrl] = useState<
+    string | undefined
+  >();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -57,6 +83,44 @@ export function ProjectPage() {
     navigate(ROUTES.HOME, { replace: true });
   };
 
+  const handleCreateLibrary = () => {
+    if (newLibraryName.trim()) {
+      createLibrary(newLibraryName.trim());
+      setNewLibraryName('');
+      setIsCreateLibraryModalOpen(false);
+      showSuccess(`Library "${newLibraryName.trim()}" created successfully`);
+    }
+  };
+
+  const handleImportLibrary = (
+    library: Library,
+    _filename: string,
+    url?: string
+  ) => {
+    setImportedLibrary(library);
+    setImportedLibraryUrl(url);
+    setIsImportLibraryModalOpen(false);
+    setIsLibraryChoiceModalOpen(true);
+  };
+
+  const handleChoiceInternal = () => {
+    if (importedLibrary) {
+      importLibrary(importedLibrary, false, importedLibraryUrl);
+    }
+    setIsLibraryChoiceModalOpen(false);
+    setImportedLibrary(null);
+    setImportedLibraryUrl(undefined);
+  };
+
+  const handleChoiceExternal = () => {
+    if (importedLibrary && importedLibraryUrl) {
+      importLibrary(importedLibrary, true, importedLibraryUrl);
+    }
+    setIsLibraryChoiceModalOpen(false);
+    setImportedLibrary(null);
+    setImportedLibraryUrl(undefined);
+  };
+
   return (
     <div className="project-page">
       <AppBar
@@ -65,7 +129,11 @@ export function ProjectPage() {
       >
         <DropdownMenu
           trigger={
-            <IconButton className="app-bar__action-btn" title="Download">
+            <IconButton
+              className="app-bar__action-btn"
+              tooltip="Download"
+              tooltipPosition="bottom"
+            >
               <Download size={17} />
             </IconButton>
           }
@@ -89,7 +157,11 @@ export function ProjectPage() {
         />
         <DropdownMenu
           trigger={
-            <IconButton className="app-bar__action-btn" title="Settings">
+            <IconButton
+              className="app-bar__action-btn"
+              tooltip="Settings"
+              tooltipPosition="bottom"
+            >
               <Settings size={17} />
             </IconButton>
           }
@@ -108,7 +180,11 @@ export function ProjectPage() {
         />
       </AppBar>
       <div className="project-body">
-        <ProjectSidebar />
+        <ProjectSidebar
+          onCreateLibrary={() => setIsCreateLibraryModalOpen(true)}
+          onImportLibrary={() => setIsImportLibraryModalOpen(true)}
+          onOpenLibraryManager={() => setIsLibraryManagerOpen(true)}
+        />
         <ProjectCanvas />
       </div>
 
@@ -118,6 +194,74 @@ export function ProjectPage() {
         title="Project JSON"
         data={project}
         defaultExpandDepth={2}
+      />
+
+      <LibraryManager
+        isOpen={isLibraryManagerOpen}
+        onClose={() => setIsLibraryManagerOpen(false)}
+      />
+
+      <Modal
+        isOpen={isCreateLibraryModalOpen}
+        onClose={() => {
+          setIsCreateLibraryModalOpen(false);
+          setNewLibraryName('');
+        }}
+        title="Create New Library"
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <p style={{ margin: 0, color: '#64748b', fontSize: '14px' }}>
+            Enter a name for the new library:
+          </p>
+          <Input
+            value={newLibraryName}
+            onChange={e => setNewLibraryName(e.target.value)}
+            placeholder="My Library"
+            onKeyDown={e => {
+              if (e.key === 'Enter') handleCreateLibrary();
+            }}
+            autoFocus
+          />
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: '8px',
+              marginTop: '8px',
+            }}
+          >
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setIsCreateLibraryModalOpen(false);
+                setNewLibraryName('');
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleCreateLibrary}
+              disabled={!newLibraryName.trim()}
+            >
+              Create
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      <ImportLibraryModal
+        isOpen={isImportLibraryModalOpen}
+        onClose={() => setIsImportLibraryModalOpen(false)}
+        onImportSuccess={handleImportLibrary}
+      />
+
+      <LibraryImportChoiceModal
+        isOpen={isLibraryChoiceModalOpen}
+        onClose={() => setIsLibraryChoiceModalOpen(false)}
+        library={importedLibrary}
+        url={importedLibraryUrl}
+        onChoiceInternal={handleChoiceInternal}
+        onChoiceExternal={handleChoiceExternal}
       />
 
       <HistoryModal
@@ -136,6 +280,12 @@ export function ProjectPage() {
         confirmLabel="Close"
         cancelLabel="Stay"
         variant="warning"
+      />
+
+      <ExternalLibrariesLoadingModal
+        isLoading={isLoadingExternalLibraries}
+        statuses={externalLibrariesStatus}
+        onClose={() => {}}
       />
     </div>
   );

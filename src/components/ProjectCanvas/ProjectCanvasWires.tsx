@@ -2,14 +2,12 @@ import type { Component } from '../../types/component';
 import type { PlacedComponent } from '../../types/project';
 import type { Wire } from '../../types/wire';
 import { buildPreviewPoints } from '../../utils/wireRouting';
-import { CanvasWire } from '../CanvasWire';
+import { CanvasWire, DEFAULT_WIRE_COLOR } from '../CanvasWire';
 import type {
   WaypointDragState,
   WireCreationState,
   WireSegmentDragState,
 } from './useProjectCanvasState';
-
-const DEFAULT_WIRE_COLOR = '#00ffff';
 
 export interface ProjectCanvasWiresProps {
   wires: Wire[];

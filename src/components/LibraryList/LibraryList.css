@@ -1,0 +1,128 @@
+.library-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.library-list__empty {
+  padding: 48px 24px;
+  text-align: center;
+  color: #94a3b8;
+}
+
+.library-list__empty p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.library-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+}
+
+.library-list-item:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.library-list-item__info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.library-list-item__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.library-list-item__name {
+  font-weight: 600;
+  font-size: 15px;
+  color: #1e293b;
+}
+
+.library-list-item__rename-btn {
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.library-list-item__rename-btn:hover {
+  opacity: 1;
+}
+
+.library-list-item__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.library-list-item__badge--internal {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.library-list-item__badge--imported {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.library-list-item__badge--external {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+
+.library-list-item__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.library-list-item__component-count {
+  font-weight: 500;
+}
+
+.library-list-item__url {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: #94a3b8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.library-list-item__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.library-list-item__remove-btn {
+  color: #dc2626;
+}
+
+.library-list-item__remove-btn:hover {
+  background: #fee2e2;
+}

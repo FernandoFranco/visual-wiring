@@ -1,19 +1,34 @@
 import { createContext } from 'react';
 
 import type { Component } from '../types/component';
-import type { LabelPosition, Project } from '../types/project';
+import type { Library } from '../types/library';
+import type { LibraryLoadStatus } from '../types/librarySource';
+import type {
+  ComponentRotation,
+  LabelPosition,
+  Project,
+} from '../types/project';
 import type { Wire } from '../types/wire';
 import type { HistoryEntry } from './useProjectHistory';
+
+export interface ExternalLibraryStatus {
+  url: string;
+  status: LibraryLoadStatus;
+  error?: string;
+}
 
 export interface ProjectContextValue {
   project: Project | null;
   isProjectLoaded: boolean;
+  externalLibrariesStatus: ExternalLibraryStatus[];
+  isLoadingExternalLibraries: boolean;
 
   createProject: (name: string) => void;
   loadProject: (file: File) => Promise<void>;
   saveProject: () => void;
   updateName: (name: string) => void;
   closeProject: () => void;
+  createLibrary: (name: string) => void;
   renameLibrary: (id: string, name: string) => void;
   addComponent: (libraryId: string, component: Component) => void;
   updateComponent: (libraryId: string, component: Component) => void;
@@ -29,7 +44,7 @@ export interface ProjectContextValue {
   rotatePlacedComponent: (instanceId: string) => void;
   setPlacedComponentRotation: (
     instanceId: string,
-    rotation: 0 | 90 | 180 | 270
+    rotation: ComponentRotation
   ) => void;
   updatePlacedComponentInstance: (
     instanceId: string,
@@ -41,6 +56,12 @@ export interface ProjectContextValue {
   updateWireColor: (wireId: string, color: string) => void;
   addColor: (color: string) => void;
   removeColor: (color: string) => void;
+
+  exportLibrary: (libraryId: string) => void;
+  importLibrary: (library: Library, asExternal: boolean, url?: string) => void;
+  addExternalLibraryByUrl: (url: string) => Promise<void>;
+  removeLibrary: (libraryId: string) => void;
+  convertExternalToInternal: (libraryId: string) => void;
 
   canUndo: boolean;
   canRedo: boolean;

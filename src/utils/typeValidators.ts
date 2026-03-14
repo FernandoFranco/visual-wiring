@@ -83,3 +83,36 @@ export function validateProject(data: unknown): asserts data is Project {
     throw new ValidationError('Invalid project: "wires" must be an array');
   }
 }
+
+export function validateLibrary(data: unknown): asserts data is Library {
+  if (!isObject(data)) {
+    throw new ValidationError('Invalid library: Data must be an object');
+  }
+
+  if (!isString(data.id) || data.id.trim() === '') {
+    throw new ValidationError('Invalid library: Missing or empty "id" field');
+  }
+
+  if (!isString(data.name) || data.name.trim() === '') {
+    throw new ValidationError('Invalid library: Missing or empty "name" field');
+  }
+
+  if (!isArray(data.components)) {
+    throw new ValidationError(
+      'Invalid library: "components" field must be an array'
+    );
+  }
+
+  if (
+    data.sourceType !== undefined &&
+    !['internal', 'imported', 'external'].includes(data.sourceType as string)
+  ) {
+    throw new ValidationError(
+      'Invalid library: "sourceType" must be "internal", "imported", or "external"'
+    );
+  }
+
+  if (data.sourceUrl !== undefined && !isString(data.sourceUrl)) {
+    throw new ValidationError('Invalid library: "sourceUrl" must be a string');
+  }
+}

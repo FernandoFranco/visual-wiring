@@ -1,8 +1,9 @@
 import { DEFAULT_SWATCHES } from '../components/ColorPicker';
+import type { Library } from '../types/library';
 import type { Project } from '../types/project';
 import type { Wire } from '../types/wire';
 
-export const CURRENT_PROJECT_VERSION = 2;
+export const CURRENT_PROJECT_VERSION = 3;
 
 interface LegacyWireEndpoint {
   instanceId: string;
@@ -60,9 +61,30 @@ function migrateV1toV2(project: Project): Project {
   };
 }
 
+function migrateV2toV3(project: Project): Project {
+  const migratedLibraries: Library[] = project.libraries.map(lib => {
+    if (lib.sourceType) {
+      return lib;
+    }
+
+    return {
+      ...lib,
+      sourceType: 'internal' as const,
+    };
+  });
+
+  return {
+    ...project,
+    version: 3,
+    libraries: migratedLibraries,
+    externalLibraries: project.externalLibraries ?? [],
+  };
+}
+
 const MIGRATIONS: Record<number, (project: Project) => Project> = {
   1: migrateV0toV1,
   2: migrateV1toV2,
+  3: migrateV2toV3,
 };
 
 export function migrateProject(project: Project): Project {

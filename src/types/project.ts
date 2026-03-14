@@ -1,7 +1,10 @@
 import type { Library } from './library';
+import type { ExternalLibraryReference } from './librarySource';
 import type { Wire } from './wire';
 
 export type LabelPosition = 'center' | 'top' | 'bottom' | 'left' | 'right';
+
+export type ComponentRotation = 0 | 90 | 180 | 270;
 
 export interface PlacedComponent {
   instanceId: string;
@@ -9,7 +12,7 @@ export interface PlacedComponent {
   libraryId: string;
   x: number;
   y: number;
-  rotation?: 0 | 90 | 180 | 270;
+  rotation?: ComponentRotation;
   alias?: string;
   labelPosition?: LabelPosition;
 }
@@ -21,6 +24,7 @@ export interface Project {
   updatedAt: string;
   colors: string[];
   libraries: Library[];
+  externalLibraries?: ExternalLibraryReference[];
   placedComponents?: PlacedComponent[];
   wires?: Wire[];
 }

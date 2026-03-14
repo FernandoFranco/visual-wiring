@@ -3,6 +3,7 @@ import './Library.css';
 import { useRef, useState } from 'react';
 
 import type { Library as LibraryType } from '../../types/library';
+import type { LibraryLoadStatus } from '../../types/librarySource';
 import type { PlacedComponent } from '../../types/project';
 import { ExpansionPanel } from '../ExpansionPanel';
 import { LibraryComponentItem } from './LibraryComponentItem';
@@ -20,6 +21,12 @@ export interface LibraryProps {
   onEditComponent?: (componentId: string) => void;
   onRemoveComponent?: (componentId: string) => void;
   query?: string;
+  readOnly?: boolean;
+  statusInfo?: {
+    status: LibraryLoadStatus;
+    url: string;
+    lastFetched?: string;
+  };
 }
 
 export function Library(props: LibraryProps) {
@@ -82,6 +89,8 @@ export function Library(props: LibraryProps) {
     onCancelRename: cancelRename,
     onAddComponent: props.onAddComponent,
     inputRef,
+    readOnly: props.readOnly,
+    statusInfo: props.statusInfo,
   });
 
   const count = query
@@ -111,6 +120,7 @@ export function Library(props: LibraryProps) {
                 query={query}
                 onEdit={props.onEditComponent}
                 onDelete={handleDeleteClick}
+                readOnly={props.readOnly}
               />
             ))}
           </ul>

@@ -1,7 +1,7 @@
 import './ComponentPropertiesSidebar.css';
 
 import type { PinSide } from '../../types/pin';
-import type { LabelPosition } from '../../types/project';
+import type { ComponentRotation, LabelPosition } from '../../types/project';
 import { ConnectedWireItem } from '../ConnectedWireItem';
 import { Input } from '../Input';
 import { LabelPositionPicker } from '../LabelPositionPicker';
@@ -22,8 +22,8 @@ export interface ComponentPropertiesSidebarProps {
   pinCount: number;
   x: number;
   y: number;
-  rotation: 0 | 90 | 180 | 270;
-  onRotationChange: (rotation: 0 | 90 | 180 | 270) => void;
+  rotation: ComponentRotation;
+  onRotationChange: (rotation: ComponentRotation) => void;
   alias: string;
   onAliasChange: (alias: string) => void;
   labelPosition: LabelPosition;

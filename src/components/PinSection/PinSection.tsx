@@ -105,7 +105,7 @@ export function PinSection(props: PinSectionProps) {
   const actions = (
     <IconButton
       className="pin-section__add-btn"
-      title={`Add ${SIDE_LABELS[props.side]} pin`}
+      tooltip={`Add ${SIDE_LABELS[props.side]} pin`}
       onClick={e => {
         e.stopPropagation();
         if (!isOpen) setIsOpen(true);
@@ -156,7 +156,7 @@ export function PinSection(props: PinSectionProps) {
                   )}
                   <IconButton
                     className="pin-section__delete-btn"
-                    title="Delete pin"
+                    tooltip="Delete pin"
                     onClick={() => deletePin(pin.id)}
                   >
                     <Trash2 size={11} />

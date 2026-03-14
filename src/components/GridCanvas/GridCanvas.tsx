@@ -51,7 +51,7 @@ export function GridCanvas(props: PropsWithChildren<GridCanvasProps>) {
   }, [props.viewBox]);
 
   const svgWidth = props.viewBox ? '100%' : cw;
-  const svgHeight = props.viewBox ? '100%' : ch;
+  const svgHeight = props.viewBox ? props.viewBox.height : ch;
   const svgViewBox = props.viewBox
     ? `0 0 ${props.viewBox.width} ${props.viewBox.height}`
     : undefined;
@@ -75,7 +75,7 @@ export function GridCanvas(props: PropsWithChildren<GridCanvasProps>) {
         style={{ '--gc-grid': `${grid}px` } as { [key: `--${string}`]: string }}
       >
         <svg
-          className="grid-canvas__svg"
+          className={`grid-canvas__svg ${props.viewBox ? 'grid-canvas__svg--fit' : 'grid-canvas__svg--fill'}`}
           width={svgWidth}
           height={svgHeight}
           viewBox={svgViewBox}

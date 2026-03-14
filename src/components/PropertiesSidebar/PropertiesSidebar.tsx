@@ -27,7 +27,11 @@ export function PropertiesSidebar(
         <span className="properties-sidebar__title" title={props.title}>
           {props.title}
         </span>
-        <IconButton title="Close" onClick={props.onClose}>
+        <IconButton
+          tooltip="Close"
+          tooltipPosition="left"
+          onClick={props.onClose}
+        >
           <X size={14} />
         </IconButton>
       </div>

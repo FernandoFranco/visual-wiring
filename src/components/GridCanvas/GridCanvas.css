@@ -2,12 +2,23 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .grid-canvas__svg {
+  display: block;
+}
+
+.grid-canvas__svg--fill {
   position: absolute;
   inset: 0;
-  display: block;
+}
+
+.grid-canvas__svg--fit {
+  max-width: 100%;
+  max-height: 100%;
 }
 
 .grid-canvas__bg {

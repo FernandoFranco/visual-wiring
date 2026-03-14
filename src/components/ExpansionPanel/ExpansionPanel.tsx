@@ -29,12 +29,12 @@ export function ExpansionPanel(props: PropsWithChildren<ExpansionPanelProps>) {
 
         <div className="expansion-panel__label">{props.label}</div>
 
-        {props.count !== undefined && (
-          <span className="expansion-panel__count">{props.count}</span>
-        )}
-
         {props.actions !== undefined && (
           <div className="expansion-panel__actions">{props.actions}</div>
+        )}
+
+        {props.count !== undefined && (
+          <span className="expansion-panel__count">{props.count}</span>
         )}
       </div>
 
